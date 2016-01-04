@@ -27,3 +27,9 @@ def connectedComponents(np.ndarray[np.double_t,ndim=4] conn, np.ndarray[np.doubl
             for k in range(dims[2]):
                 compReturn[i][j][k]=renum[compReturn[i][j][k]-1]
     return compReturn
+
+cdef extern from "main2.h":
+    void test()
+
+def test_py():
+    test()

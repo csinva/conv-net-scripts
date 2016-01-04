@@ -9,6 +9,9 @@
 #include <stack>
 using namespace std;
 
+void test(){
+	cout << "test" << endl;
+}
 
 // zero-based sub2ind (column-major order)
 int sub2ind(const int * sub,const int num_dims,const int * dims){
