@@ -633,39 +633,29 @@ typedef vector<Vertex> VertexList;
 //     return vec;
 // }
 
-int eval_c(int dimX, int dimY, int dimZ, uint32_t* gt)
+int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs)
 {
     std::cout << "evaluating..." << std::endl;
     std::string experiment_result_folder = ".";
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("/groups/turaga/turagalab/greentea_experiments/project_data/labels_id_cropped.raw", dimX, dimY, dimZ);
-/*
-    for(int i=0;i<10;i++){
-        std::cout << gt_ptr->data()[i] << " ";
-    }
 
-    std::cout << std::endl;
-
-    for(int i=0;i<72*936*936;i++){
-        if(gt_ptr->data()[i]!=gt[i])
-            std::cout << "error!!!";
-    }
-*/
     for(int i=0;i<dimX*dimY*dimZ;i++){
         gt_ptr->data()[i] = gt[i];
     }
-
 
     std::cout << std::endl;
 
     affinity_graph_ptr<float> aff = read_affinity_graphe<float>("/groups/turaga/home/turagas/research/caffe_neural_models/dataset_07/processed/train_euclid.raw", dimX, dimY, dimZ);
 
+    for(int i=0;i<dimX*dimY*dimZ*dcons;i++){
+        aff->data()[i] = affs[i];
+    }
+
     std::cout << "0_dim of affinity " << aff->shape()[0] << "\n";
     std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
     std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
     std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
-
-    return(0);
 
     // std::cout << "Get region graph ....\n";
     // auto rg = get_region_graphe(aff, segg, 72*936*936);

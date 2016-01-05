@@ -35,8 +35,8 @@ def test_py():
     test()
 
 cdef extern from "main2.h":
-    int eval_c(int dx, int dy, int dz, np.uint32_t* gt)
+    int eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs)
 
-def eval(np.ndarray[np.uint32_t,ndim=3] gt):
-    dims = gt.shape
-    eval_c(dims[0],dims[1],dims[2],&gt[0,0,0])
+def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs):
+    dims = affs.shape
+    eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0])
