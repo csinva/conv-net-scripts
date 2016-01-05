@@ -34,15 +34,6 @@
 #include <string>
 using namespace std;
 
-
-
-std::list<int> connectedComponentsCPP(double * conn, double * nhood, int dimX, int dimY, int dimZ, double * outputComp, std::list<int> * cmpSz){
-    std::list<int> compSizes = *cmpSz;
-    return compSizes;
-
-}
-
-
 template< typename ID, typename F >
 inline region_graph_ptr<ID,F>
 get_merge_tree( const region_graph<ID,F>& rg, std::size_t max_segid )
@@ -528,7 +519,7 @@ void process_square( volume_ptr<uint32_t> gt_ptr,
 std::pair<double,double>
 compare_volumes_arb(
                  volume<uint32_t>& gt,
-                 volume<uint32_t>& ws )
+                 volume<uint32_t>& ws, int dimX, int dimY, int dimZ )
 {
     std::map<uint32_t, std::map<uint32_t, uint32_t>> map;
     std::map<uint32_t, std::map<uint32_t, uint32_t>> invmap;
@@ -546,9 +537,9 @@ compare_volumes_arb(
     std::map<uint32_t, std::size_t> s_i, t_j;
 
     // hard-coded, argh :/
-    for ( std::ptrdiff_t z = 0; z < 72; ++z )
-        for ( std::ptrdiff_t y = 0; y < 936; ++y )
-            for ( std::ptrdiff_t x = 0; x < 936; ++x )
+    for ( std::ptrdiff_t z = 0; z < dimX; ++z )
+        for ( std::ptrdiff_t y = 0; y < dimY; ++y )
+            for ( std::ptrdiff_t x = 0; x < dimZ; ++x )
             {
                 uint32_t wsv = ws[x][y][z];
                 uint32_t gtv = gt[x][y][z];
@@ -645,7 +636,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
      if ( 1 )
      {
-         std::cout << "\n\nwatershed" << "\n";
+         std::cout << "\n\n\nwatershed" << "\n";
          volume_ptr<uint32_t>     seg   ;
          std::vector<std::size_t> counts;
 
@@ -673,14 +664,10 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      //
      if ( 1 )
      {
-        std::cout << " linear" << "\n";
+        std::cout << "\n\n\nlinear" << "\n";
          std::vector<double> r;
-         for ( std::size_t thold = 200; thold <= 100000; thold += 100 )
-         {
-             if ( thold > 1000 ) thold += 900;
-             if ( thold > 10000 ) thold += 9000;
-
-             //double k = static_cast<double>(thold) / 1000;
+         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+                 int thold = *iterator;
 
              std::cout << "THOLD: " << thold << "\n";
 
@@ -698,7 +685,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  write_volume(out+"linear/"
                               + std::to_string(thold) + ".dat", seg);
 
-                 auto x = compare_volumes(*gt_ptr, *seg, 256);
+                 auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
              }
@@ -712,12 +699,10 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      //
      if ( 1 )
      {
-        std::cout << " square" << "\n";
+        std::cout << "\n\n\nsquare" << "\n";
          std::vector<double> r;
-         for ( std::size_t thold = 200; thold <= 100000; thold += 100 )
-         {
-             if ( thold > 1000 ) thold += 900;
-             if ( thold > 10000 ) thold += 9000;
+         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+                 int thold = *iterator;
 
              std::cout << "THOLD: " << thold << "\n";
 
@@ -735,7 +720,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  write_volume(out+"square/"
                               + std::to_string(thold) + ".dat", seg);
 
-                 auto x = compare_volumes(*gt_ptr, *seg, 256);
+                 auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
              }
@@ -749,12 +734,11 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      //
      if ( 1 )
      {
-         std::cout << " Felzenszwalb" << "\n";
+         std::cout << "\n\n\nFelzenszwalb" << "\n";
          std::vector<double> r;
-         for ( std::size_t thold = 100; thold <= 50000; thold += 100 )
-         {
-             if ( thold > 1000 ) thold += 900;
-             if ( thold > 10000 ) thold += 9000;
+         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+             int thold = *iterator;
+             std::cout << "THOLD: " << thold << "\n";
 
              double k = static_cast<double>(thold) / 1000;
 
@@ -762,7 +746,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              write_volume(out+"felzenszwalb/"
                           + std::to_string(k) + ".dat", seg);
 
-             auto x = compare_volumes(*gt_ptr, *seg, 256);
+             auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
 
              r.push_back(x.first);
              r.push_back(x.second);
@@ -774,12 +758,10 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      // simple thold fn
      //
      if ( 1 ){
-         std::cout << " simple thold" << "\n";
+         std::cout << "\n\n\nsimple thold" << "\n";
          std::vector<double> r;
-         for ( std::size_t thold = 100; thold <= 50000; thold += 100 )
-         {
-             if ( thold > 1000 ) thold += 900;
-             if ( thold > 10000 ) thold += 9000;
+         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+                 int thold = *iterator;
 
              std::cout << "THOLD: " << thold << "\n";
 
@@ -797,7 +779,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  write_volume(out+"threshold/"
                               + std::to_string(thold) + ".dat", seg);
 
-                 auto x = compare_volumes(*gt_ptr, *seg, 256);
+                 auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
              }

@@ -1,3 +1,5 @@
 *.idea
 tmp
 *.dat
+*.nfs*
+*/*.nfs*
