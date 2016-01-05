@@ -24,11 +24,11 @@ print(aff[0:10])
 f.close()
 
 # threshes
-threshes = [200+i*1000 for i in range(0,11)]+[i*10000 for i in range(2,11)]
+threshes = [100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*10000 for i in range(2,11)] # 100...1,000...100,000
 print threshes
 
 # output folder
-out = 'experiment/'
+out = 'out/'
 
 gt = np.frombuffer(a,dtype='uint32').reshape(dims[0:3])
 affs = np.frombuffer(aff,dtype='float32').reshape(dims)

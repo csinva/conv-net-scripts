@@ -512,10 +512,10 @@ void process_square( volume_ptr<uint32_t> gt_ptr,
 //                         (segg, gt_ptr, rg, counts,
 //                          square_fn(0.3, 50000, 250), 100));
 
-//         write_to_file("./experiments/square/50000_pr.dat",
+//         write_to_file(out+"square/50000_pr.dat",
 //                       r.data(), r.size());
 
-//         write_volume("./experiments/square/50000.dat", segg);
+//         write_volume(out+"square/50000.dat", segg);
 //     }
 
 //     auto seg = felzenszwalb<uint32_t>(aff, k);
@@ -633,9 +633,10 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
     std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
     std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
 
-    /* loop over thresholds, add string out
     std::list<int>::const_iterator iterator;
     std::list<int> thresh_list = *threshes;
+
+    /* loop over thresholds
     for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
         int thold = *iterator;
     */
@@ -644,15 +645,15 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
      if ( 1 )
      {
-         std::cout << " watershed" << "\n";
+         std::cout << "\n\nwatershed" << "\n";
          volume_ptr<uint32_t>     seg   ;
          std::vector<std::size_t> counts;
 
          std::tie(seg, counts) = watershed<uint32_t>(aff, -1, 2);
-         write_volume("./experiments/watershed/basic.out", seg);
+         write_volume(out+"watershed/basic.out", seg);
 
          std::tie(seg, counts) = watershed<uint32_t>(aff, 0.1, 0.99);
-         write_volume("./experiments/watershed/minmax.out", seg);
+         write_volume(out+"watershed/minmax.out", seg);
 
          // {
          //     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
@@ -661,7 +662,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
          //     merge_segments_with_function(segg, rg,
          //                                  counts, limit_fn2, 100);
 
-         //     write_volume("./experiments/voutall.out", segg);
+         //     write_volume(out+"voutall.out", segg);
          // }
 
      }
@@ -694,14 +695,14 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                      (seg, rg, counts,
                       linear(thold), 10);
 
-                 write_volume("experiments/linear/"
+                 write_volume(out+"linear/"
                               + std::to_string(thold) + ".dat", seg);
 
                  auto x = compare_volumes(*gt_ptr, *seg, 256);
                  r.push_back(x.first);
                  r.push_back(x.second);
              }
-             write_to_file("experiments/linear.dat", r.data(), r.size());
+             write_to_file(out+"linear.dat", r.data(), r.size());
          }
 
      }
@@ -731,14 +732,14 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                      (seg, rg, counts,
                       square(thold), 10);
 
-                 write_volume("experiments/square/"
+                 write_volume(out+"square/"
                               + std::to_string(thold) + ".dat", seg);
 
                  auto x = compare_volumes(*gt_ptr, *seg, 256);
                  r.push_back(x.first);
                  r.push_back(x.second);
              }
-             write_to_file("experiments/square.dat", r.data(), r.size());
+             write_to_file(out+"square.dat", r.data(), r.size());
          }
 
      }
@@ -758,7 +759,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              double k = static_cast<double>(thold) / 1000;
 
              auto seg = felzenszwalb<uint32_t>(aff, k);
-             write_volume("experiments/felzenszwalb/"
+             write_volume(out+"felzenszwalb/"
                           + std::to_string(k) + ".dat", seg);
 
              auto x = compare_volumes(*gt_ptr, *seg, 256);
@@ -766,7 +767,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              r.push_back(x.first);
              r.push_back(x.second);
          }
-         write_to_file("experiments/felzenszwalb.dat", r.data(), r.size());
+         write_to_file(out+"felzenszwalb.dat", r.data(), r.size());
      }
 
      //
@@ -793,7 +794,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                      (seg, rg, counts,
                       const_above_threshold(0.3, thold), 100);
 
-                 write_volume("experiments/threshold/"
+                 write_volume(out+"threshold/"
                               + std::to_string(thold) + ".dat", seg);
 
                  auto x = compare_volumes(*gt_ptr, *seg, 256);
@@ -801,7 +802,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  r.push_back(x.second);
              }
          }
-         write_to_file("experiments/threshold.dat", r.data(), r.size());
+         write_to_file(out+"threshold.dat", r.data(), r.size());
      }
 
      //return 0;
@@ -811,7 +812,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
      std::tie(segg, counts) = watershed<uint32_t>(aff, -1, 2);
 
-     write_volume("voutraw.out", segg);
+     write_volume(out+"voutraw.out", segg);
 
      for ( float low = 0.01; low < 0.051; low += 0.01 )
      {
@@ -825,11 +826,11 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
      std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
 
-     write_volume("voutmax.out", segg);
+     write_volume(out+"voutmax.out", segg);
 
      std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
 
-     write_volume("voutminmax.out", segg);
+     write_volume(out+"voutminmax.out", segg);
 
 
  //    return 0;
@@ -857,18 +858,18 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      auto r = merge_segments_with_function_err(segg, gt_ptr, rg,
                                                counts, limit_fn2, 100);
 
-     write_to_file("./experiments/custom/precision_recall.dat",
+     write_to_file(out+"/precision_recall.dat",
                    r.data(), r.size());
 
-     write_volume("voutall4x.out", segg);
+     write_volume(out+"voutall4x.out", segg);
 
-     return 0;
+     //return 0;
 
-     write_region_graph("voutall.rg", *rg);
+     write_region_graph(out+"voutall.rg", *rg);
 
      auto mt = get_merge_tree(*rg, counts.size()-1);
 
-     write_region_graph("voutall.mt", *mt);
+     write_region_graph(out+"voutall.mt", *mt);
 
      return 0;
 
