@@ -33,3 +33,9 @@ cdef extern from "main2.h":
 
 def test_py():
     test()
+
+cdef extern from "main2.h":
+    int eval_c()
+
+def eval():
+    eval_c()

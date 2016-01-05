@@ -1154,6 +1154,7 @@ static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
 static PyObject *__pyx_pf_8mainDefs_connectedComponents(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_conn, PyArrayObject *__pyx_v_nhood); /* proto */
 static PyObject *__pyx_pf_8mainDefs_2test_py(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_8mainDefs_4eval(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static char __pyx_k_B[] = "B";
@@ -1181,6 +1182,7 @@ static char __pyx_k_comp[] = "comp";
 static char __pyx_k_conn[] = "conn";
 static char __pyx_k_dims[] = "dims";
 static char __pyx_k_dust[] = "dust";
+static char __pyx_k_eval[] = "eval";
 static char __pyx_k_main[] = "__main__";
 static char __pyx_k_sort[] = "sort";
 static char __pyx_k_test[] = "__test__";
@@ -1226,6 +1228,7 @@ static PyObject *__pyx_n_s_conn;
 static PyObject *__pyx_n_s_connectedComponents;
 static PyObject *__pyx_n_s_dims;
 static PyObject *__pyx_n_s_dust;
+static PyObject *__pyx_n_s_eval;
 static PyObject *__pyx_kp_s_groups_turaga_home_singhc_evalu;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
@@ -1264,6 +1267,7 @@ static PyObject *__pyx_tuple__9;
 static PyObject *__pyx_tuple__10;
 static PyObject *__pyx_codeobj__11;
 static PyObject *__pyx_codeobj__12;
+static PyObject *__pyx_codeobj__13;
 
 /* "mainDefs.pyx":8
  *     list[int] connectedComponentsCPP(double * conn, double * nhood,int dimX,int dimY,int dimZ, double * outputComp, list[int] * l)
@@ -1997,6 +2001,7 @@ static PyObject *__pyx_pf_8mainDefs_connectedComponents(CYTHON_UNUSED PyObject *
  * 
  * def test_py():             # <<<<<<<<<<<<<<
  *     test()
+ * 
  */
 
 /* Python wrapper */
@@ -2022,6 +2027,8 @@ static PyObject *__pyx_pf_8mainDefs_2test_py(CYTHON_UNUSED PyObject *__pyx_self)
  * 
  * def test_py():
  *     test()             # <<<<<<<<<<<<<<
+ * 
+ * cdef extern from "main2.h":
  */
   test();
 
@@ -2030,6 +2037,54 @@ static PyObject *__pyx_pf_8mainDefs_2test_py(CYTHON_UNUSED PyObject *__pyx_self)
  * 
  * def test_py():             # <<<<<<<<<<<<<<
  *     test()
+ * 
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "mainDefs.pyx":40
+ *     int eval_c()
+ * 
+ * def eval():             # <<<<<<<<<<<<<<
+ *     eval_c()
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8mainDefs_5eval(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyMethodDef __pyx_mdef_8mainDefs_5eval = {"eval", (PyCFunction)__pyx_pw_8mainDefs_5eval, METH_NOARGS, 0};
+static PyObject *__pyx_pw_8mainDefs_5eval(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("eval (wrapper)", 0);
+  __pyx_r = __pyx_pf_8mainDefs_4eval(__pyx_self);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8mainDefs_4eval(CYTHON_UNUSED PyObject *__pyx_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("eval", 0);
+
+  /* "mainDefs.pyx":41
+ * 
+ * def eval():
+ *     eval_c()             # <<<<<<<<<<<<<<
+ */
+  eval_c();
+
+  /* "mainDefs.pyx":40
+ *     int eval_c()
+ * 
+ * def eval():             # <<<<<<<<<<<<<<
+ *     eval_c()
  */
 
   /* function exit code */
@@ -4306,6 +4361,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_connectedComponents, __pyx_k_connectedComponents, sizeof(__pyx_k_connectedComponents), 0, 0, 1, 1},
   {&__pyx_n_s_dims, __pyx_k_dims, sizeof(__pyx_k_dims), 0, 0, 1, 1},
   {&__pyx_n_s_dust, __pyx_k_dust, sizeof(__pyx_k_dust), 0, 0, 1, 1},
+  {&__pyx_n_s_eval, __pyx_k_eval, sizeof(__pyx_k_eval), 0, 0, 1, 1},
   {&__pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_k_groups_turaga_home_singhc_evalu, sizeof(__pyx_k_groups_turaga_home_singhc_evalu), 0, 0, 1, 0},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -4459,8 +4515,17 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * def test_py():             # <<<<<<<<<<<<<<
  *     test()
+ * 
  */
   __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_test_py, 34, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "mainDefs.pyx":40
+ *     int eval_c()
+ * 
+ * def eval():             # <<<<<<<<<<<<<<
+ *     eval_c()
+ */
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_eval, 40, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -4604,10 +4669,22 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
  * 
  * def test_py():             # <<<<<<<<<<<<<<
  *     test()
+ * 
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_3test_py, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_test_py, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "mainDefs.pyx":40
+ *     int eval_c()
+ * 
+ * def eval():             # <<<<<<<<<<<<<<
+ *     eval_c()
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_5eval, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_eval, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "mainDefs.pyx":1
