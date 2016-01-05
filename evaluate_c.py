@@ -26,10 +26,12 @@ f.close()
 # threshes
 threshes = [200+i*1000 for i in range(0,11)]+[i*10000 for i in range(2,11)]
 print threshes
+
+# output folder
+out = 'experiment/'
+
 gt = np.frombuffer(a,dtype='uint32').reshape(dims[0:3])
 affs = np.frombuffer(aff,dtype='float32').reshape(dims)
-print('calling c...')
-eval(gt,affs,threshes)
-
+eval(gt,affs,threshes,out)
 end = time.clock()
 print (end-start)*60,"seconds elapsed"

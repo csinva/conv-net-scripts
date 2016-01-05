@@ -31,6 +31,7 @@
 #include <vector>
 #include <chrono>
 #include <fstream>
+#include <string>
 using namespace std;
 
 
@@ -603,39 +604,15 @@ struct Vertex
 
 typedef vector<Vertex> VertexList;
 
-// std::vector<unsigned int> readFile(const char* filename)
-// {
-//     // open the file:
-//     std::ifstream file(filename, std::ios::binary);
-
-//     // Stop eating new lines in binary mode!!!
-//     file.unsetf(std::ios::skipws);
-
-//     // get its size:
-//     std::streampos fileSize;
-
-//     file.seekg(0, std::ios::end);
-//     fileSize = file.tellg();
-//     file.seekg(0, std::ios::beg);
-
-//     // reserve capacity
-//     std::vector<unsigned int> vec;
-//     vec.reserve(fileSize);
-
-//     // read the data:
-//     vec.insert(vec.begin(),
-//                std::istream_iterator<unsigned int>(file),
-//                std::istream_iterator<unsigned int>());
-
-//     return vec;
-// }
-
-int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes)
+int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::string* out_ptr)
 {
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    std::string out = *out_ptr;
     std::cout << "evaluating..." << std::endl;
+    std::cout << "output: "<< out << std::endl;
     std::string experiment_result_folder = ".";
 
-    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("/groups/turaga/turagalab/greentea_experiments/project_data/labels_id_cropped.raw", dimX, dimY, dimZ);
+    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
 
     int totalDim = dimX*dimY*dimZ;
     for(int i=0;i<totalDim;i++){
@@ -644,7 +621,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
     std::cout << std::endl;
 
-    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("/groups/turaga/home/turagas/research/caffe_neural_models/dataset_07/processed/train_euclid.raw", dimX, dimY, dimZ, dcons);
+    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
 
     totalDim*=dcons;
     for(int i=0;i<totalDim;i++){
@@ -656,81 +633,243 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
     std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
     std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
 
-    // std::cout << "Get region graph ....\n";
-    // auto rg = get_region_graphe(aff, segg, 72*936*936);
-    VertexList list2;
-    int size2;
+    /* loop over thresholds, add string out
+    std::list<int>::const_iterator iterator;
+    std::list<int> thresh_list = *threshes;
+    for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+        int thold = *iterator;
+    */
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<double> r;
-int thresh_size = (*threshes).size();
-std::list<int>::const_iterator iterator;
-std::list<int> thresh_list = *threshes;
-for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
-    int thold = *iterator;
-    std::cout << "THOLD: " << thold << "\n";
 
-    ifstream is("region_graph.raw", ios::binary);
-    is.read((char*)&size2, 4);
-    list2.resize(size2);
-    std::cout << "read region graph raw\n";
-    is.read((char*)&list2[0], size2 * sizeof(Vertex));
+     if ( 1 )
+     {
+         std::cout << " watershed" << "\n";
+         volume_ptr<uint32_t>     seg   ;
+         std::vector<std::size_t> counts;
 
-    region_graph_ptr<uint32_t,float> rg_ptr( new region_graph<uint32_t, float> );
-    region_graph<uint32_t,float>& rg = *rg_ptr;
+         std::tie(seg, counts) = watershed<uint32_t>(aff, -1, 2);
+         write_volume("./experiments/watershed/basic.out", seg);
 
-    std::cout << "add edges to graph \n";
-    for ( auto &i : list2 ) {
-        // rg.emplace_back(p.second, id1, p.first);
-        rg.emplace_back(i.value, i.first, i.second);
-        // std::cout << i.first << " " << i.second << std::endl;
-    }
+         std::tie(seg, counts) = watershed<uint32_t>(aff, 0.1, 0.99);
+         write_volume("./experiments/watershed/minmax.out", seg);
 
-    std::cout << "Region graph size: " << rg.size() << std::endl;
+         // {
+         //     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
 
-    std::stable_sort(std::begin(rg), std::end(rg),
-                     std::greater<std::tuple<float, uint32_t, uint32_t>>());
+         //     auto rg = get_region_graph(aff, segg, counts.size()-1);
+         //     merge_segments_with_function(segg, rg,
+         //                                  counts, limit_fn2, 100);
 
-    std::cout << "Sorted" << std::endl;
+         //     write_volume("./experiments/voutall.out", segg);
+         // }
 
-    volume_ptr<uint32_t>     segg;
-    std::vector<std::size_t> counts;
+     }
 
-    std::tie(segg, counts) = get_dummy_segmentation<uint32_t>( 72, 936, 936 );
 
-    // std::cout << "counts.size(): " << counts.size() << "\n";
+     //
+     // Linear
+     //
+     if ( 1 )
+     {
+        std::cout << " linear" << "\n";
+         std::vector<double> r;
+         for ( std::size_t thold = 200; thold <= 100000; thold += 100 )
+         {
+             if ( thold > 1000 ) thold += 900;
+             if ( thold > 10000 ) thold += 9000;
 
-    std::cout << "yet_another_watershed ....\n";
-    yet_another_watershed(segg, rg_ptr, counts, 0.3);
+             //double k = static_cast<double>(thold) / 1000;
 
-    // write_volume("yet_another_watershed_out_01.out", segg);
+             std::cout << "THOLD: " << thold << "\n";
 
-    //merge_segments_with_function(segg, rg_ptr, counts, limit_fn2, 100);
-    merge_segments_with_function(segg, rg_ptr, counts, square(thold), 100);
+             volume_ptr<uint32_t>     seg   ;
+             std::vector<std::size_t> counts;
 
-    // write_volume("yet_another_watershed_out_01_aftermerge.out", segg);
+             {
+                 std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                 auto rg = get_region_graph(aff, seg , counts.size()-1);
 
-    auto x = compare_volumes_arb(*gt_ptr,  *segg);
-    r.push_back(x.first);
-    r.push_back(x.second);
-}
-write_to_file("results_square.dat", r.data(), r.size());
-    //std::cout << x.first << '\n';
-    //std::cout << x.second << '\n';
+                 merge_segments_with_function
+                     (seg, rg, counts,
+                      linear(thold), 10);
 
-//    std::cout << "Results\n" << r.data();
-//    for( auto &i : r ) {
-//	std::cout << i.first << " " << i.second << "\n";
-//    }
+                 write_volume("experiments/linear/"
+                              + std::to_string(thold) + ".dat", seg);
 
-    // can also test limit_fn3
+                 auto x = compare_volumes(*gt_ptr, *seg, 256);
+                 r.push_back(x.first);
+                 r.push_back(x.second);
+             }
+             write_to_file("experiments/linear.dat", r.data(), r.size());
+         }
 
-    // write_to_file("precision_recall.dat", r.data(), r.size());
+     }
 
-    return 0;
+     //
+     // Square
+     //
+     if ( 1 )
+     {
+        std::cout << " square" << "\n";
+         std::vector<double> r;
+         for ( std::size_t thold = 200; thold <= 100000; thold += 100 )
+         {
+             if ( thold > 1000 ) thold += 900;
+             if ( thold > 10000 ) thold += 9000;
 
-    // write_region_graph("voutall.rg", *rg);
-    // auto mt = get_merge_tree(*rg, counts.size()-1);
-    // write_region_graph("voutall.mt", *mt);
-    // return 0;
+             std::cout << "THOLD: " << thold << "\n";
 
-}
+             volume_ptr<uint32_t>     seg   ;
+             std::vector<std::size_t> counts;
+
+             {
+                 std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                 auto rg = get_region_graph(aff, seg , counts.size()-1);
+
+                 merge_segments_with_function
+                     (seg, rg, counts,
+                      square(thold), 10);
+
+                 write_volume("experiments/square/"
+                              + std::to_string(thold) + ".dat", seg);
+
+                 auto x = compare_volumes(*gt_ptr, *seg, 256);
+                 r.push_back(x.first);
+                 r.push_back(x.second);
+             }
+             write_to_file("experiments/square.dat", r.data(), r.size());
+         }
+
+     }
+
+     //
+     // Felzenszwalb implementation
+     //
+     if ( 1 )
+     {
+         std::cout << " Felzenszwalb" << "\n";
+         std::vector<double> r;
+         for ( std::size_t thold = 100; thold <= 50000; thold += 100 )
+         {
+             if ( thold > 1000 ) thold += 900;
+             if ( thold > 10000 ) thold += 9000;
+
+             double k = static_cast<double>(thold) / 1000;
+
+             auto seg = felzenszwalb<uint32_t>(aff, k);
+             write_volume("experiments/felzenszwalb/"
+                          + std::to_string(k) + ".dat", seg);
+
+             auto x = compare_volumes(*gt_ptr, *seg, 256);
+
+             r.push_back(x.first);
+             r.push_back(x.second);
+         }
+         write_to_file("experiments/felzenszwalb.dat", r.data(), r.size());
+     }
+
+     //
+     // simple thold fn
+     //
+     if ( 1 ){
+         std::cout << " simple thold" << "\n";
+         std::vector<double> r;
+         for ( std::size_t thold = 100; thold <= 50000; thold += 100 )
+         {
+             if ( thold > 1000 ) thold += 900;
+             if ( thold > 10000 ) thold += 9000;
+
+             std::cout << "THOLD: " << thold << "\n";
+
+             volume_ptr<uint32_t>     seg   ;
+             std::vector<std::size_t> counts;
+
+             {
+                 std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                 auto rg = get_region_graph(aff, seg , counts.size()-1);
+
+                 merge_segments_with_function
+                     (seg, rg, counts,
+                      const_above_threshold(0.3, thold), 100);
+
+                 write_volume("experiments/threshold/"
+                              + std::to_string(thold) + ".dat", seg);
+
+                 auto x = compare_volumes(*gt_ptr, *seg, 256);
+                 r.push_back(x.first);
+                 r.push_back(x.second);
+             }
+         }
+         write_to_file("experiments/threshold.dat", r.data(), r.size());
+     }
+
+     //return 0;
+
+     volume_ptr<uint32_t>     segg  ;
+     std::vector<std::size_t> counts;
+
+     std::tie(segg, counts) = watershed<uint32_t>(aff, -1, 2);
+
+     write_volume("voutraw.out", segg);
+
+     for ( float low = 0.01; low < 0.051; low += 0.01 )
+     {
+         for ( float high = 0.998; high > 0.989; high -= 0.002 )
+         {
+ //            std::tie(segg, counts) = watershed<uint32_t>(aff, low, high);
+ //            write_volume("vout." + std::to_string(low) + "." +
+ //                                 std::to_string(high) + ".out", segg);
+         }
+     }
+
+     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
+
+     write_volume("voutmax.out", segg);
+
+     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+
+     write_volume("voutminmax.out", segg);
+
+
+ //    return 0;
+
+     // auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+     // //yet_another_watershed(segg, rg, counts, 0.3);
+
+     // //write_volume("voutanouther.out", segg);
+
+
+     // merge_segments_with_function(segg, rg, counts, limit_fn3, 100);
+
+     // write_volume("voutdo.out", segg);
+
+
+
+
+     auto rg = get_region_graph(aff, segg, counts.size()-1);
+
+     //yet_another_watershed(segg, rg, counts, 0.3);
+
+     //write_volume("voutanouther.out", segg);
+
+     auto r = merge_segments_with_function_err(segg, gt_ptr, rg,
+                                               counts, limit_fn2, 100);
+
+     write_to_file("./experiments/custom/precision_recall.dat",
+                   r.data(), r.size());
+
+     write_volume("voutall4x.out", segg);
+
+     return 0;
+
+     write_region_graph("voutall.rg", *rg);
+
+     auto mt = get_merge_tree(*rg, counts.size()-1);
+
+     write_region_graph("voutall.mt", *mt);
+
+     return 0;
+
+ }

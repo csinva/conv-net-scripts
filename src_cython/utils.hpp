@@ -1,7 +1,6 @@
 #pragma once
 
 #include "types.hpp"
-
 #include <cstdio>
 #include <fstream>
 #include <type_traits>
@@ -95,6 +94,7 @@ inline bool
 write_volume( const std::string& fname,
               const volume_ptr<T>& vol )
 {
+    //mkdir(fname);
     std::ofstream f(fname.c_str(), (std::ios::out | std::ios::binary) );
     if ( !f ) return false;
 
