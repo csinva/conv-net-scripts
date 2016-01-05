@@ -9,6 +9,7 @@
 template < typename T >
 inline bool read_from_file( const std::string& fname, T* data, std::size_t n )
 {
+    return true;
     FILE* f = std::fopen(fname.c_str(), "rbXS");
     if ( !f ) return false;
 
@@ -51,13 +52,14 @@ inline affinity_graph_ptr<T>
 read_affinity_graphe( const std::string& fname,
                      std::size_t xsize,
                      std::size_t ysize,
-                     std::size_t zsize )
+                     std::size_t zsize,
+                     std::size_t connSize)
 {
     affinity_graph_ptr<T> aff(new affinity_graph<T>
-                              (boost::extents[xsize][ysize][zsize][11],
+                              (boost::extents[xsize][ysize][zsize][connSize],
                                boost::fortran_storage_order()));
 
-    if ( !read_from_file(fname, aff->data(), xsize*ysize*zsize*11) ) throw 0;
+    if ( !read_from_file(fname, aff->data(), xsize*ysize*zsize*connSize) ) throw 0;
     return aff;
 }
 

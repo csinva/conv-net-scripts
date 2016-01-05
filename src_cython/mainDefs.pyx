@@ -28,15 +28,10 @@ def connectedComponents(np.ndarray[np.double_t,ndim=4] conn, np.ndarray[np.doubl
                 compReturn[i][j][k]=renum[compReturn[i][j][k]-1]
     return compReturn
 
-cdef extern from "main2.h":
-    void test()
-
-def test_py():
-    test()
 
 cdef extern from "main2.h":
-    int eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs)
+    int eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes)
 
-def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs):
+def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
     dims = affs.shape
-    eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0])
+    eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes)

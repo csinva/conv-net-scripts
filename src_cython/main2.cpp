@@ -34,9 +34,6 @@
 using namespace std;
 
 
-void test(){
-	std::cout << "test" << std::endl;
-}
 
 std::list<int> connectedComponentsCPP(double * conn, double * nhood, int dimX, int dimY, int dimZ, double * outputComp, std::list<int> * cmpSz){
     std::list<int> compSizes = *cmpSz;
@@ -633,22 +630,24 @@ typedef vector<Vertex> VertexList;
 //     return vec;
 // }
 
-int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs)
+int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes)
 {
     std::cout << "evaluating..." << std::endl;
     std::string experiment_result_folder = ".";
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("/groups/turaga/turagalab/greentea_experiments/project_data/labels_id_cropped.raw", dimX, dimY, dimZ);
 
-    for(int i=0;i<dimX*dimY*dimZ;i++){
+    int totalDim = dimX*dimY*dimZ;
+    for(int i=0;i<totalDim;i++){
         gt_ptr->data()[i] = gt[i];
     }
 
     std::cout << std::endl;
 
-    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("/groups/turaga/home/turagas/research/caffe_neural_models/dataset_07/processed/train_euclid.raw", dimX, dimY, dimZ);
+    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("/groups/turaga/home/turagas/research/caffe_neural_models/dataset_07/processed/train_euclid.raw", dimX, dimY, dimZ, dcons);
 
-    for(int i=0;i<dimX*dimY*dimZ*dcons;i++){
+    totalDim*=dcons;
+    for(int i=0;i<totalDim;i++){
         aff->data()[i] = affs[i];
     }
 
@@ -663,8 +662,11 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs)
     int size2;
 
 std::vector<double> r;
-for ( std::size_t thold = 200; thold <= 100000; thold += 1000 )
-{
+int thresh_size = (*threshes).size();
+std::list<int>::const_iterator iterator;
+std::list<int> thresh_list = *threshes;
+for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+    int thold = *iterator;
     std::cout << "THOLD: " << thold << "\n";
 
     ifstream is("region_graph.raw", ios::binary);
