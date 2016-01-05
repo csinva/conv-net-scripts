@@ -2052,10 +2052,11 @@ static PyObject *__pyx_pf_8mainDefs_2test_py(CYTHON_UNUSED PyObject *__pyx_self)
 }
 
 /* "mainDefs.pyx":40
- *     int eval_c(np.uint32_t* gt)
+ *     int eval_c(int dx, int dy, int dz, np.uint32_t* gt)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt):             # <<<<<<<<<<<<<<
- *     eval_c(&gt[0,0,0])
+ *     dims = gt.shape
+ *     eval_c(dims[0],dims[1],dims[2],&gt[0,0,0])
  */
 
 /* Python wrapper */
@@ -2081,14 +2082,16 @@ static PyObject *__pyx_pw_8mainDefs_5eval(PyObject *__pyx_self, PyObject *__pyx_
 }
 
 static PyObject *__pyx_pf_8mainDefs_4eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt) {
+  npy_intp *__pyx_v_dims;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_gt;
   __Pyx_Buffer __pyx_pybuffer_gt;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  long __pyx_t_1;
+  npy_intp *__pyx_t_1;
   long __pyx_t_2;
   long __pyx_t_3;
-  int __pyx_t_4;
+  long __pyx_t_4;
+  int __pyx_t_5;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2106,35 +2109,45 @@ static PyObject *__pyx_pf_8mainDefs_4eval(CYTHON_UNUSED PyObject *__pyx_self, Py
   /* "mainDefs.pyx":41
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt):
- *     eval_c(&gt[0,0,0])             # <<<<<<<<<<<<<<
+ *     dims = gt.shape             # <<<<<<<<<<<<<<
+ *     eval_c(dims[0],dims[1],dims[2],&gt[0,0,0])
  */
-  __pyx_t_1 = 0;
+  __pyx_t_1 = __pyx_v_gt->dimensions;
+  __pyx_v_dims = __pyx_t_1;
+
+  /* "mainDefs.pyx":42
+ * def eval(np.ndarray[np.uint32_t,ndim=3] gt):
+ *     dims = gt.shape
+ *     eval_c(dims[0],dims[1],dims[2],&gt[0,0,0])             # <<<<<<<<<<<<<<
+ */
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_4 = -1;
-  if (__pyx_t_1 < 0) {
-    __pyx_t_1 += __pyx_pybuffernd_gt.diminfo[0].shape;
-    if (unlikely(__pyx_t_1 < 0)) __pyx_t_4 = 0;
-  } else if (unlikely(__pyx_t_1 >= __pyx_pybuffernd_gt.diminfo[0].shape)) __pyx_t_4 = 0;
+  __pyx_t_4 = 0;
+  __pyx_t_5 = -1;
   if (__pyx_t_2 < 0) {
-    __pyx_t_2 += __pyx_pybuffernd_gt.diminfo[1].shape;
-    if (unlikely(__pyx_t_2 < 0)) __pyx_t_4 = 1;
-  } else if (unlikely(__pyx_t_2 >= __pyx_pybuffernd_gt.diminfo[1].shape)) __pyx_t_4 = 1;
+    __pyx_t_2 += __pyx_pybuffernd_gt.diminfo[0].shape;
+    if (unlikely(__pyx_t_2 < 0)) __pyx_t_5 = 0;
+  } else if (unlikely(__pyx_t_2 >= __pyx_pybuffernd_gt.diminfo[0].shape)) __pyx_t_5 = 0;
   if (__pyx_t_3 < 0) {
-    __pyx_t_3 += __pyx_pybuffernd_gt.diminfo[2].shape;
-    if (unlikely(__pyx_t_3 < 0)) __pyx_t_4 = 2;
-  } else if (unlikely(__pyx_t_3 >= __pyx_pybuffernd_gt.diminfo[2].shape)) __pyx_t_4 = 2;
-  if (unlikely(__pyx_t_4 != -1)) {
-    __Pyx_RaiseBufferIndexError(__pyx_t_4);
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 += __pyx_pybuffernd_gt.diminfo[1].shape;
+    if (unlikely(__pyx_t_3 < 0)) __pyx_t_5 = 1;
+  } else if (unlikely(__pyx_t_3 >= __pyx_pybuffernd_gt.diminfo[1].shape)) __pyx_t_5 = 1;
+  if (__pyx_t_4 < 0) {
+    __pyx_t_4 += __pyx_pybuffernd_gt.diminfo[2].shape;
+    if (unlikely(__pyx_t_4 < 0)) __pyx_t_5 = 2;
+  } else if (unlikely(__pyx_t_4 >= __pyx_pybuffernd_gt.diminfo[2].shape)) __pyx_t_5 = 2;
+  if (unlikely(__pyx_t_5 != -1)) {
+    __Pyx_RaiseBufferIndexError(__pyx_t_5);
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  eval_c((&(*__Pyx_BufPtrStrided3d(__pyx_t_5numpy_uint32_t *, __pyx_pybuffernd_gt.rcbuffer->pybuffer.buf, __pyx_t_1, __pyx_pybuffernd_gt.diminfo[0].strides, __pyx_t_2, __pyx_pybuffernd_gt.diminfo[1].strides, __pyx_t_3, __pyx_pybuffernd_gt.diminfo[2].strides))));
+  eval_c((__pyx_v_dims[0]), (__pyx_v_dims[1]), (__pyx_v_dims[2]), (&(*__Pyx_BufPtrStrided3d(__pyx_t_5numpy_uint32_t *, __pyx_pybuffernd_gt.rcbuffer->pybuffer.buf, __pyx_t_2, __pyx_pybuffernd_gt.diminfo[0].strides, __pyx_t_3, __pyx_pybuffernd_gt.diminfo[1].strides, __pyx_t_4, __pyx_pybuffernd_gt.diminfo[2].strides))));
 
   /* "mainDefs.pyx":40
- *     int eval_c(np.uint32_t* gt)
+ *     int eval_c(int dx, int dy, int dz, np.uint32_t* gt)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt):             # <<<<<<<<<<<<<<
- *     eval_c(&gt[0,0,0])
+ *     dims = gt.shape
+ *     eval_c(dims[0],dims[1],dims[2],&gt[0,0,0])
  */
 
   /* function exit code */
@@ -4583,15 +4596,16 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_test_py, 34, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "mainDefs.pyx":40
- *     int eval_c(np.uint32_t* gt)
+ *     int eval_c(int dx, int dy, int dz, np.uint32_t* gt)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt):             # <<<<<<<<<<<<<<
- *     eval_c(&gt[0,0,0])
+ *     dims = gt.shape
+ *     eval_c(dims[0],dims[1],dims[2],&gt[0,0,0])
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_n_s_gt); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_n_s_gt, __pyx_n_s_dims); if (unlikely(!__pyx_tuple__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
-  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_eval, 40, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_eval, 40, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -4743,10 +4757,11 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "mainDefs.pyx":40
- *     int eval_c(np.uint32_t* gt)
+ *     int eval_c(int dx, int dy, int dz, np.uint32_t* gt)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt):             # <<<<<<<<<<<<<<
- *     eval_c(&gt[0,0,0])
+ *     dims = gt.shape
+ *     eval_c(dims[0],dims[1],dims[2],&gt[0,0,0])
  */
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_5eval, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);

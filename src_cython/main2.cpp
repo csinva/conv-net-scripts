@@ -633,35 +633,32 @@ typedef vector<Vertex> VertexList;
 //     return vec;
 // }
 
-int eval_c(uint32_t* gt)
+int eval_c(int dimX, int dimY, int dimZ, uint32_t* gt)
 {
     std::cout << "evaluating..." << std::endl;
     std::string experiment_result_folder = ".";
 
-    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("/groups/turaga/turagalab/greentea_experiments/project_data/labels_id_cropped.raw", 72, 936, 936);
-
+    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("/groups/turaga/turagalab/greentea_experiments/project_data/labels_id_cropped.raw", dimX, dimY, dimZ);
+/*
     for(int i=0;i<10;i++){
         std::cout << gt_ptr->data()[i] << " ";
     }
-
-
-
 
     std::cout << std::endl;
 
-    for(int i=0;i<10;i++){
+    for(int i=0;i<72*936*936;i++){
         if(gt_ptr->data()[i]!=gt[i])
             std::cout << "error!!!";
-        std::cout << gt_ptr->data()[i] << " ";
     }
-
-    for(int i=0;i<72*936*936;i++){
+*/
+    for(int i=0;i<dimX*dimY*dimZ;i++){
         gt_ptr->data()[i] = gt[i];
     }
 
+
     std::cout << std::endl;
 
-    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("/groups/turaga/home/turagas/research/caffe_neural_models/dataset_07/processed/train_euclid.raw", 72, 936, 936);
+    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("/groups/turaga/home/turagas/research/caffe_neural_models/dataset_07/processed/train_euclid.raw", dimX, dimY, dimZ);
 
     std::cout << "0_dim of affinity " << aff->shape()[0] << "\n";
     std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
