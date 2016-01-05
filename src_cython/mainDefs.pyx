@@ -35,7 +35,7 @@ def test_py():
     test()
 
 cdef extern from "main2.h":
-    int eval_c()
+    int eval_c(np.uint32_t* gt)
 
-def eval():
-    eval_c()
+def eval(np.ndarray[np.uint32_t,ndim=3] gt):
+    eval_c(&gt[0,0,0])

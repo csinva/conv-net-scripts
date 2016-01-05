@@ -9,7 +9,7 @@ ext_modules = [Extension("mainDefs",
                          language='c++',
                          std= 'c++11',
                          extra_link_args=["-std=c++11"],
-                         extra_compile_args=["-std=c++11"])]
+                         extra_compile_args=["-std=c++11", "-w"])]
 
 setup(cmdclass = {'build_ext': build_ext}, ext_modules = ext_modules)
 

@@ -633,66 +633,33 @@ typedef vector<Vertex> VertexList;
 //     return vec;
 // }
 
-int eval_c()
+int eval_c(uint32_t* gt)
 {
     std::cout << "evaluating..." << std::endl;
-    // // Create a list for testing
-    // VertexList list;
-    // Vertex v1 = {1, 2,   1.0f}; list.push_back(v1);
-    // Vertex v2 = {1, 2,   1.0f}; list.push_back(v2);
-    // // Vertex v2 = {2, 100, 3.0f}; list.push_back(v2);
-    // // Vertex v3 = {3.0f, 200.0f, 3.0f}; list.push_back(v3);
-    // // Vertex v4 = {4.0f, 300.0f, 3.0f}; list.push_back(v4);
-
-    // // Write out a list to a disk file
-    // ofstream os ("data.dat", ios::binary);
-
-    // int size1 = list.size();
-    // os.write((const char*)&size1, 4);
-    // os.write((const char*)&list[0], size1 * sizeof(Vertex));
-    // os.close();
-
-    // // Read it back in
-    // VertexList list2;
-
-    // ifstream is("data.dat", ios::binary);
-    // int size2;
-    // is.read((char*)&size2, 4);
-    // list2.resize(size2);
-
-    //  // Is it safe to read a whole array of structures directly into the vector?
-    // is.read((char*)&list2[0], size2 * sizeof(Vertex));
-
-    // for ( auto &i : list2 ) {
-    //     std::cout << i.first << " " << i.second << std::endl;
-    // }
-
-    // std::vector<unsigned int> vec = readFile("/home/stephan/dev/emscripts/evaluation/test.raw");
-    // std::cout << "new iterator" << vec.size();
-
-    // for(std::vector<BYTE>::iterator it = vec.begin(); it != vec.end(); ++it) {
-    //     std::cout << *it;
-    // }
-    // for ( auto i = vec.begin(); i != vec.end(); i++ ) {
-    //     std::cout << *i << std::endl;
-    // }
-
-    // for ( auto &i : vec ) {
-    //     std::cout << i << std::endl;
-    // }
-
-    // return 0;
-
-    // load the ground truth and the affinity graph
-
-    // volume_ptr<uint32_t> gt_ptr = read_volume<uint32_t>("./data/gt.in", 256);
-    // affinity_graph_ptr<float> aff = read_affinity_graph<float>("./data/ws_test_256.raw", 256, 256, 256);
-
-    // int data_dimension = (int) atoi(argv[1]);
     std::string experiment_result_folder = ".";
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("/groups/turaga/turagalab/greentea_experiments/project_data/labels_id_cropped.raw", 72, 936, 936);
 
+    for(int i=0;i<10;i++){
+        std::cout << gt_ptr->data()[i] << " ";
+    }
+
+
+
+
+    std::cout << std::endl;
+
+    for(int i=0;i<10;i++){
+        if(gt_ptr->data()[i]!=gt[i])
+            std::cout << "error!!!";
+        std::cout << gt_ptr->data()[i] << " ";
+    }
+
+    for(int i=0;i<72*936*936;i++){
+        gt_ptr->data()[i] = gt[i];
+    }
+
+    std::cout << std::endl;
 
     affinity_graph_ptr<float> aff = read_affinity_graphe<float>("/groups/turaga/home/turagas/research/caffe_neural_models/dataset_07/processed/train_euclid.raw", 72, 936, 936);
 
@@ -700,6 +667,8 @@ int eval_c()
     std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
     std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
     std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
+
+    return(0);
 
     // std::cout << "Get region graph ....\n";
     // auto rg = get_region_graphe(aff, segg, 72*936*936);

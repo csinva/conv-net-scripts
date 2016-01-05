@@ -15,4 +15,7 @@ print(a[0:10])
 
 test_py()
 
-eval()
+gt = np.array(a,dtype='uint32').reshape(dims)
+print gt[0][0][0]
+print gt.shape
+eval(gt)
