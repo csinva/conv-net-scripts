@@ -521,9 +521,10 @@ compare_volumes_arb(
                  volume<uint32_t>& gt,
                  volume<uint32_t>& ws, int dimX, int dimY, int dimZ )
 {
-    std::map<uint32_t, std::map<uint32_t, uint32_t>> map;
-    std::map<uint32_t, std::map<uint32_t, uint32_t>> invmap;
-    std::map<uint32_t, uint32_t> setg, setw;
+    //ws is seg
+    //std::map<uint32_t, std::map<uint32_t, uint32_t>> map;
+    //std::map<uint32_t, std::map<uint32_t, uint32_t>> invmap;
+    //std::map<uint32_t, uint32_t> setg, setw;
 
     double rand_split = 0;
     double rand_merge = 0;
@@ -536,7 +537,6 @@ compare_volumes_arb(
 
     std::map<uint32_t, std::size_t> s_i, t_j;
 
-    // hard-coded, argh :/
     for ( std::ptrdiff_t z = 0; z < dimX; ++z )
         for ( std::ptrdiff_t y = 0; y < dimY; ++y )
             for ( std::ptrdiff_t x = 0; x < dimZ; ++x )

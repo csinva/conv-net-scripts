@@ -8,22 +8,30 @@ sys.path.append('src_cython')
 from mainDefs import eval
 
 start = time.clock()
-dims = np.array([256,256,256,3],dtype='uint32')
 
-########################### RAND ERROR ######################################
-# gt
-f = open("/groups/turaga/home/singhc/evaluation/data/gt.in")
-a = array.array("I")
-a.fromfile(f, dims[0]*dims[1]*dims[2])
-print(a[0:10])
-f.close()
 
-# affs
-f = open("/groups/turaga/home/singhc/evaluation/data/ws_test_256.raw")
-aff = array.array("f")
-aff.fromfile(f, dims[0]*dims[1]*dims[2]*dims[3])
-print(aff[0:10])
-f.close()
+########################### FIBSEM ######################################
+hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
+hdf5_aff_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_aff.h5'
+hdf5_pred_file = '/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5'
+
+hdf5_gt = h5py.File(hdf5_gt_file, 'r')
+hdf5_aff = h5py.File(hdf5_pred_file, 'r')
+gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
+aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
+
+dims = np.array(aff.shape,dtype='uint32')[::-1]
+print 'dims:',dims
+print 'aff shape:',aff.shape
+
+# trim gt data - only works for perfect cubes
+gt_data_dimension = gt.shape[0]
+data_dimension = aff.shape[3]
+if gt_data_dimension != data_dimension:
+    print("Data dimension do not match. Clip the GT borders.")
+    padding = (gt_data_dimension - data_dimension) / 2
+    gt = gt[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
+    print"New GT data shape :",gt.shape
 
 # threshes
 threshes = [100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*10000 for i in range(2,11)] # 100...1,000...100,000
@@ -32,8 +40,10 @@ threshes = [100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*100
 print threshes
 
 # output folder
-out = 'out/test_full/'
+out = 'out/fibsem5/'
 
-gt = np.frombuffer(a,dtype='uint32').reshape(dims[0:3])
+# evaluate call
+if gt_data_dimension == data_dimension:
+    gt = np.frombuffer(gt,dtype='uint32').reshape(dims[0:3])
 affs = np.frombuffer(aff,dtype='float32').reshape(dims)
 eval(gt,affs,threshes,out)

@@ -1,5 +1,5 @@
 import numpy as np
-import pylab
+import pylab as plt
 import sys
 import os.path as op
 
@@ -15,26 +15,26 @@ outfolder = 'out/'+target_folder
 a=np.fromfile( op.join(outfolder , 'linear.dat') )
 print a
 linear=a.reshape(len(a)/2,2)
-pylab.plot( linear[:,0], linear[:,1], 'ro-', label='linear')
-pylab.hold(True)
+plt.plot( linear[:,0], linear[:,1], 'ro-', label='linear')
+plt.hold(True)
 
 a=np.fromfile( op.join(outfolder, 'square.dat') )
 linear=a.reshape(len(a)/2,2)
-pylab.plot( linear[:,0], linear[:,1], 'bo-', label='square')
+plt.plot( linear[:,0], linear[:,1], 'bo-', label='square')
 
 a=np.fromfile( op.join(outfolder, 'felzenszwalb.dat') )
 linear=a.reshape(len(a)/2,2)
-pylab.plot( linear[:,0], linear[:,1], 'ko-', label='felzenszwalb')
+plt.plot( linear[:,0], linear[:,1], 'ko-', label='felzenszwalb')
 
 
 a=np.fromfile( op.join(outfolder, 'threshold.dat') )
 linear=a.reshape(len(a)/2,2)
-pylab.plot( linear[:,0], linear[:,1], 'go-', label='threshold')
+plt.plot( linear[:,0], linear[:,1], 'go-', label='threshold')
 
 
-pylab.xlabel('Rand Split')
-pylab.ylabel('Rand Merge')
-pylab.legend()
-pylab.savefig('figs/'+target_folder+'_results.png')
-pylab.show()
+plt.xlabel('Rand Split')
+plt.ylabel('Rand Merge')
+plt.legend(bbox_to_anchor=(.5,.5),bbox_transform=plt.gcf().transFigure)
+plt.savefig('figs/'+target_folder+'_results.png')
+plt.show()
 
