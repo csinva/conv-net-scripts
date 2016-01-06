@@ -3,3 +3,4 @@ tmp
 *.dat
 *.nfs*
 */*.nfs*
+src_cython/*.nfs*
