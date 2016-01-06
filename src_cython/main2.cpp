@@ -598,6 +598,8 @@ typedef vector<Vertex> VertexList;
 int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::string* out_ptr)
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool write_dats = false;
+
     std::string out = *out_ptr;
     std::cout << "evaluating..." << std::endl;
     std::cout << "output: "<< out << std::endl;
@@ -681,8 +683,8 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  merge_segments_with_function
                      (seg, rg, counts,
                       linear(thold), 10);
-
-                 write_volume(out+"linear/"
+                 if(write_dats)
+                    write_volume(out+"linear/"
                               + std::to_string(thold) + ".dat", seg);
 
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
@@ -716,8 +718,8 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  merge_segments_with_function
                      (seg, rg, counts,
                       square(thold), 10);
-
-                 write_volume(out+"square/"
+                 if(write_dats)
+                    write_volume(out+"square/"
                               + std::to_string(thold) + ".dat", seg);
 
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
@@ -743,7 +745,8 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              double k = static_cast<double>(thold) / 1000;
 
              auto seg = felzenszwalb<uint32_t>(aff, k);
-             write_volume(out+"felzenszwalb/"
+             if(write_dats)
+                write_volume(out+"felzenszwalb/"
                           + std::to_string(k) + ".dat", seg);
 
              auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
@@ -775,8 +778,8 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  merge_segments_with_function
                      (seg, rg, counts,
                       const_above_threshold(0.3, thold), 100);
-
-                 write_volume(out+"threshold/"
+                 if(write_dats)
+                    write_volume(out+"threshold/"
                               + std::to_string(thold) + ".dat", seg);
 
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
@@ -794,7 +797,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
      std::tie(segg, counts) = watershed<uint32_t>(aff, -1, 2);
 
-     write_volume(out+"voutraw.out", segg);
+     //write_volume(out+"voutraw.out", segg);
 
      for ( float low = 0.01; low < 0.051; low += 0.01 )
      {
@@ -808,11 +811,11 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
      std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
 
-     write_volume(out+"voutmax.out", segg);
+     //write_volume(out+"voutmax.out", segg);
 
      std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
 
-     write_volume(out+"voutminmax.out", segg);
+     //write_volume(out+"voutminmax.out", segg);
 
 
  //    return 0;
@@ -831,27 +834,27 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
 
 
-     auto rg = get_region_graph(aff, segg, counts.size()-1);
+     //auto rg = get_region_graph(aff, segg, counts.size()-1);
 
      //yet_another_watershed(segg, rg, counts, 0.3);
 
      //write_volume("voutanouther.out", segg);
 
-     auto r = merge_segments_with_function_err(segg, gt_ptr, rg,
-                                               counts, limit_fn2, 100);
+     //auto r = merge_segments_with_function_err(segg, gt_ptr, rg,
+     //                                          counts, limit_fn2, 100);
 
-     write_to_file(out+"/precision_recall.dat",
-                   r.data(), r.size());
+     //write_to_file(out+"/precision_recall.dat",
+     //              r.data(), r.size());
 
-     write_volume(out+"voutall4x.out", segg);
+     //write_volume(out+"voutall4x.out", segg);
 
      //return 0;
 
-     write_region_graph(out+"voutall.rg", *rg);
+     //write_region_graph(out+"voutall.rg", *rg);
 
-     auto mt = get_merge_tree(*rg, counts.size()-1);
+     //auto mt = get_merge_tree(*rg, counts.size()-1);
 
-     write_region_graph(out+"voutall.mt", *mt);
+     //write_region_graph(out+"voutall.mt", *mt);
 
      return 0;
 

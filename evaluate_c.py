@@ -12,7 +12,7 @@ p=0
 
 def evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,out):
     hdf5_gt = h5py.File(hdf5_gt_file, 'r')
-    hdf5_aff = h5py.File(hdf5_aff_file, 'r')
+    hdf5_aff = h5py.File(hdf5_pred_file, 'r')
     gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
     aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
     aff = aff.transpose(3,2,1,0)
@@ -41,17 +41,12 @@ hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvo
 hdf5_aff_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_aff.h5'
 hdf5_pred_file = '/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5' #'',0,2,3,4,6
 
-'''
-global p
-p = Pool(numWorkers)
-print "Parallel Pool:",numWorkers
-'''
-
 # threshes
-threshes = [100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*10000 for i in range(2,11)] # 100...1,000...100,000
+#threshes = [100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*10000 for i in range(2,11)] # 100...1,000...100,000
+threshes = [i*10 for i in range(0,16)]
 print threshes
 
 # output folder
-out = 'out/null/'
+out = 'out/fibsem5_0-10-150/'
 
 evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,out)
