@@ -779,12 +779,9 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
                  auto rg = get_region_graph(aff, seg , counts.size()-1);
 
-                 merge_segments_with_function
-                     (seg, rg, counts,
-                      const_above_threshold(0.3, thold), 100);
+                 merge_segments_with_function(seg, rg, counts,const_above_threshold(0.3, thold), 100);
                  if(write_dats)
-                    write_volume(out+"threshold/"
-                              + std::to_string(thold) + ".dat", seg);
+                    write_volume(out+"threshold/"+ std::to_string(thold) + ".dat", seg);
 
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
@@ -805,15 +802,17 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
          //
          // low high tholds
          //
+         std::tie(segg, counts) = watershed<uint32_t>(aff, -1, 2);
+         write_volume(out+"lowhigh/vout." + std::to_string(-1) + "." + std::to_string(2) + ".out", segg);
 
-
-         for ( float low = 0.01; low < 0.051; low += 0.01 )
+         for ( double low = .00001; low <= 0.00001; low += 0.00001 ) //default low = 0.01; low < 0.051; low += 0.01
          {
-             for ( float high = 0.998; high > 0.989; high -= 0.002 )
+             for ( double sub = .1; sub >= 1e-8; sub*=.1 ) //default high = 0.998; high > 0.989; high -= 0.002
              {
+                 double high = 1-sub;
+                 std::cout << std::to_string(low) + "." + std::to_string(high) + ".out" << std::endl;
                  std::tie(segg, counts) = watershed<uint32_t>(aff, low, high);
-                 write_volume("vout." + std::to_string(low) + "." +
-                                      std::to_string(high) + ".out", segg);
+                 write_volume(out+"lowhigh/vout." + std::to_string(low) + "." + std::to_string(high) + ".out", segg);
              }
          }
 

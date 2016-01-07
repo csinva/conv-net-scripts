@@ -53,7 +53,7 @@ print threshes
 # funcs
 #funcs = ['linear','square','fel','threshold','watershed','lowhigh']
 # funcs = ['linear','square','fel','threshold']
-funcs = ['watershed']
+funcs = ['lowhigh']
 
 save_segs = False
 

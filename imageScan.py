@@ -10,7 +10,7 @@ import h5py
 import array
 
 #Displays three images: the raw data, the corresponding labels, and the predictions
-def display(raw, label, pred, im_size=250):
+def display(raw, label, pred, im_size=250, im2_size=432):
     fig = plt.figure(figsize=(20,10))
     fig.set_facecolor('white')
     ax1,ax2,ax3 = fig.add_subplot(1,3,1),fig.add_subplot(1,3,2),fig.add_subplot(1,3,3)
@@ -28,7 +28,7 @@ def display(raw, label, pred, im_size=250):
     im2 = ax2.imshow(im)
     ax2.set_title('Groundtruth')
 
-    im_ = np.zeros((im_size,im_size,3))
+    im_ = np.zeros((im2_size,im2_size,3))
     im_[:,:,:]=pred[:,:,1,:]
     im3 = ax3.imshow(im_)
     ax3.set_title('Predictions')
@@ -52,6 +52,7 @@ def display(raw, label, pred, im_size=250):
 
 
 ## Just to access the images...
+
 data_folder = 'nobackup/turaga/data/fibsem_medulla_7col/tstvol-520-1-h5/'
 os.chdir('/.')
 
@@ -66,11 +67,12 @@ label_set = np.transpose(label_set)
 label_set = np.swapaxes(label_set,0,1)
 print label_set.shape
 
-# preds
-f = open("/groups/turaga/home/singhc/evaluation/out/fibsem5/square/100.dat")
-pred = array.array("I")
-pred.fromfile(f, 432*432*432)
-print(pred[0:10])
-f.close()
 
-display(data_set, label_set, label_set, im_size=520)
+# preds
+hdf5_pred_file = '/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5'
+hdf5_aff = h5py.File(hdf5_pred_file, 'r')
+aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
+aff = aff.transpose(3,2,1,0)
+
+
+display(data_set, label_set, aff, im_size=520, im2_size=432)
