@@ -595,7 +595,7 @@ struct Vertex
 
 typedef vector<Vertex> VertexList;
 
-int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::string* out_ptr)
+int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::string* out_ptr)
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool write_dats = false;
@@ -636,7 +636,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-     if ( 1 )
+     if ( std::find(funcs->begin(), funcs->end(), "watershed") != funcs->end() )
      {
          std::cout << "\n\n\nwatershed" << "\n";
          volume_ptr<uint32_t>     seg   ;
@@ -661,45 +661,10 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      }
 
 
-     //
-     // Linear
-     //
-     if ( 1 )
-     {
-        std::cout << "\n\n\nlinear" << "\n";
-         std::vector<double> r;
-         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
-                 int thold = *iterator;
-
-             std::cout << "THOLD: " << thold << "\n";
-
-             volume_ptr<uint32_t>     seg   ;
-             std::vector<std::size_t> counts;
-
-             {
-                 std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-                 auto rg = get_region_graph(aff, seg , counts.size()-1);
-
-                 merge_segments_with_function
-                     (seg, rg, counts,
-                      linear(thold), 10);
-                 if(write_dats)
-                    write_volume(out+"linear/"
-                              + std::to_string(thold) + ".dat", seg);
-
-                 auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
-                 r.push_back(x.first);
-                 r.push_back(x.second);
-             }
-             write_to_file(out+"linear.dat", r.data(), r.size());
-         }
-
-     }
-
-     //
+          //
      // Square
      //
-     if ( 1 )
+     if ( std::find(funcs->begin(), funcs->end(), "square") != funcs->end() )
      {
         std::cout << "\n\n\nsquare" << "\n";
          std::vector<double> r;
@@ -721,7 +686,6 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                  if(write_dats)
                     write_volume(out+"square/"
                               + std::to_string(thold) + ".dat", seg);
-
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
@@ -732,9 +696,44 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      }
 
      //
+    // Linear
+    //
+    if ( std::find(funcs->begin(), funcs->end(), "linear") != funcs->end() )
+    {
+     std::cout << "\n\n\nlinear" << "\n";
+      std::vector<double> r;
+      for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+              int thold = *iterator;
+
+          std::cout << "THOLD: " << thold << "\n";
+
+          volume_ptr<uint32_t>     seg   ;
+          std::vector<std::size_t> counts;
+
+          {
+              std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+              auto rg = get_region_graph(aff, seg , counts.size()-1);
+
+              merge_segments_with_function
+                  (seg, rg, counts,
+                   linear(thold), 10);
+              if(write_dats)
+                 write_volume(out+"linear/"
+                           + std::to_string(thold) + ".dat", seg);
+
+              auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
+              r.push_back(x.first);
+              r.push_back(x.second);
+          }
+          write_to_file(out+"linear.dat", r.data(), r.size());
+      }
+
+    }
+
+     //
      // Felzenszwalb implementation
      //
-     if ( 1 )
+     if ( std::find(funcs->begin(), funcs->end(), "fel") != funcs->end() )
      {
          std::cout << "\n\n\nFelzenszwalb" << "\n";
          std::vector<double> r;
@@ -760,7 +759,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      //
      // simple thold fn
      //
-     if ( 1 ){
+     if ( std::find(funcs->begin(), funcs->end(), "threshold") != funcs->end() ){
          std::cout << "\n\n\nsimple thold" << "\n";
          std::vector<double> r;
          for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
@@ -791,35 +790,40 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
      }
 
      //return 0;
+     if ( std::find(funcs->begin(), funcs->end(), "lowhigh") != funcs->end() ) {
+         volume_ptr<uint32_t>     segg  ;
+         std::vector<std::size_t> counts;
 
-     volume_ptr<uint32_t>     segg  ;
-     std::vector<std::size_t> counts;
+         std::tie(segg, counts) = watershed<uint32_t>(aff, -1, 2);
 
-     std::tie(segg, counts) = watershed<uint32_t>(aff, -1, 2);
+         //write_volume(out+"voutraw.out", segg);
+         //
+         // low high tholds
+         //
 
-     //write_volume(out+"voutraw.out", segg);
 
-     for ( float low = 0.01; low < 0.051; low += 0.01 )
-     {
-         for ( float high = 0.998; high > 0.989; high -= 0.002 )
+         for ( float low = 0.01; low < 0.051; low += 0.01 )
          {
- //            std::tie(segg, counts) = watershed<uint32_t>(aff, low, high);
- //            write_volume("vout." + std::to_string(low) + "." +
- //                                 std::to_string(high) + ".out", segg);
+             for ( float high = 0.998; high > 0.989; high -= 0.002 )
+             {
+                 std::tie(segg, counts) = watershed<uint32_t>(aff, low, high);
+                 write_volume("vout." + std::to_string(low) + "." +
+                                      std::to_string(high) + ".out", segg);
+             }
          }
-     }
-
-     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
-
-     //write_volume(out+"voutmax.out", segg);
-
-     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-
-     //write_volume(out+"voutminmax.out", segg);
 
 
- //    return 0;
+         std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
 
+         //write_volume(out+"voutmax.out", segg);
+
+         std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+
+         //write_volume(out+"voutminmax.out", segg);
+
+
+     //    return 0;
+    }
      // auto rg = get_region_graph(aff, segg, counts.size()-1);
 
      // //yet_another_watershed(segg, rg, counts, 0.3);

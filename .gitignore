@@ -4,3 +4,6 @@ tmp
 *.nfs*
 */*.nfs*
 src_cython/*.nfs*
+out
+data
+

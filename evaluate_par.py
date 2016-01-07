@@ -9,7 +9,7 @@ from mainDefs import eval
 from multiprocessing import Pool
 start = time.clock()
 def evaluateFile(args):
-    hdf5_gt_file,hdf5_pred_file,threshes,out = args
+    hdf5_gt_file,hdf5_pred_file,threshes,funcs,out = args
     hdf5_gt = h5py.File(hdf5_gt_file, 'r')
     hdf5_aff = h5py.File(hdf5_pred_file, 'r')
     gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
@@ -28,7 +28,14 @@ def evaluateFile(args):
     # evaluate call
     print "gt shape:",gt.shape
     print "aff shape:",aff.shape
-    eval(gt,aff,threshes,out)
+    if not os.path.exists(out):
+        os.makedirs(out)
+    f = open(out+'info.txt', 'w')
+    f.write('gt: '+hdf5_gt_file+'\n')
+    f.write('pred: '+hdf5_pred_file+'\n')
+    f.write('pred_dims: '+np.array_str(dims))
+    f.close()
+    eval(gt,aff,threshes,funcs,out)
 
     end = time.clock()
     print "time elapsed ",end-start
@@ -48,6 +55,10 @@ threshes = [100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*100
 # threshes = [i*10 for i in range(0,21)]+ [i*25000 for i in range(1,11)]
 print threshes
 
+# funcs
+#funcs = ['linear','square','fel','threshold','watershed','lowhigh']
+funcs = ['linear','square','fel','threshold']
+
 # output folder
 out = 'out/fibsem'
 ###############################################################################
@@ -58,7 +69,7 @@ pred_arr = [hdf5_pred_file_pre+dirs[i]+hdf5_pred_file_post for i in range(numWor
 out_arr = [out+dirs[i]+'/' for i in range(numWorkers)]
 argsArr=[]
 for i in range(numWorkers):
-    argsArr.append([hdf5_gt_file, pred_arr[i], threshes, out_arr[i]])
+    argsArr.append([hdf5_gt_file, pred_arr[i], threshes, funcs,out_arr[i]])
 print argsArr
 # parallel call
 p = Pool(numWorkers)
