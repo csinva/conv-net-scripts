@@ -599,6 +599,9 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool write_dats = save_seg!=0;
+    bool debug = 1;
+    double LOW= .00001; //default = .3
+    double HIGH=.99988; //default = .99
 
     std::string out = *out_ptr;
     std::cout << "evaluating..." << std::endl;
@@ -648,6 +651,10 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
          std::tie(seg, counts) = watershed<uint32_t>(aff, 0.1, 0.99);
          write_volume(out+"watershed/minmax.out", seg);
 
+         if(debug){
+             std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
+             write_volume(out+"watershed/3_99.out", seg);
+         }
          // {
          //     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
 
@@ -677,12 +684,10 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              std::vector<std::size_t> counts;
 
              {
-                 std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                 std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
                  auto rg = get_region_graph(aff, seg , counts.size()-1);
 
-                 merge_segments_with_function
-                     (seg, rg, counts,
-                      square(thold), 10);
+                 merge_segments_with_function(seg, rg, counts, square(thold), 10);
                  if(write_dats)
                     write_volume(out+"square/"
                               + std::to_string(thold) + ".dat", seg);
@@ -711,7 +716,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
           std::vector<std::size_t> counts;
 
           {
-              std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+              std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
               auto rg = get_region_graph(aff, seg , counts.size()-1);
 
               merge_segments_with_function
@@ -771,7 +776,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              std::vector<std::size_t> counts;
 
              {
-                 std::tie(seg , counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+                 std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
                  auto rg = get_region_graph(aff, seg , counts.size()-1);
 
                  merge_segments_with_function

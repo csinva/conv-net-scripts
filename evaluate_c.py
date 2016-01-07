@@ -52,12 +52,13 @@ print threshes
 
 # funcs
 #funcs = ['linear','square','fel','threshold','watershed','lowhigh']
-funcs = ['linear','square','fel','threshold']
+# funcs = ['linear','square','fel','threshold']
+funcs = ['watershed']
 
 save_segs = False
 
 # output folder
-out = 'out/null/'
+out = 'out/fibsem5_0-10-150/'
 
 evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out)
 
