@@ -6,4 +6,4 @@ tmp
 src_cython/*.nfs*
 out
 data
-
+*.pyc

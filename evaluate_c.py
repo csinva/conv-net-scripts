@@ -8,9 +8,8 @@ sys.path.append('src_cython')
 from mainDefs import eval
 from multiprocessing import Pool
 start = time.clock()
-p=0
 
-def evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,out):
+def evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out):
     hdf5_gt = h5py.File(hdf5_gt_file, 'r')
     hdf5_aff = h5py.File(hdf5_pred_file, 'r')
     gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
@@ -37,12 +36,9 @@ def evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,out):
     f.write('gt: '+hdf5_gt_file+'\n')
     f.write('pred: '+hdf5_pred_file+'\n')
     f.write('pred_dims: '+np.array_str(dims))
-    f.close()
+    eval(gt,aff,threshes,funcs,save_segs,out)
 
-    eval(gt,aff,threshes,funcs,out)
 
-    end = time.clock()
-    print "time elapsed ",end-start
 
 ########################### FIBSEM ######################################
 hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
@@ -58,10 +54,14 @@ print threshes
 #funcs = ['linear','square','fel','threshold','watershed','lowhigh']
 funcs = ['linear','square','fel','threshold']
 
+save_segs = False
+
 # output folder
 out = 'out/null/'
 
-evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,out)
+evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out)
 
+end = time.clock()
+print "time elapsed ",end-start
 #groundtruth seg: /groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/
 #aff seg:

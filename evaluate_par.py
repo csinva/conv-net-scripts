@@ -9,12 +9,13 @@ from mainDefs import eval
 from multiprocessing import Pool
 start = time.clock()
 def evaluateFile(args):
-    hdf5_gt_file,hdf5_pred_file,threshes,funcs,out = args
+    hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out = args
     hdf5_gt = h5py.File(hdf5_gt_file, 'r')
     hdf5_aff = h5py.File(hdf5_pred_file, 'r')
     gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
     aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
     aff = aff.transpose(3,2,1,0)
+    dims = np.array(aff.shape,dtype='uint32')
     print 'dims:',aff.shape
 
     # trim gt data - only works for perfect cubes
@@ -35,10 +36,8 @@ def evaluateFile(args):
     f.write('pred: '+hdf5_pred_file+'\n')
     f.write('pred_dims: '+np.array_str(dims))
     f.close()
-    eval(gt,aff,threshes,funcs,out)
+    eval(gt,aff,threshes,funcs,save_segs,out)
 
-    end = time.clock()
-    print "time elapsed ",end-start
 
 ########################### FIBSEM ARGS ######################################
 # files
@@ -68,13 +67,17 @@ numWorkers = len(dirs)
 pred_arr = [hdf5_pred_file_pre+dirs[i]+hdf5_pred_file_post for i in range(numWorkers)]
 out_arr = [out+dirs[i]+'/' for i in range(numWorkers)]
 argsArr=[]
+save_segs=False
 for i in range(numWorkers):
-    argsArr.append([hdf5_gt_file, pred_arr[i], threshes, funcs,out_arr[i]])
+    argsArr.append([hdf5_gt_file, pred_arr[i], threshes, funcs,save_segs,out_arr[i]])
 print argsArr
 # parallel call
 p = Pool(numWorkers)
 print "Parallel Pool:",numWorkers
 p.map(evaluateFile,argsArr)
+
+end = time.clock()
+print "time elapsed ",end-start
 
 # evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,out)
 

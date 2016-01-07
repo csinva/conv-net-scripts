@@ -595,10 +595,10 @@ struct Vertex
 
 typedef vector<Vertex> VertexList;
 
-int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::string* out_ptr)
+int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::list<std::string> * funcs, int save_seg, std::string* out_ptr)
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    bool write_dats = false;
+    bool write_dats = save_seg!=0;
 
     std::string out = *out_ptr;
     std::cout << "evaluating..." << std::endl;
