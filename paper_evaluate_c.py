@@ -41,11 +41,11 @@ funcs = ['square']
 # eval call
 gt = np.frombuffer(gt,dtype='uint32').reshape(dims[0:3])
 affs = np.frombuffer(aff,dtype='float32').reshape(dims)
+
 start = time.clock()
 map = eval(gt,affs,threshes,funcs,save_segs,out)
 print "time",(time.clock()-start)
-print "map:",map
-print "map[linear]",map["linear"]
+
 
 
 # saving
