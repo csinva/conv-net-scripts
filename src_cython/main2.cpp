@@ -32,6 +32,7 @@
 #include <chrono>
 #include <fstream>
 #include <string>
+#include <boost/make_shared.hpp>
 using namespace std;
 
 template< typename ID, typename F >
@@ -677,16 +678,23 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
      {
         std::cout << "\n\n\nsquare" << "\n";
          std::vector<double> r;
+
+         volume_ptr<uint32_t>     seg_ref   ;
+         std::vector<std::size_t> counts_ref;
+         std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
+
          for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
                  int thold = *iterator;
 
              std::cout << "THOLD: " << thold << "\n";
 
              volume_ptr<uint32_t>     seg   ;
-             std::vector<std::size_t> counts;
-
              {
-                 std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
+                 //std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
+                 seg.reset(new volume<uint32_t>(*seg_ref));
+                 std::vector<std::size_t> counts(counts_ref);
+
+
                  auto rg = get_region_graph(aff, seg , counts.size()-1);
 
                  merge_segments_with_function(seg, rg, counts, square(thold), 10);
@@ -701,6 +709,40 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
 
         returnMap["square"] = r;
      }
+
+     /*
+     // Square
+          //
+          if ( std::find(funcs->begin(), funcs->end(), "square") != funcs->end() )
+          {
+             std::cout << "\n\n\nsquare" << "\n";
+              std::vector<double> r;
+              for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+                      int thold = *iterator;
+
+                  std::cout << "THOLD: " << thold << "\n";
+
+                  volume_ptr<uint32_t>     seg   ;
+                  std::vector<std::size_t> counts;
+
+                  {
+                      std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
+                      auto rg = get_region_graph(aff, seg , counts.size()-1);
+
+                      merge_segments_with_function(seg, rg, counts, square(thold), 10);
+                      if(write_dats)
+                         write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);
+                      auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
+                      r.push_back(x.first);
+                      r.push_back(x.second);
+                  }
+                  write_to_file(out+"square.dat", r.data(), r.size());
+              }
+
+             returnMap["square"] = r;
+          }
+     */
+
 
      //
     // Linear
