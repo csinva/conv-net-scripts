@@ -26,14 +26,15 @@ outfolder = 'out/'+target_folder
 try:
     fig = plt.figure()
     ax = plt.subplot(111)
-    a=np.fromfile( op.join(outfolder , 'linear.dat') )
-    print a
-    linear=a.reshape(len(a)/2,2)
-    plt.plot( linear[:,0], linear[:,1], 'ro-', label='linear') #ms=10
-    plt.hold(True)
     a=np.fromfile( op.join(outfolder, 'square.dat') )
     linear=a.reshape(len(a)/2,2)
     plt.plot( linear[:,0], linear[:,1], 'bo-', label='square')
+    plt.hold(True)
+
+    a=np.fromfile( op.join(outfolder , 'linear.dat') )
+    linear=a.reshape(len(a)/2,2)
+    plt.plot( linear[:,0], linear[:,1], 'ro-', label='linear') #ms=10
+
     a=np.fromfile( op.join(outfolder, 'felzenszwalb.dat') )
     linear=a.reshape(len(a)/2,2)
     plt.plot( linear[:,0], linear[:,1], 'ko-', label='felzenszwalb')

@@ -595,13 +595,13 @@ struct Vertex
 
 typedef vector<Vertex> VertexList;
 
-int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::list<std::string> * funcs, int save_seg, std::string* out_ptr)
+std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::list<std::string> * funcs, int save_seg, std::string* out_ptr)
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool write_dats = save_seg!=0;
     bool debug = 1;
-    double LOW= .00001; //default = .3
-    double HIGH=.99988; //default = .99
+    double LOW= .3; //.00001; //default = .3
+    double HIGH= .99; //.99988; //default = .99
 
     std::string out = *out_ptr;
     std::cout << "evaluating..." << std::endl;
@@ -637,6 +637,8 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
         int thold = *iterator;
     */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     std::map<std::string,std::vector<double>> returnMap;
 
 
      if ( std::find(funcs->begin(), funcs->end(), "watershed") != funcs->end() )
@@ -689,8 +691,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
                  merge_segments_with_function(seg, rg, counts, square(thold), 10);
                  if(write_dats)
-                    write_volume(out+"square/"
-                              + std::to_string(thold) + ".dat", seg);
+                    write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
@@ -698,6 +699,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              write_to_file(out+"square.dat", r.data(), r.size());
          }
 
+        returnMap["square"] = r;
      }
 
      //
@@ -723,8 +725,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
                   (seg, rg, counts,
                    linear(thold), 10);
               if(write_dats)
-                 write_volume(out+"linear/"
-                           + std::to_string(thold) + ".dat", seg);
+                 write_volume(out+"linear/"+ std::to_string(thold) + ".dat", seg);
 
               auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
               r.push_back(x.first);
@@ -732,7 +733,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
           }
           write_to_file(out+"linear.dat", r.data(), r.size());
       }
-
+      returnMap["linear"] = r;
     }
 
      //
@@ -759,6 +760,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              r.push_back(x.second);
          }
          write_to_file(out+"felzenszwalb.dat", r.data(), r.size());
+         returnMap["fel"] = r;
      }
 
      //
@@ -789,6 +791,7 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
              }
          }
          write_to_file(out+"threshold.dat", r.data(), r.size());
+         returnMap["threshold"] = r;
      }
 
      //return 0;
@@ -864,6 +867,6 @@ int eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,st
 
      //write_region_graph(out+"voutall.mt", *mt);
 
-     return 0;
+     return returnMap;
 
  }
