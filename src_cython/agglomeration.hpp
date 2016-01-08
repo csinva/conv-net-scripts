@@ -112,7 +112,8 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
                                           const region_graph_ptr<ID,F> rg_ptr,
                                           std::vector<std::size_t>& counts,
                                           const FN& func,
-                                          const M& lowt )
+                                          const M& lowt,
+                                           bool recreate_rg)
 {
     zi::disjoint_sets<ID> sets(counts.size());
 
@@ -198,7 +199,8 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
         }
     }
 
-    rg.swap(new_rg);
+    if(recreate_rg)
+        rg.swap(new_rg);
 
     std::cout << "Done with updating the region graph, size: "
               << rg.size() << std::endl;

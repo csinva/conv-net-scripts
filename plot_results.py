@@ -35,9 +35,6 @@ try:
     linear=a.reshape(len(a)/2,2)
     plt.plot( linear[:,0], linear[:,1], 'ro-', label='linear') #ms=10
 
-    a=np.fromfile( op.join(outfolder, 'felzenszwalb.dat') )
-    linear=a.reshape(len(a)/2,2)
-    plt.plot( linear[:,0], linear[:,1], 'ko-', label='felzenszwalb')
     a=np.fromfile( op.join(outfolder, 'threshold.dat') )
     linear=a.reshape(len(a)/2,2)
     plt.plot( linear[:,0], linear[:,1], 'go-', label='threshold')

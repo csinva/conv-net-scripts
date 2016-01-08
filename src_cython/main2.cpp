@@ -391,132 +391,6 @@ std::vector<double> reduce( const std::vector<double>& v )
 
 
 
-////////////////////////////////////////////////////////////////////////////
-//
-// Felzenszwalb implementation
-
-void process_felzenszwalb( volume_ptr<uint32_t> gt_ptr,
-                           affinity_graph_ptr<float> aff,
-                           double k,
-                           const std::string& fname )
-{
-    auto seg = felzenszwalb<uint32_t>(aff, k);
-    write_volume(fname + ".dat", seg);
-
-    auto prc = reduce(felzenszwalb_err(gt_ptr, aff, k));
-    write_to_file(fname + "_pr.dat", prc.data(), prc.size());
-}
-
-////////////////////////////////////////////////////////////////////////////
-//
-// Const above threshold
-
-void process_const_above_thold( volume_ptr<uint32_t> gt_ptr,
-                                affinity_graph_ptr<float> aff,
-                                float thold,
-                                std::size_t sz,
-                                const std::string& fname )
-{
-    volume_ptr<uint32_t>     segg  ;
-    std::vector<std::size_t> counts;
-
-    {
-        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-        auto rg = get_region_graph(aff, segg, counts.size()-1);
-
-        merge_segments_with_function
-            (segg, rg, counts,
-             const_above_threshold(thold, sz), 100);
-
-        write_volume(fname + ".dat", segg);
-    }
-
-    {
-        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-        auto rg = get_region_graph(aff, segg, counts.size()-1);
-
-        auto r = reduce(merge_segments_with_function_err
-                        (segg, gt_ptr, rg, counts,
-                         const_above_threshold(thold, sz), 100));
-
-        write_to_file(fname + "_pr.dat", r.data(), r.size());
-    }
-}
-
-
-////////////////////////////////////////////////////////////////////////////
-//
-// Const above threshold
-
-void process_square( volume_ptr<uint32_t> gt_ptr,
-                     affinity_graph_ptr<float> aff,
-                     std::size_t atlow,
-                     std::size_t at1,
-                     const std::string& fname )
-{
-    volume_ptr<uint32_t>     segg  ;
-    std::vector<std::size_t> counts;
-
-    {
-        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-        auto rg = get_region_graph(aff, segg, counts.size()-1);
-
-        merge_segments_with_function
-            (segg, rg, counts,
-             square_fn(0.3, atlow, at1), 100);
-
-        write_volume(fname + ".dat", segg);
-    }
-
-    {
-        std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-        auto rg = get_region_graph(aff, segg, counts.size()-1);
-
-        auto r = reduce(merge_segments_with_function_err
-                        (segg, gt_ptr, rg, counts,
-                         square_fn(0.3, atlow, at1), 100));
-
-        write_to_file(fname + "_pr.dat", r.data(), r.size());
-    }
-}
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////
-//
-// Felzenszwalb implementation
-
-// void process_square_fn( volume_ptr<uint32_t> gt_ptr,
-//                         affinity_graph_ptr<float> aff,
-//                         std::size_t k,
-//                         const std::string& fname )
-// {
-//     volume_ptr<uint32_t>     segg  ;
-//     std::vector<std::size_t> counts;
-
-//     {
-//         std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-//         auto rg = get_region_graph(aff, segg, counts.size()-1);
-
-//         auto r = reduce(merge_segments_with_function_err
-//                         (segg, gt_ptr, rg, counts,
-//                          square_fn(0.3, 50000, 250), 100));
-
-//         write_to_file(out+"square/50000_pr.dat",
-//                       r.data(), r.size());
-
-//         write_volume(out+"square/50000.dat", segg);
-//     }
-
-//     auto seg = felzenszwalb<uint32_t>(aff, k);
-//     write_volume(fname + ".dat", seg);
-
-//     auto prc = reduce(felzenszwalb_err(gt_ptr, aff, k));
-//     write_to_file(fname + "_pr.dat", prc.data(), prc.size());
-// }
-
 std::pair<double,double>
 compare_volumes_arb(
                  volume<uint32_t>& gt,
@@ -600,6 +474,7 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
 {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool write_dats = save_seg!=0;
+    bool recreate_rg = false;
     bool debug = 1;
     double LOW= .3; //.00001; //default = .3
     double HIGH= .99; //.99988; //default = .99
@@ -663,7 +538,7 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
 
          //     auto rg = get_region_graph(aff, segg, counts.size()-1);
          //     merge_segments_with_function(segg, rg,
-         //                                  counts, limit_fn2, 100);
+         //                                  counts, limit_fn2, 100,recreate_rg);
 
          //     write_volume(out+"voutall.out", segg);
          // }
@@ -671,33 +546,29 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
      }
 
 
-          //
+     volume_ptr<uint32_t>     seg_ref   ;
+      std::vector<std::size_t> counts_ref;
+      std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
+      auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
+      volume_ptr<uint32_t>     seg   ;
+
+     //
      // Square
      //
      if ( std::find(funcs->begin(), funcs->end(), "square") != funcs->end() )
      {
-        std::cout << "\n\n\nsquare" << "\n";
+         std::cout << "\n\n\nsquare" << "\n";
          std::vector<double> r;
-
-         volume_ptr<uint32_t>     seg_ref   ;
-         std::vector<std::size_t> counts_ref;
-         std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
 
          for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
                  int thold = *iterator;
 
              std::cout << "THOLD: " << thold << "\n";
 
-             volume_ptr<uint32_t>     seg   ;
              {
-                 //std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
                  seg.reset(new volume<uint32_t>(*seg_ref));
                  std::vector<std::size_t> counts(counts_ref);
-
-
-                 auto rg = get_region_graph(aff, seg , counts.size()-1);
-
-                 merge_segments_with_function(seg, rg, counts, square(thold), 10);
+                 merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
                  if(write_dats)
                     write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
@@ -710,40 +581,6 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
         returnMap["square"] = r;
      }
 
-     /*
-     // Square
-          //
-          if ( std::find(funcs->begin(), funcs->end(), "square") != funcs->end() )
-          {
-             std::cout << "\n\n\nsquare" << "\n";
-              std::vector<double> r;
-              for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
-                      int thold = *iterator;
-
-                  std::cout << "THOLD: " << thold << "\n";
-
-                  volume_ptr<uint32_t>     seg   ;
-                  std::vector<std::size_t> counts;
-
-                  {
-                      std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
-                      auto rg = get_region_graph(aff, seg , counts.size()-1);
-
-                      merge_segments_with_function(seg, rg, counts, square(thold), 10);
-                      if(write_dats)
-                         write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);
-                      auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
-                      r.push_back(x.first);
-                      r.push_back(x.second);
-                  }
-                  write_to_file(out+"square.dat", r.data(), r.size());
-              }
-
-             returnMap["square"] = r;
-          }
-     */
-
-
      //
     // Linear
     //
@@ -755,17 +592,11 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
               int thold = *iterator;
 
           std::cout << "THOLD: " << thold << "\n";
-
-          volume_ptr<uint32_t>     seg   ;
-          std::vector<std::size_t> counts;
-
           {
-              std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
-              auto rg = get_region_graph(aff, seg , counts.size()-1);
+              seg.reset(new volume<uint32_t>(*seg_ref));
+              std::vector<std::size_t> counts(counts_ref);
 
-              merge_segments_with_function
-                  (seg, rg, counts,
-                   linear(thold), 10);
+              merge_segments_with_function(seg, rg, counts,linear(thold), 10,recreate_rg);
               if(write_dats)
                  write_volume(out+"linear/"+ std::to_string(thold) + ".dat", seg);
 
@@ -778,32 +609,6 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
       returnMap["linear"] = r;
     }
 
-     //
-     // Felzenszwalb implementation
-     //
-     if ( std::find(funcs->begin(), funcs->end(), "fel") != funcs->end() )
-     {
-         std::cout << "\n\n\nFelzenszwalb" << "\n";
-         std::vector<double> r;
-         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
-             int thold = *iterator;
-             std::cout << "THOLD: " << thold << "\n";
-
-             double k = static_cast<double>(thold) / 1000;
-
-             auto seg = felzenszwalb<uint32_t>(aff, k);
-             if(write_dats)
-                write_volume(out+"felzenszwalb/"
-                          + std::to_string(k) + ".dat", seg);
-
-             auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
-
-             r.push_back(x.first);
-             r.push_back(x.second);
-         }
-         write_to_file(out+"felzenszwalb.dat", r.data(), r.size());
-         returnMap["fel"] = r;
-     }
 
      //
      // simple thold fn
@@ -816,14 +621,11 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
 
              std::cout << "THOLD: " << thold << "\n";
 
-             volume_ptr<uint32_t>     seg   ;
-             std::vector<std::size_t> counts;
-
              {
-                 std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
-                 auto rg = get_region_graph(aff, seg , counts.size()-1);
+                 seg.reset(new volume<uint32_t>(*seg_ref));
+                 std::vector<std::size_t> counts(counts_ref);
 
-                 merge_segments_with_function(seg, rg, counts,const_above_threshold(0.3, thold), 100);
+                 merge_segments_with_function(seg, rg, counts,const_above_threshold(0.3, thold), 100,recreate_rg);
                  if(write_dats)
                     write_volume(out+"threshold/"+ std::to_string(thold) + ".dat", seg);
 
@@ -880,7 +682,7 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
      // //write_volume("voutanouther.out", segg);
 
 
-     // merge_segments_with_function(segg, rg, counts, limit_fn3, 100);
+     // merge_segments_with_function(segg, rg, counts, limit_fn3, 100,recreate_rg);
 
      // write_volume("voutdo.out", segg);
 
@@ -894,7 +696,7 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
      //write_volume("voutanouther.out", segg);
 
      //auto r = merge_segments_with_function_err(segg, gt_ptr, rg,
-     //                                          counts, limit_fn2, 100);
+     //                                          counts, limit_fn2, 100,recreate_rg);
 
      //write_to_file(out+"/precision_recall.dat",
      //              r.data(), r.size());
@@ -908,6 +710,7 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
      //auto mt = get_merge_tree(*rg, counts.size()-1);
 
      //write_region_graph(out+"voutall.mt", *mt);
+
 
      return returnMap;
 

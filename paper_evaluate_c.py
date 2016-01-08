@@ -36,7 +36,7 @@ out = 'out/test_paper/'
 
 # funcs
 #funcs = ['square','linear','fel','threshold','watershed','lowhigh']
-funcs = ['square']
+funcs = ['linear','square','threshold']
 
 # eval call
 gt = np.frombuffer(gt,dtype='uint32').reshape(dims[0:3])
