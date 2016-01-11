@@ -11,7 +11,7 @@ cdef extern from "main2.h":
 
 def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, int save_seg, string out='out/'):
     dims = affs.shape
-    dirs = [out,out+'felzenszwalb',out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']
+    dirs = [out]+[out+funcs[i] for i in range(len(funcs))] #,out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']
     for i in range(len(dirs)):
         if not os.path.exists(dirs[i]):
             os.makedirs(dirs[i])

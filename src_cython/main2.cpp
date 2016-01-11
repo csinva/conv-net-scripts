@@ -4,7 +4,6 @@
  */
 #include "main2.h"
 //#pragma once
-#include "felzenszwalb.hpp"
 #include "agglomeration.hpp"
 #include "region_graph.hpp"
 #include "basic_watershed.hpp"
@@ -565,7 +564,6 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
                  int thold = *iterator;
 
              std::cout << "THOLD: " << thold << "\n";
-
              {
                  seg.reset(new volume<uint32_t>(*seg_ref));
                  std::vector<std::size_t> counts(counts_ref);

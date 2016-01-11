@@ -49,7 +49,7 @@ plt.show()
 '''
 
 
-############ find thres ############
+############ find thresh ############
 def pow(a,b,c):
     if(a>.5):
         return (a-.05)**b

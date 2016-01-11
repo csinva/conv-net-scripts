@@ -5,14 +5,8 @@ import time
 import os
 import h5py
 sys.path.append('src_cython')
-from mainDefs import eval
-from multiprocessing import Pool
 start = time.clock()
 from evaluateFile import evaluateFile
-
-def test():
-    print("testing...\n\n")
-
 
 ########################### FIBSEM ######################################
 hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'

@@ -1,12 +1,10 @@
 import numpy as np
 import sys
-import array
 import time
 import os
 import h5py
 sys.path.append('src_cython')
 from mainDefs import eval
-from multiprocessing import Pool
 start = time.clock()
 
 def evaluateFile(args):
