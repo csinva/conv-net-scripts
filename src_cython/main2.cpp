@@ -476,8 +476,9 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
     bool write_dats = save_seg!=0;
     bool recreate_rg = false;
     bool debug = 1;
-    double LOW= .3; //.00001; //default = .3
-    double HIGH= .99; //.99988; //default = .99
+    // these values based on 5% at iter = 10000
+    double LOW= 0.003785; //.00001; //default = .3
+    double HIGH= 0.999971; //.99988; //default = .99
 
     std::string out = *out_ptr;
     std::cout << "evaluating..." << std::endl;

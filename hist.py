@@ -9,7 +9,8 @@ import array
 ######################### PICK DATA #############################
 # fibsem data
 out = 'fibsem5'
-hdf5_pred_file = '/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5' #'',0,2,3,4,6
+#hdf5_pred_file = '/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5' #'',0,2,3,4,6
+hdf5_pred_file = '../tstvol-520-1-h5.h5'
 hdf5_aff = h5py.File(hdf5_pred_file, 'r')
 aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32').flatten()
 # paper data
@@ -67,5 +68,5 @@ def findThresh(arr,percentWantedLow=.1,percentWantedHigh=.1):
     numUniqueHigh = len(np.unique(arr[-numWantedHigh:]))
     return lowThresh,numUniqueLow,highThresh,numUniqueHigh
 
-lowThresh,numUniqueLow,highThresh,numUniqueHigh = findThresh(aff,.1)
+lowThresh,numUniqueLow,highThresh,numUniqueHigh = findThresh(aff,.05)
 print "thresh_low,numUnique_low,thresh_high,num_high",lowThresh,",",numUniqueLow,highThresh,numUniqueHigh
