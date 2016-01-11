@@ -7,3 +7,5 @@ src_cython/*.nfs*
 out
 data
 *.pyc
+*.h5
+

@@ -4,13 +4,13 @@ import array
 import time
 import os
 import h5py
-sys.path.append('evaluation/src_cython')
-#sys.path.append('/groups/turaga/home/singhc/caffe_v1/pygt_models/fibsem4')
+sys.path.append('src_cython')
 from mainDefs import eval
 from multiprocessing import Pool
 start = time.clock()
 
-def evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out):
+def evaluateFile(args):
+    hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out = args
     hdf5_gt = h5py.File(hdf5_gt_file, 'r')
     hdf5_aff = h5py.File(hdf5_pred_file, 'r')
     gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
@@ -37,4 +37,5 @@ def evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out):
     f.write('gt: '+hdf5_gt_file+'\n')
     f.write('pred: '+hdf5_pred_file+'\n')
     f.write('pred_dims: '+np.array_str(dims))
+    f.close()
     eval(gt,aff,threshes,funcs,save_segs,out)

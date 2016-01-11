@@ -5,45 +5,14 @@ import numpy as np
 import time
 from numpy import float32, int32, uint8, dtype
 from os.path import join
-
-#from evaluate_process import evaluateFile
-#sys.path.append('src_cython')
-#from mainDefs import eval
-
-def evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out):
-	hdf5_gt = h5py.File(hdf5_gt_file, 'r')
-	hdf5_aff = h5py.File(hdf5_pred_file, 'r')
-	gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
-	aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
-	aff = aff.transpose(3,2,1,0)
-	dims = np.array(aff.shape,dtype='uint32')
-	print('dims:',aff.shape)
-
-	# trim gt data - only works for perfect cubes
-	gt_data_dimension = gt.shape[0]
-	data_dimension = aff.shape[1]
-	if gt_data_dimension != data_dimension:
-		print("Data dimension do not match. Clip the GT borders.")
-		padding = (gt_data_dimension - data_dimension) / 2
-		gt = gt[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
-		print("New GT data shape :",gt.shape)
-
-	# evaluate call
-	print("gt shape:",gt.shape)
-	print("aff shape:",aff.shape)
-	if not os.path.exists(out):
-		os.makedirs(out)
-	f = open(out+'info.txt', 'w')
-	f.write('gt: '+hdf5_gt_file+'\n')
-	f.write('pred: '+hdf5_pred_file+'\n')
-	f.write('pred_dims: '+np.array_str(dims))
-	eval(gt,aff,threshes,funcs,save_segs,out)
+# Load PyGreentea - this block only works inside of process
+pygt_path = '/groups/turaga/home/singhc/caffe_v1/PyGreentea' # Relative path to where PyGreentea resides
+sys.path.append(pygt_path)
+import PyGreentea as pygt
+sys.path.append('src_cython')
+from evaluateFile import evaluateFile
 
 def process(iter):
-	# Load PyGreentea - this block only works inside of process
-	pygt_path = '/groups/turaga/home/singhc/caffe_v1/PyGreentea' # Relative path to where PyGreentea resides
-	sys.path.append(pygt_path)
-	import PyGreentea as pygt
 	print('processing...',iter)
 	# Load the datasets
 	path = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/'
@@ -89,8 +58,10 @@ start = time.clock()
 hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
 hdf5_aff_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_aff.h5'
 #hdf5_pred_file = '/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5' #'',0,2,3,4,6
-hdf5_pred_file = '../tstvol-520-1-h5.h5'
-dirs = [i*10000 for i in range(1,2)] #should go to 40
+#hdf5_pred_file = '/groups/turaga/home/singhc/caffe_v1/pygt_models/fibsem4/tstvol-520-1-h5.h5'
+hdf5_pred_file = "tstvol-520-1-h5.h5"
+#dirs = [i*10000 for i in range(1,40)] #should go to 40
+dirs = [10000,20000]
 
 iters = ['net_iter_'+str(dirs[i])+'.caffemodel' for i in range(len(dirs))]
 #pred_files = ['net_iter_'+dirs[i]+'_out.h5' for i in range(len(dirs))]
@@ -114,8 +85,8 @@ print(outs)
 
 for iter_idx in range(len(dirs)):
 	process(dirs[iter_idx])
-	#evaluateFile(hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,outs[iter_idx])
-	#evaluateFile(hdf5_gt_file,'tstvol_test.h5',threshes,funcs,save_segs,outs[iter_idx])
+	args = [hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,outs[iter_idx]]
+	evaluateFile(args)
 
 end = time.clock()
 print("time elapsed ",end-start)

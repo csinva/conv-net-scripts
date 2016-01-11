@@ -7,7 +7,7 @@ ext_modules = [Extension("mainDefs",
                          library_dirs = ["."],
                          include_dirs = ["."],
                          language='c++',
-                         std= 'c++11',
+                         # std= 'c++11',
                          extra_link_args=["-std=c++11"],
                          extra_compile_args=["-std=c++11", "-w"])]
 
