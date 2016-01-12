@@ -24,12 +24,12 @@ def display(raw, label, pred, im_size=250, im2_size=432):
     ax1.set_title('Raw Image')
 
     im = np.zeros((im_size,im_size,3))
-    im[:,:,:]=label[:,:,1,:]
+    im[:,:,:]=label[1,:,:,:]
     im2 = ax2.imshow(im)
     ax2.set_title('Groundtruth')
 
     im_ = np.zeros((im2_size,im2_size,3))
-    im_[:,:,:]=pred[:,:,1,:]
+    im_[:,:,:]=pred[1,:,:,:]
     im3 = ax3.imshow(im_)
     ax3.set_title('Predictions')
 
@@ -42,9 +42,9 @@ def display(raw, label, pred, im_size=250, im2_size=432):
     def update(val):
         z = int(depth.val)
         im1.set_data(raw[z,:,:])
-        im[:,:,:]=label[:,:,z,:]
+        im[:,:,:]=label[z,:,:,:]
         im2.set_data(im)
-        im_[:,:,:]=pred[:,:,z,:]
+        im_[:,:,:]=pred[z,:,:,:]
         im3.set_data(im_)
         fig.canvas.draw()
     depth.on_changed(update)
@@ -80,8 +80,8 @@ print('done rearranging...')
 ##
 
 # transpose so they match image
-label_set = np.transpose(label_set,(2,3,1,0))
-aff = np.transpose(aff,(2,3,1,0))
+label_set = np.transpose(label_set,(1,2,3,0))
+aff = np.transpose(aff,(1,2,3,0))
 
 # reshape labels, image
 gt_data_dimension = label_set.shape[0]

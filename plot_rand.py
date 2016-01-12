@@ -28,6 +28,7 @@ try:
     ax = plt.subplot(111)
     a=np.fromfile( op.join(outfolder, 'square.dat') )
     linear=a.reshape(len(a)/2,2)
+    print linear
     plt.plot( linear[:,0], linear[:,1], 'bo-', label='square')
     plt.hold(True)
 

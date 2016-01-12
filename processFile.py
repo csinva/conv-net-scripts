@@ -30,7 +30,7 @@ def processFile(basename,iter,outputName = "data_tier2/tstvol-520-1-h5"):
 	'''
 
 	# Set devices
-	test_device = 0
+	test_device = 2
 	print('Setting devices...')
 	pygt.caffe.set_mode_gpu()
 	pygt.caffe.set_device(test_device)

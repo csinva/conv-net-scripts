@@ -3,6 +3,7 @@
 
 import os
 import matplotlib.cm as cm
+import matplotlib
 import numpy as np
 from matplotlib.widgets import Slider, Button, RadioButtons
 import matplotlib.pyplot as plt
@@ -11,6 +12,7 @@ import array
 
 #Displays three images: the raw data, the corresponding labels, and the predictions
 def display(raw, label, seg, im_size=250, im2_size=432):
+    cmap = matplotlib.colors.ListedColormap(np.vstack(((0,0,0),np.random.rand(255,3))))
     fig = plt.figure(figsize=(20,10))
     fig.set_facecolor('white')
     ax1,ax2,ax3 = fig.add_subplot(1,3,1),fig.add_subplot(1,3,2),fig.add_subplot(1,3,3)
@@ -25,14 +27,14 @@ def display(raw, label, seg, im_size=250, im2_size=432):
     ax1.set_title('Raw Image')
 
     im = np.zeros((im_size,im_size,3))
-    im[:,:,:]=label[:,:,1,:]
+    im[:,:,:]=label[1,:,:,:]
     im2 = ax2.imshow(im)
     ax2.set_title('Groundtruth')
 
     im_ = np.zeros((im2_size,im2_size))
     im_[:,:]=seg[1,:,:]
     print 'shape',np.array(im_).shape
-    im3 = ax3.imshow(im_,cmap=cm.Greys_r)
+    im3 = ax3.imshow(im_,cmap=cmap)
     ax3.set_title('Seg')
 
     axdepth = fig.add_axes([0.25, 0.3, 0.65, 0.03], axisbg='white')
@@ -44,7 +46,7 @@ def display(raw, label, seg, im_size=250, im2_size=432):
     def update(val):
         z = int(depth.val)
         im1.set_data(raw[z,:,:])
-        im[:,:,:]=label[:,:,z,:]
+        im[:,:,:]=label[z,:,:,:]
         im2.set_data(im)
         im_[:,:]=seg[z,:,:]
         im3.set_data(im_)
@@ -59,23 +61,20 @@ os.chdir('/.')
 
 #Open training data
 f = h5py.File(data_folder + 'img_normalized.h5', 'r')
-data_set = f['main']
+data_set = f['main'] #520,520,520, z,y,x
+print data_set.shape
 
 #Open training labels
 g = h5py.File(data_folder + 'groundtruth_aff.h5', 'r')
-label_set = np.asarray(g['main'],dtype='float32') #3,z,y,x
+label_set = np.asarray(g['main'],dtype='float32') #3,520,520,520  3,z,y,x
+print label_set.shape
 
-# preds
-hdf5_pred_file = '/tier2/turaga/singhc/output_10000/tstvol-1_5.h5' #'/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5'
-hdf5_aff = h5py.File(hdf5_pred_file, 'r')
-aff = np.asarray(hdf5_aff['main'],dtype='float32')
-print aff.shape
 
 # transpose so they match image
-label_set = np.transpose(label_set,(2,3,1,0))
-aff = np.transpose(aff,(2,3,1,0))
+label_set = np.transpose(label_set,(1,2,3,0)) # z,y,x,3
 
-hdf5_seg_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
+#hdf5_seg_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
+hdf5_seg_file = '/tier2/turaga/singhc/out/test_save_dat/square/1000.dat'
 hdf5_seg = h5py.File(hdf5_seg_file, 'r')
 seg = np.asarray(hdf5_seg['main'],dtype='uint32')
 print 'seg:',seg.shape,np.max(seg),np.min(seg)

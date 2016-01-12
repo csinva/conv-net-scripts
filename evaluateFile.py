@@ -11,9 +11,10 @@ def evaluateFile(args):
     hdf5_gt_file,hdf5_pred_file,threshes,funcs,save_segs,out = args
     hdf5_gt = h5py.File(hdf5_gt_file, 'r')
     hdf5_aff = h5py.File(hdf5_pred_file, 'r')
-    gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32',order='F')
-    aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32',order='F')
-    aff = np.transpose(aff,(3,2,1,0))
+    gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]],dtype='uint32')
+    aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
+    aff = np.transpose(aff,(1,2,3,0))
+
     dims = np.array(aff.shape,dtype='uint32')
     print 'dims:',aff.shape
 
@@ -25,6 +26,10 @@ def evaluateFile(args):
         padding = (gt_data_dimension - data_dimension) / 2
         gt = gt[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
         print"New GT data shape :",gt.shape
+
+    # change both to fortran order
+    gt = np.array(gt,order='F')
+    aff = np.array(aff,order='F')
 
     # evaluate call
     print "gt shape:",gt.shape
@@ -84,8 +89,9 @@ if __name__ == "__main__":
     hdf5_aff_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_aff.h5'
     hdf5_pred_file = '/tier2/turaga/singhc/output_10000/tstvol-1_5.h5'
 
-    threshes = [100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*10000 for i in range(2,11)] # 100...1,000...100,000
-    funcs = ['linear','square','threshold'] # ['linear','square','threshold','watershed','lowhigh']
-    out = 'data_tier2/out/test/'
-
-    evaluateFile([hdf5_gt_file,hdf5_pred_file,threshes,funcs,False,out])
+    threshes = [i*2000 for i in range(1,6)]+[i*20000 for i in range(2,16)] # 100...1,000...100,000
+    funcs = ['square'] # ['linear','square','threshold','watershed','lowhigh']
+    out = 'data_tier2/out/fibsem'
+    strs = ["","2","4","5","6"]
+    for i in range(len(strs)):
+        evaluateFile([hdf5_gt_file,'/tier2/turaga/singhc/output_10000/tstvol-1_' +strs[i]+ '.h5',threshes,funcs,True,out+strs[i]+'_10000/'])

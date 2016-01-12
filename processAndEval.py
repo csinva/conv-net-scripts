@@ -11,15 +11,16 @@ hdf5_aff_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstv
 
 # input models
 model_base_folder = '/groups/turaga/home/turagas/research/caffe_v1/pygt_models/fibsem'
-fibsemFolders = ['5'] #['','2','3','4',,'5','6']
+fibsemFolders = ['','2','3','4','5','6']
 iters = [80000] #10000 - 39000
 
 # output folders
-h5OutputFilenames = ["data_tier2/output_10000/"+"tstvol-1_"+fibsemFolders[i] for i in range(len(fibsemFolders))]
+h5OutputFilenames = ["data_tier2/output_80000/"+"tstvol-1_"+fibsemFolders[i] for i in range(len(fibsemFolders))]
 randOutputFolder = ['data_tier2/out/fibsem' +fibsemFolders[i]+ '_iter_'+str(iters[j])+'/' for j in range(len(iters)) for i in range(len(fibsemFolders))]
 
 # settings
-threshes = [50000 + i*10000 for i in range(10)] #[100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*10000 for i in range(2,11)] # 100...1,000...100,000
+threshes = [i*2000 for i in range(1,6)]+[i*20000 for i in range(2,16)]
+# threshes = [50000 + i*10000 for i in range(10)] #[100+i*100 for i in range(0,10)]+[i*1000 for i in range(2,11)]+[i*10000 for i in range(2,11)] # 100...1,000...100,000
 funcs = ['linear','square','threshold'] #'watershed','lowhigh'
 save_segs = False
 
