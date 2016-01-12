@@ -21,7 +21,7 @@ def formatAndSave(ax):
 target_folder = "test_full"
 if len(sys.argv)>1:
     target_folder = sys.argv[1]
-outfolder = 'out/'+target_folder
+outfolder = 'data_tier2/out/'+target_folder
 
 try:
     fig = plt.figure()

@@ -7,7 +7,7 @@ from os.path import join
 sys.path.append('/groups/turaga/home/singhc/caffe_v1/PyGreentea') # Relative path to where PyGreentea resides
 import PyGreentea as pygt
 
-def processFile(basename,iter,filename1 = "tstvol-520-1-h5"):
+def processFile(basename,iter,outputName = "data_tier2/tstvol-520-1-h5"):
 	print('processing...',iter)
 	# Load the datasets
 	path = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/'
@@ -15,8 +15,7 @@ def processFile(basename,iter,filename1 = "tstvol-520-1-h5"):
 	test_dataset = []
 
 	test_dataset.append({})
-	dname = filename1
-	test_dataset[-1]['name'] = dname
+	test_dataset[-1]['name'] = outputName
 	h5im = h5py.File(join(path,"tstvol-520-1-h5",'img_normalized.h5'),'r')
 	h5im_n = pygt.normalize(np.asarray(h5im[h5im.keys()[0]]).astype(float32), -1, 1)
 	test_dataset[-1]['data'] = h5im_n

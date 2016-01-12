@@ -9,4 +9,4 @@ data
 *.pyc
 *.h5
 .ipynb_checkpoints
-
+data_tier2
