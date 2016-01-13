@@ -16,14 +16,17 @@ def formatAndSave(ax,outputFile):
     ax.grid()
     plt.show()
 
-names = ['train','test']
-folders = ["/tier2/turaga/singhc/train/out/fibsem_ave_","/tier2/turaga/singhc/test/out/fibsem_ave_"]
-output_file = '/tier2/turaga/singhc/figs/f_scores'
-train = [10000,20000,80000,200000]
+names = ['train_average','test_average']+['train_fibsem'+str(i) for i in range(2,7)]+['test_fibsem'+str(i) for i in range(2,7)]
+folders = ["/tier2/turaga/singhc/train/out/fibsem_ave_","/tier2/turaga/singhc/test/out/fibsem_ave_"]+["/tier2/turaga/singhc/train/out/fibsem"+str(i)+"_" for i in range(2,7)]+["/tier2/turaga/singhc/test/out/fibsem"+str(i)+"_" for i in range(2,7)]
+output_file = '/tier2/turaga/singhc/figs/f_scores_full'
+train = [20000,80000,200000]
 test = [10000,30000,50000,70000,100000,200000]
-iters = [train,test]
+iters = [train]+[test]+[train]*5+[test]*5
+dashed = [iters[i]==train for i in range(len(iters))]
+print dashed
 all_target_folders = [folders[i]+str(iters[i][j]) for i in range(len(folders)) for j in range(len(iters[i]))]#["data_tier2/train/out/fibsem_ave_"+str(train[i]) for i in range(len(train))]
 
+print folders
 print "target folders: ",all_target_folders
 print "output file: ",output_file+'.png'
 
@@ -45,9 +48,11 @@ for x in range(len(iters)):
             f_scores[j]=2/(1/data[j][0]+1/data[j][1])
         maxes[i]=max(f_scores)
         count+=1
-    plt.plot(iters[x],maxes, 'o-', label='train')
+    if dashed[x]:
+        plt.plot(iters[x],maxes, 'o--', label=names[x])
+    else:
+        plt.plot(iters[x],maxes, 'o-', label=names[x])
     plt.hold(True)
-    target_folders = ["data_tier2/test/out/fibsem_ave_"+str(test[i]) for i in range(len(test))]
 formatAndSave(ax,output_file)
 
 

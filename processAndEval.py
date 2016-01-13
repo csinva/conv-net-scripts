@@ -12,7 +12,7 @@ hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvo
 # input models
 model_base_folder = '/groups/turaga/home/turagas/research/caffe_v1/pygt_models/fibsem'
 fibsemFolders = ['2','3','4','5','6']
-iters = [30000,70000]
+iters = [80000]
 
 # output folders
 train = False # which dataset to evaluate
