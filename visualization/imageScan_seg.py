@@ -54,7 +54,6 @@ def display(raw, label, seg, im_size=250, im2_size=432):
     depth.on_changed(update)
     plt.show()
 
-## Just to access the images...
 
 data_folder = 'nobackup/turaga/data/fibsem_medulla_7col/tstvol-520-1-h5/'
 os.chdir('/.')

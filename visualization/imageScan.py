@@ -65,7 +65,7 @@ g = h5py.File(data_folder + 'groundtruth_aff.h5', 'r')
 label_set = np.asarray(g['main'],dtype='float32') #3,z,y,x
 
 # preds
-hdf5_pred_file = '/tier2/turaga/singhc/output_10000/tstvol-1_5.h5' #'/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5'
+hdf5_pred_file = '/tier2/turaga/singhc/train/output_10000/tstvol-1_5.h5' #'/tier2/turaga/turagas/research/pygt_models/fibsem5/test_out_0.h5'
 hdf5_aff = h5py.File(hdf5_pred_file, 'r')
 aff = np.asarray(hdf5_aff['main'],dtype='float32')
 print aff.shape

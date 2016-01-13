@@ -471,7 +471,7 @@ typedef vector<Vertex> VertexList;
 
 std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::list<std::string> * funcs, int save_seg, std::string* out_ptr)
 {
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////// LOAD DATA ///////////////////////////////////////////////////////////////
     bool write_dats = save_seg!=0;
     bool recreate_rg = false;
     bool debug = 1;
@@ -512,49 +512,16 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
     for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
         int thold = *iterator;
     */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-     std::map<std::string,std::vector<double>> returnMap;
+    std::map<std::string,std::vector<double>> returnMap;
+    volume_ptr<uint32_t>     seg_ref   ;
+    std::vector<std::size_t> counts_ref;
+    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
+    auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
+    volume_ptr<uint32_t>     seg   ;
 
+/////////////////////////////////////////// SQUARE ///////////////////////////////////////////////////////////////
 
-     if ( std::find(funcs->begin(), funcs->end(), "watershed") != funcs->end() )
-     {
-         std::cout << "\n\n\nwatershed" << "\n";
-         volume_ptr<uint32_t>     seg   ;
-         std::vector<std::size_t> counts;
-
-         std::tie(seg, counts) = watershed<uint32_t>(aff, -1, 2);
-         write_volume(out+"watershed/basic.out", seg);
-
-         std::tie(seg, counts) = watershed<uint32_t>(aff, 0.1, 0.99);
-         write_volume(out+"watershed/minmax.out", seg);
-
-         if(debug){
-             std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
-             write_volume(out+"watershed/3_99.out", seg);
-         }
-         // {
-         //     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
-
-         //     auto rg = get_region_graph(aff, segg, counts.size()-1);
-         //     merge_segments_with_function(segg, rg,
-         //                                  counts, limit_fn2, 100,recreate_rg);
-
-         //     write_volume(out+"voutall.out", segg);
-         // }
-
-     }
-
-
-     volume_ptr<uint32_t>     seg_ref   ;
-      std::vector<std::size_t> counts_ref;
-      std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
-      auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
-      volume_ptr<uint32_t>     seg   ;
-
-     //
-     // Square
-     //
      if ( std::find(funcs->begin(), funcs->end(), "square") != funcs->end() )
      {
          std::cout << "\n\n\nsquare" << "\n";
@@ -580,9 +547,8 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
         returnMap["square"] = r;
      }
 
-     //
-    // Linear
-    //
+/////////////////////////////////////////// LINEAR ///////////////////////////////////////////////////////////////
+
     if ( std::find(funcs->begin(), funcs->end(), "linear") != funcs->end() )
     {
      std::cout << "\n\n\nlinear" << "\n";
@@ -608,10 +574,8 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
       returnMap["linear"] = r;
     }
 
+/////////////////////////////////////////// SIMPLE THRESHOLD ///////////////////////////////////////////////////////////////
 
-     //
-     // simple thold fn
-     //
      if ( std::find(funcs->begin(), funcs->end(), "threshold") != funcs->end() ){
          std::cout << "\n\n\nsimple thold" << "\n";
          std::vector<double> r;
@@ -637,7 +601,8 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
          returnMap["threshold"] = r;
      }
 
-     //return 0;
+/////////////////////////////////////////// LOWHIGH ///////////////////////////////////////////////////////////////
+
      if ( std::find(funcs->begin(), funcs->end(), "lowhigh") != funcs->end() ) {
          volume_ptr<uint32_t>     segg  ;
          std::vector<std::size_t> counts;
@@ -662,7 +627,6 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
              }
          }
 
-
          std::tie(segg, counts) = watershed<uint32_t>(aff, 0.5, 2);
 
          //write_volume(out+"voutmax.out", segg);
@@ -671,9 +635,37 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
 
          //write_volume(out+"voutminmax.out", segg);
 
-
-     //    return 0;
     }
+
+/////////////////////////////////////////// WATERSHED SEGS ///////////////////////////////////////////////////////////////
+
+     if ( std::find(funcs->begin(), funcs->end(), "watershed") != funcs->end() )
+         {
+             std::cout << "\n\n\nwatershed" << "\n";
+             volume_ptr<uint32_t>     seg   ;
+             std::vector<std::size_t> counts;
+
+             std::tie(seg, counts) = watershed<uint32_t>(aff, -1, 2);
+             write_volume(out+"watershed/basic.out", seg);
+
+             std::tie(seg, counts) = watershed<uint32_t>(aff, 0.1, 0.99);
+             write_volume(out+"watershed/minmax.out", seg);
+
+             if(debug){
+                 std::tie(seg , counts) = watershed<uint32_t>(aff, LOW, HIGH);
+                 write_volume(out+"watershed/3_99.out", seg);
+             }
+             // {
+             //     std::tie(segg, counts) = watershed<uint32_t>(aff, 0.3, 0.99);
+
+             //     auto rg = get_region_graph(aff, segg, counts.size()-1);
+             //     merge_segments_with_function(segg, rg,
+             //                                  counts, limit_fn2, 100,recreate_rg);
+
+             //     write_volume(out+"voutall.out", segg);
+             // }
+
+         }
      // auto rg = get_region_graph(aff, segg, counts.size()-1);
 
      // //yet_another_watershed(segg, rg, counts, 0.3);
@@ -684,8 +676,6 @@ std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, i
      // merge_segments_with_function(segg, rg, counts, limit_fn3, 100,recreate_rg);
 
      // write_volume("voutdo.out", segg);
-
-
 
 
      //auto rg = get_region_graph(aff, segg, counts.size()-1);
