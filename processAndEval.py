@@ -7,17 +7,17 @@ from evaluateFile import evaluateFile, averageAndEvaluateFiles
 from processFile import processFile
 
 # gt file
-hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-2-h5/groundtruth_seg_thick.h5' #groundtruth_aff.h5
+hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5' #groundtruth_aff.h5
 
 # input models
 model_base_folder = '/groups/turaga/home/turagas/research/caffe_v1/pygt_models/fibsem'
 fibsemFolders = ['2','3','4','5','6']
-iters = [80000]
+iters = [10000,30000,40000,50000,60000,70000,90000,10000,110000,120000,130000]
 
 # output folders
 train = False # which dataset to evaluate
-h5OutputFilenames = ["data_tier2/test/output_"+str(iters[j])+"/"+"tstvol-2_"+fibsemFolders[i] for j in range(len(iters)) for i in range(len(fibsemFolders))]
-randOutputFolder = ['data_tier2/test/out/fibsem' +fibsemFolders[i]+ '_'+str(iters[j])+'/' for j in range(len(iters)) for i in range(len(fibsemFolders))]
+h5OutputFilenames = ["data_tier2/train/output_"+str(iters[j])+"/"+"tstvol-1_"+fibsemFolders[i] for j in range(len(iters)) for i in range(len(fibsemFolders))]
+randOutputFolder = ['data_tier2/train/out/fibsem' +fibsemFolders[i]+ '_'+str(iters[j])+'/' for j in range(len(iters)) for i in range(len(fibsemFolders))]
 
 # settings
 threshes = [i*2000 for i in range(1,6)]+[i*20000 for i in range(2,16)] # default: 100...1,000...100,000

@@ -109,3 +109,14 @@ def formatAndSave(ax,outputFile):
     plt.savefig(outputFile)
     ax.grid()
     plt.show()
+'''
+def load_seg_from_dat:
+    f = open("/groups/turaga/home/singhc/evaluation/out/fibsem5_0-10-150/lowhigh/vout.0.000010.0.999999.out")
+    pred = array.array("I")
+    pred.fromfile(f, 432*432*432)
+    pred = np.array(pred).reshape((432,432,432))
+    print 'pred.shape:',pred.shape
+    print 'max:',np.max(pred)
+    print 'min:',np.min(pred)
+    f.close()
+'''

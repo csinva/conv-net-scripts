@@ -1,0 +1,1 @@
+neuroproof_graph_analyze_gt /tier2/turaga/singhc/neuroproof_examples/validation_sample/results/segmentation.h5 /tier2/turaga/singhc/neuroproof_examples/validation_sample/groundtruth.h5 > neuroproof_sample.txt

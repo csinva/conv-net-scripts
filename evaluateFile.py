@@ -43,7 +43,7 @@ def evaluateFile(args):
     f.close()
     eval(gt,aff,threshes,funcs,save_segs,out)
 
-def averageAndEvaluateFiles(hdf5_pred_files,outputFileName): #array of pred files, average them
+def averageFiles(hdf5_pred_files,outputFileName): #array of pred files, average them
     hdf5_aff = h5py.File(hdf5_pred_files[0]+'.h5', 'r')
     aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
 
@@ -59,13 +59,13 @@ def averageAndEvaluateFiles(hdf5_pred_files,outputFileName): #array of pred file
 
 if __name__ == "__main__":
     print "running evaluateFile main..."
-    hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
+    hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-2-h5/groundtruth_seg_thick.h5'
     #hdf5_aff_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_aff.h5'
     #hdf5_pred_file = '/tier2/turaga/singhc/output_10000/tstvol-1_5.h5'
 
     threshes = [i*2000 for i in range(1,6)]+[i*20000 for i in range(2,16)] # 100...1,000...100,000
     funcs = ['square'] # ['linear','square','threshold','watershed','lowhigh']
-    out = 'data_tier2/train/out/fibsem'
+    out = 'data_tier2/test/out/fibsem'
     iters = [10000,20000,80000,200000] #[10000,30000,50000,70000,100000,200000]
     strs = ["2","3","4","5","6"]
     files = ['/tier2/turaga/singhc/train/output_70000/tstvol-2_' +strs[i] for i in range(len(strs))]
@@ -75,6 +75,6 @@ if __name__ == "__main__":
     '''
     for iter in range(len(iters)):
         files = ['/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-1_' +strs[i] for i in range(len(strs))]
-        averageAndEvaluateFiles(files,'/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-1_ave.h5')
+        averageFiles(files,'/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-1_ave.h5')
 
 
