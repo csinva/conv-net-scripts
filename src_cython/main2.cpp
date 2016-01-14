@@ -469,10 +469,11 @@ struct Vertex
 
 typedef vector<Vertex> VertexList;
 
-std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,std::list<int> * threshes, std::list<std::string> * funcs, int save_seg, std::string* out_ptr)
+std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
+float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list<int> * save_threshes, std::string* out_ptr)
 {
 /////////////////////////////////////////// LOAD DATA ///////////////////////////////////////////////////////////////
-    bool write_dats = save_seg!=0;
+    bool write_dats =0; // save_seg!=0;
     bool recreate_rg = false;
     bool debug = 1;
     // these values based on 5% at iter = 10000

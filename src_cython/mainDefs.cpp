@@ -1231,12 +1231,12 @@ static char __pyx_k_square[] = "square";
 static char __pyx_k_lowhigh[] = "lowhigh";
 static char __pyx_k_mainDefs[] = "mainDefs";
 static char __pyx_k_makedirs[] = "makedirs";
-static char __pyx_k_save_seg[] = "save_seg";
 static char __pyx_k_threshes[] = "threshes";
 static char __pyx_k_threshold[] = "threshold";
 static char __pyx_k_watershed[] = "watershed";
 static char __pyx_k_ValueError[] = "ValueError";
 static char __pyx_k_RuntimeError[] = "RuntimeError";
+static char __pyx_k_save_threshes[] = "save_threshes";
 static char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
 static char __pyx_k_groups_turaga_home_singhc_evalu[] = "/groups/turaga/home/singhc/evaluation/src_cython/mainDefs.pyx";
 static char __pyx_k_unknown_dtype_code_in_numpy_pxd[] = "unknown dtype code in numpy.pxd (%d)";
@@ -1274,14 +1274,14 @@ static PyObject *__pyx_n_s_out;
 static PyObject *__pyx_kp_b_out_2;
 static PyObject *__pyx_n_s_path;
 static PyObject *__pyx_n_s_range;
-static PyObject *__pyx_n_s_save_seg;
+static PyObject *__pyx_n_s_save_threshes;
 static PyObject *__pyx_n_s_square;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_threshes;
 static PyObject *__pyx_n_s_threshold;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_watershed;
-static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, int __pyx_v_save_seg, std::string __pyx_v_out); /* proto */
+static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, std::list<int>  __pyx_v_save_threshes, std::string __pyx_v_out); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static std::string __pyx_k_;
@@ -1295,9 +1295,9 @@ static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_codeobj__9;
 
 /* "mainDefs.pyx":12
- *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, int save_seg, string* out)
+ *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
  * 
- * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, int save_seg, string out='out/'):             # <<<<<<<<<<<<<<
+ * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
  *     dims = affs.shape
  *     dirs = [out,out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']
  */
@@ -1310,7 +1310,7 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
   PyArrayObject *__pyx_v_affs = 0;
   std::list<int>  __pyx_v_threshes;
   std::list<std::string>  __pyx_v_funcs;
-  int __pyx_v_save_seg;
+  std::list<int>  __pyx_v_save_threshes;
   std::string __pyx_v_out;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -1319,7 +1319,7 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("eval (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_gt,&__pyx_n_s_affs,&__pyx_n_s_threshes,&__pyx_n_s_funcs,&__pyx_n_s_save_seg,&__pyx_n_s_out,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_gt,&__pyx_n_s_affs,&__pyx_n_s_threshes,&__pyx_n_s_funcs,&__pyx_n_s_save_threshes,&__pyx_n_s_out,0};
     PyObject* values[6] = {0,0,0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
@@ -1355,7 +1355,7 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
           __Pyx_RaiseArgtupleInvalid("eval", 0, 5, 6, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
-        if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_save_seg)) != 0)) kw_args--;
+        if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_save_threshes)) != 0)) kw_args--;
         else {
           __Pyx_RaiseArgtupleInvalid("eval", 0, 5, 6, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
@@ -1384,7 +1384,7 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
     __pyx_v_affs = ((PyArrayObject *)values[1]);
     __pyx_v_threshes = __pyx_convert_list_from_py_int(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_funcs = __pyx_convert_list_from_py_std_3a__3a_string(values[3]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_save_seg = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_save_seg == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_save_threshes = __pyx_convert_list_from_py_int(values[4]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     if (values[5]) {
       __pyx_v_out = __pyx_convert_string_from_py_std__in_string(values[5]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     } else {
@@ -1401,7 +1401,7 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_gt), __pyx_ptype_5numpy_ndarray, 1, "gt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_eval(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_funcs, __pyx_v_save_seg, __pyx_v_out);
+  __pyx_r = __pyx_pf_8mainDefs_eval(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_funcs, __pyx_v_save_threshes, __pyx_v_out);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1412,7 +1412,7 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, int __pyx_v_save_seg, std::string __pyx_v_out) {
+static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, std::list<int>  __pyx_v_save_threshes, std::string __pyx_v_out) {
   npy_intp *__pyx_v_dims;
   PyObject *__pyx_v_dirs = NULL;
   Py_ssize_t __pyx_v_i;
@@ -1468,7 +1468,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
 
   /* "mainDefs.pyx":13
  * 
- * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, int save_seg, string out='out/'):
+ * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):
  *     dims = affs.shape             # <<<<<<<<<<<<<<
  *     dirs = [out,out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']
  *     for i in range(len(dirs)):
@@ -1477,7 +1477,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   __pyx_v_dims = __pyx_t_1;
 
   /* "mainDefs.pyx":14
- * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, int save_seg, string out='out/'):
+ * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):
  *     dims = affs.shape
  *     dirs = [out,out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']             # <<<<<<<<<<<<<<
  *     for i in range(len(dirs)):
@@ -1597,7 +1597,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
  *         if not os.path.exists(dirs[i]):
  *             os.makedirs(dirs[i])             # <<<<<<<<<<<<<<
  *     # list contains six args ('linear','square','fel','thresh','watershed','lowhigh')
- *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,save_seg,&out)
+ *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,&save_threshes,&out)
  */
       __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_os); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
@@ -1647,7 +1647,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   /* "mainDefs.pyx":19
  *             os.makedirs(dirs[i])
  *     # list contains six args ('linear','square','fel','thresh','watershed','lowhigh')
- *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,save_seg,&out)             # <<<<<<<<<<<<<<
+ *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,&save_threshes,&out)             # <<<<<<<<<<<<<<
  *     return map
  */
   __pyx_t_13 = 0;
@@ -1695,11 +1695,11 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
     __Pyx_RaiseBufferIndexError(__pyx_t_16);
     {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_v_map = eval_c((__pyx_v_dims[0]), (__pyx_v_dims[1]), (__pyx_v_dims[2]), (__pyx_v_dims[3]), (&(*__Pyx_BufPtrStrided3d(__pyx_t_5numpy_uint32_t *, __pyx_pybuffernd_gt.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_gt.diminfo[0].strides, __pyx_t_14, __pyx_pybuffernd_gt.diminfo[1].strides, __pyx_t_15, __pyx_pybuffernd_gt.diminfo[2].strides))), (&(*__Pyx_BufPtrStrided4d(__pyx_t_5numpy_float32_t *, __pyx_pybuffernd_affs.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_affs.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_affs.diminfo[1].strides, __pyx_t_19, __pyx_pybuffernd_affs.diminfo[2].strides, __pyx_t_20, __pyx_pybuffernd_affs.diminfo[3].strides))), (&__pyx_v_threshes), (&__pyx_v_funcs), __pyx_v_save_seg, (&__pyx_v_out));
+  __pyx_v_map = eval_c((__pyx_v_dims[0]), (__pyx_v_dims[1]), (__pyx_v_dims[2]), (__pyx_v_dims[3]), (&(*__Pyx_BufPtrStrided3d(__pyx_t_5numpy_uint32_t *, __pyx_pybuffernd_gt.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_gt.diminfo[0].strides, __pyx_t_14, __pyx_pybuffernd_gt.diminfo[1].strides, __pyx_t_15, __pyx_pybuffernd_gt.diminfo[2].strides))), (&(*__Pyx_BufPtrStrided4d(__pyx_t_5numpy_float32_t *, __pyx_pybuffernd_affs.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_affs.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_affs.diminfo[1].strides, __pyx_t_19, __pyx_pybuffernd_affs.diminfo[2].strides, __pyx_t_20, __pyx_pybuffernd_affs.diminfo[3].strides))), (&__pyx_v_threshes), (&__pyx_v_funcs), (&__pyx_v_save_threshes), (&__pyx_v_out));
 
   /* "mainDefs.pyx":20
  *     # list contains six args ('linear','square','fel','thresh','watershed','lowhigh')
- *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,save_seg,&out)
+ *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,&save_threshes,&out)
  *     return map             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
@@ -1710,9 +1710,9 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   goto __pyx_L0;
 
   /* "mainDefs.pyx":12
- *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, int save_seg, string* out)
+ *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
  * 
- * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, int save_seg, string out='out/'):             # <<<<<<<<<<<<<<
+ * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
  *     dims = affs.shape
  *     dirs = [out,out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']
  */
@@ -4667,7 +4667,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_b_out_2, __pyx_k_out_2, sizeof(__pyx_k_out_2), 0, 0, 0, 0},
   {&__pyx_n_s_path, __pyx_k_path, sizeof(__pyx_k_path), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
-  {&__pyx_n_s_save_seg, __pyx_k_save_seg, sizeof(__pyx_k_save_seg), 0, 0, 1, 1},
+  {&__pyx_n_s_save_threshes, __pyx_k_save_threshes, sizeof(__pyx_k_save_threshes), 0, 0, 1, 1},
   {&__pyx_n_s_square, __pyx_k_square, sizeof(__pyx_k_square), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_threshes, __pyx_k_threshes, sizeof(__pyx_k_threshes), 0, 0, 1, 1},
@@ -4756,13 +4756,13 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "mainDefs.pyx":12
- *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, int save_seg, string* out)
+ *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
  * 
- * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, int save_seg, string out='out/'):             # <<<<<<<<<<<<<<
+ * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
  *     dims = affs.shape
  *     dirs = [out,out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']
  */
-  __pyx_tuple__8 = PyTuple_Pack(10, __pyx_n_s_gt, __pyx_n_s_affs, __pyx_n_s_threshes, __pyx_n_s_funcs, __pyx_n_s_save_seg, __pyx_n_s_out, __pyx_n_s_dims, __pyx_n_s_dirs, __pyx_n_s_i, __pyx_n_s_map); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__8 = PyTuple_Pack(10, __pyx_n_s_gt, __pyx_n_s_affs, __pyx_n_s_threshes, __pyx_n_s_funcs, __pyx_n_s_save_threshes, __pyx_n_s_out, __pyx_n_s_dims, __pyx_n_s_dirs, __pyx_n_s_i, __pyx_n_s_map); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
   __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(6, 0, 10, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_eval, 12, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 12; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4912,9 +4912,9 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "mainDefs.pyx":12
- *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, int save_seg, string* out)
+ *     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
  * 
- * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, int save_seg, string out='out/'):             # <<<<<<<<<<<<<<
+ * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
  *     dims = affs.shape
  *     dirs = [out,out+'linear',out+'square',out+'threshold',out+'watershed',out+'lowhigh']
  */
