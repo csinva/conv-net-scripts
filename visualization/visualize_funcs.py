@@ -98,3 +98,14 @@ def trim(data_set,label_set,aff):
         data_set = data_set[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
         label_set = label_set[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding),:]
     return data_set,label_set
+
+def formatAndSave(ax,outputFile):
+    #plt.xlim([.5,1])
+    #plt.ylim([.5,1])
+    plt.legend(bbox_to_anchor=(.4,.4),bbox_transform=plt.gcf().transFigure)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.savefig(outputFile)
+    ax.grid()
+    plt.show()

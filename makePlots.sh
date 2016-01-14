@@ -1,4 +1,0 @@
-# test
-# python plot_rand.py data_tier2/test/out/fibsem_ave_10000 data_tier2/test/out/fibsem_ave_30000 data_tier2/test/out/fibsem_ave_50000 data_tier2/test/out/fibsem_ave_100000 data_tier2/test/out/fibsem_ave_200000 data_tier2/train/out/fibsem_ave_10000 data_tier2/train/out/fibsem_ave_200000
-python plot_rand.py data_tier2/test/out/fibsem_ave_10000 data_tier2/test/out/fibsem_ave_10000 data_tier2/test/out/fibsem_ave_200000 data_tier2/train/out/fibsem_ave_10000 data_tier2/train/out/fibsem_ave_200000
-#python plot_rand.py data_tier2/figs/f_scores data_tier2/test/out/fibsem_ave_10000 data_tier2/test/out/fibsem_ave_30000 data_tier2/test/out/fibsem_ave_50000 data_tier2/test/out/fibsem_ave_100000 data_tier2/test/out/fibsem_ave_200000 data_tier2/train/out/fibsem_ave_10000 data_tier2/train/out/fibsem_ave_200000
