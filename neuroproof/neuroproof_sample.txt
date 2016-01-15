@@ -19,4 +19,4 @@ Number of unmerged pairs of large bodies: 91 from 353 large bodies
 Number of under-merged bodies: 100
 ************Finished Printing Statistics**************
 Number of GT orphan bodies with more than 25000 voxels : 42
-Time Elapsed: 114.129 seconds
+Time Elapsed: 110.246 seconds

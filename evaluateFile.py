@@ -40,6 +40,7 @@ def evaluateFile(args):
     f.write('gt: '+hdf5_gt_file+'\n')
     f.write('pred: '+hdf5_pred_file+'\n')
     f.write('pred_dims: '+np.array_str(dims))
+    f.write('threshes: '+np.array_str(np.array(threshes)))
     f.close()
     eval(gt,aff,threshes,funcs,save_threshes,out)
 
@@ -59,23 +60,23 @@ def averageFiles(hdf5_pred_files,outputFileName): #array of pred files, average 
 
 if __name__ == "__main__":
     print "running evaluateFile main..."
-    hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-2-h5/groundtruth_seg_thick.h5'
+    hdf5_gt_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
     #hdf5_aff_file = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_aff.h5'
     #hdf5_pred_file = '/tier2/turaga/singhc/output_10000/tstvol-1_5.h5'
 
     threshes = [i*2000 for i in range(1,6)]+[i*20000 for i in range(2,16)] # 100...1,000...100,000
     funcs = ['square'] # ['linear','square','threshold','watershed','lowhigh']
-    out = 'data_tier2/test/out/fibsem'
+    out = 'data_tier2/train/out/fibsem'
     iters = [10000*i for i in range(1,14)]
     strs = ["2","3","4","5","6"]
-    #files = ['/tier2/turaga/singhc/train/output_70000/tstvol-2_' +strs[i] for i in range(len(strs))]
-    '''
+    files = ['/tier2/turaga/singhc/train/output_200000/tstvol-2_' +strs[i] for i in range(len(strs))]
+
     for i in range(len(strs)):
         evaluateFile([hdf5_gt_file,files[i]+'.h5',threshes,funcs,[],out+strs[i]+'_10000/'])
     '''
     for iter in range(len(iters)):
-        files = ['/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-2_' +strs[i] for i in range(len(strs))]
-        averageFiles(files,'/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-2_ave.h5')
-        evaluateFile([hdf5_gt_file,'/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-2_ave.h5',threshes,funcs,[],out+'ave_'+str(iters[iter])])
-
+        files = ['/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-1_' +strs[i] for i in range(len(strs))]
+        averageFiles(files,'/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-1_ave.h5')
+        evaluateFile([hdf5_gt_file,'/tier2/turaga/singhc/train/output_'+str(iters[iter])+'/tstvol-1_ave.h5',threshes,funcs,[],out+'ave_'+str(iters[iter])+'/'])
+    '''
 

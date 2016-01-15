@@ -285,76 +285,6 @@ void fill_void( ID* arr, std::size_t len )
     }
 }
 
-std::pair<double,double>
-compare_volumes( volume<uint32_t>& gt,
-                 volume<uint32_t>& ws,
-                 std::size_t size )
-{
-    std::map<uint32_t, std::map<uint32_t, uint32_t>> map;
-    std::map<uint32_t, std::map<uint32_t, uint32_t>> invmap;
-    std::map<uint32_t, uint32_t> setg, setw;
-
-    double rand_split = 0;
-    double rand_merge = 0;
-
-    double t_sq = 0;
-    double s_sq = 0;
-
-    double total = 0;
-    std::map<uint32_t, std::map<uint32_t, std::size_t>> p_ij;
-
-    std::map<uint32_t, std::size_t> s_i, t_j;
-
-    for ( std::ptrdiff_t z = 28; z < size-28; ++z )
-        for ( std::ptrdiff_t y = 28; y < size-28; ++y )
-            for ( std::ptrdiff_t x = 16; x < size-16; ++x )
-            {
-                uint32_t wsv = ws[x][y][z];
-                uint32_t gtv = gt[x][y][z];
-
-                if ( gtv )
-                {
-                    ++total;
-
-                    ++p_ij[gtv][wsv];
-                    ++s_i[wsv];
-                    ++t_j[gtv];
-                }
-            }
-
-    double sum_p_ij = 0;
-    for ( auto& a: p_ij )
-    {
-        for ( auto& b: a.second )
-        {
-            sum_p_ij += b.second * b.second;
-        }
-    }
-
-    double sum_t_k = 0;
-    for ( auto& a: t_j )
-    {
-        sum_t_k += a.second * a.second;
-    }
-
-
-    double sum_s_k = 0;
-    for ( auto& a: s_i )
-    {
-        sum_s_k += a.second * a.second;
-    }
-
-
-    //std::cout << sum_p_ij << "\n";
-    std::cout << "Rand Split: " << (sum_p_ij/sum_t_k) << "\n";
-    std::cout << "Rand Merge: " << (sum_p_ij/sum_s_k) << "\n";
-    std::cout << "Rand alpha: " << (sum_p_ij*2/(sum_t_k+sum_s_k)) << "\n";
-
-
-    return std::make_pair(sum_p_ij/sum_t_k,
-                          sum_p_ij/sum_s_k);
-}
-
 std::vector<double> reduce( const std::vector<double>& v )
 {
     std::vector<double> ret;
@@ -536,8 +466,14 @@ float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list
                  seg.reset(new volume<uint32_t>(*seg_ref));
                  std::vector<std::size_t> counts(counts_ref);
                  merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
-                 if(write_dats)
-                    write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);
+                 if ( std::find(save_threshes->begin(), save_threshes->end(), thold) != save_threshes->end() ){
+                    //copy seg to a 1d vector and return it
+                    std::vector<uint32_t> seg_vector;
+                    for(int i=0;i<5;i++)
+                        seg_vector.push_back(i);
+                    std::cout << "seg_vector: ";// << seg_vector;
+                    write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);  // return threshold
+                 }
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
@@ -547,6 +483,29 @@ float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list
 
         returnMap["square"] = r;
      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /////////////////////////////////////////// LINEAR ///////////////////////////////////////////////////////////////
 
