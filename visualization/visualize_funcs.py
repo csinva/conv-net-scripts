@@ -134,7 +134,16 @@ def trim(data_set,label_set,aff):
         padding = (gt_data_dimension - data_dimension) / 2
         data_set = data_set[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
         label_set = label_set[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding),:]
-    return data_set,label_set
+
+def trim_seg(seg,newSize):
+    # reshape labels, image
+    gt_data_dimension = seg.shape[0]
+    if gt_data_dimension != newSize:
+        padding = (gt_data_dimension - newSize) / 2
+        seg = seg[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
+    return seg
+
+
 
 def formatAndSave(ax,outputFile):
     #plt.xlim([.5,1])

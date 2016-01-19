@@ -1,0 +1,22 @@
+Read seg stack
+Read GT stack
+Built GT RAG
+Built seg RAG
+computed contingency table
+gt label determined for 1961 nodes
+Create gt 0 boundaries
+************Printing Statistics**************
+Graph edges: 0
+Graph nodes: 1961
+Body VI: MergeSplit: (0, 0)
+Number of orphan bodies with more than 25000 voxels : 0
+Percent orphans matched for seg: -nan
+Percent orphans matched for GT: -nan
+Orphan agreement rate: -nan
+computed contingency table
+gt label determined for 1961 nodes
+Number of unmerged pairs of large bodies: 0 from 259 large bodies
+Number of under-merged bodies: 0
+************Finished Printing Statistics**************
+Number of GT orphan bodies with more than 25000 voxels : 0
+Time Elapsed: 127.539 seconds

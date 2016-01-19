@@ -50,12 +50,14 @@ def averageFiles(hdf5_pred_files,outputFileName): #array of pred files, average 
 
     # loop over and average preds
     for i in range(1,len(hdf5_pred_files)):
-        print('fibsem'+hdf5_pred_files[i])
+        print(hdf5_pred_files[i])
         hdf5_aff = h5py.File(hdf5_pred_files[i]+'.h5', 'r')
         aff += np.asarray(hdf5_aff[hdf5_aff.keys()[0]],dtype='float32')
     aff = aff/len(hdf5_pred_files)
     f = h5py.File(outputFileName,'w')
-    f.create_dataset("main",data=aff)
+    print("output: ",outputFileName)
+    f["main"] = aff
+    f.close()
 
 
 if __name__ == "__main__":
