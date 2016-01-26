@@ -6,7 +6,10 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <utility>
 
 std::map<std::string,std::vector<double>> eval_c(int dx,int dy, int dz, int dcons, uint32_t * gt, float * affs,std::list<int> * threshes, std::list<std::string> * funcs,std::list<int> * save_threshes, std::string* out);
+
+std::map<std::string,std::vector<double>> oneThresh(int dx,int dy, int dz, int dcons, uint32_t * gt, float * affs,int thresh,int eval);
 
 #endif
