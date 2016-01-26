@@ -537,8 +537,10 @@ float* affs, int thresh,int eval)
 	 merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
 	    //copy seg to a 1d vector and return it
 	    std::vector<double> seg_vector;
-	    for(int i=0;i<5;i++)
-		seg_vector.push_back(((double)(i)));
+    		//for(int i=0;i<totalDim;i++){
+        	//	aff->data()[i] = affs[i];
+	    for(int i=0;i<dimX*dimY*dimZ;i++)
+		seg_vector.push_back(((double)(seg->data()[i])));
 	    std::cout << "seg_vector: ";// << seg_vector;
 	returnMap["seg"] = seg_vector; 
 	//}

@@ -134,6 +134,8 @@ def trim(data_set,label_set,aff):
         padding = (gt_data_dimension - data_dimension) / 2
         data_set = data_set[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
         label_set = label_set[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding),:]
+    return data_set,label_set	
+
 
 def trim_seg(seg,newSize):
     # reshape labels, image

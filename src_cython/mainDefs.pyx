@@ -23,9 +23,20 @@ def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs,
     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,&save_threshes,&out)
     return map
 
-
-def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes, string out='out/'):
-    print("new evalAll")
+def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):
     dims = affs.shape
     map = oneThresh(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],100,1)
-    print map
+    print map['stats']
+    #print map['seg'][0:50]
+    seg_np = np.array(map['seg']).reshape((dims[0],dims[1],dims[2]))
+    seg_np = np.transpose(seg_np,(2,1,0))
+    return segs,rand
+
+def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):
+    dims = affs.shape
+    map = oneThresh(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],100,1)
+    print map['stats']
+    #print map['seg'][0:50]
+    seg_np = np.array(map['seg']).reshape((dims[0],dims[1],dims[2]))
+    seg_np = np.transpose(seg_np,(2,1,0))
+    return segs,rand
