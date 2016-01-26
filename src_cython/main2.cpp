@@ -547,7 +547,6 @@ float* affs, int thresh,int eval)
 	 r.push_back(x.second);
 
 	returnMap["stats"] = r;
-     //}
 
      return returnMap;
 
