@@ -29,9 +29,11 @@ def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] af
             os.makedirs(seg_save_path)
     dims = affs.shape
     segs = []
+    splits = []
+    merges = []
     for i in range(len(threshes)):
         map = oneThresh(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],threshes[i],eval)
-        seg_np = np.array(map['seg']).reshape((dims[0],dims[1],dims[2]))
+        seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
         seg_np = np.transpose(seg_np,(2,1,0))
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
@@ -39,11 +41,21 @@ def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] af
                 f = h5py.File(seg_save_path+'seg_'+str(threshes[i])+'.h5','w')
                 f["main"] = seg_np
                 f.close()
-    if not h5==1:
-        if eval:
-            return segs,map['stats']
-        else:
-            return segs
+        splits = splits+[map['stats'][0]]
+        merges = merges+[map['stats'][1]]
+        max_f_score = 2/(1/splits[0]+1/merges[0])
+    for j in range(len(splits)):
+        f_score=2/(1/splits[j][0]+1/merges[j][1])
+        if f_score > max_f_score:
+             max_f_score = f_score
+    returnMap={}
+    returnMap['V_Rand']=max_f_score
+    returnMap['V_Rand_split']=splits
+    returnMap['V_Rand_merge']=merges
+    if h5==1:
+        return returnMap
+    else:
+        return segs,returnMap
 
 def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
     if not seg_save_path.endswith("/"):
@@ -54,7 +66,7 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
     segs = []
     for i in range(len(threshes)):
         map = oneThresh_no_gt(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes[i],eval)
-        seg_np = np.array(map['seg']).reshape((dims[0],dims[1],dims[2]))
+        seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
         seg_np = np.transpose(seg_np,(2,1,0))
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
@@ -63,10 +75,7 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
                 f["main"] = seg_np
                 f.close()
     if not h5==1:
-        if eval:
-            return segs
-        else:
-            return segs
+        return segs
     
 
 def zwatershed_and_metrics(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):
@@ -76,8 +85,8 @@ def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.f
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
 
 def zwatershed(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
-    return watershedAll_no_eval(affs,threshes,threshes,eval=1,h5=0)
+    return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
 
 def zwatershed_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
-    watershedAll_no_eval(affs,threshes,threshes,eval=1,h5=1)
+    watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=1)
 
