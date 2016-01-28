@@ -27,6 +27,9 @@ def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] af
         seg_save_path = seg_save_path + "/"
         if not os.path.exists(seg_save_path):
             os.makedirs(seg_save_path)
+    affs = np.transpose(affs,(1,2,3,0))
+    gt = np.array(gt,order='F')
+    affs = np.array(affs,order='F')
     dims = affs.shape
     segs = []
     splits = []
@@ -62,6 +65,9 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
         seg_save_path = seg_save_path + "/"
         if not os.path.exists(seg_save_path):
             os.makedirs(seg_save_path)
+    # change both to fortran order
+    affs = np.transpose(affs,(1,2,3,0))
+    affs = np.array(affs,order='F')
     dims = affs.shape
     segs = []
     for i in range(len(threshes)):
@@ -78,15 +84,15 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
         return segs
     
 
-def zwatershed_and_metrics(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):
+def zwatershed_and_metrics(gt,affs,threshes,save_threshes):
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
 
 def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes,seg_save_path):
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
 
-def zwatershed(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
+def zwatershed(affs, list[int] threshes):
     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
 
-def zwatershed_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
+def zwatershed_h5(np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
     watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=1)
 
