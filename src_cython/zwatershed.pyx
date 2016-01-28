@@ -87,12 +87,12 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
 def zwatershed_and_metrics(gt,affs,threshes,save_threshes):
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
 
-def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes,seg_save_path):
+def zwatershed_and_metrics_h5(gt, affs, threshes, save_threshes,seg_save_path):
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
 
-def zwatershed(affs, list[int] threshes):
+def zwatershed(affs, threshes):
     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
 
-def zwatershed_h5(np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
-    watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=1)
+def zwatershed_h5(affs, threshes, seg_save_path):
+    watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=1,seg_save_path=seg_save_path)
 
