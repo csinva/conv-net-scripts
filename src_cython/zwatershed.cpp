@@ -243,8 +243,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__mainDefs
-#define __PYX_HAVE_API__mainDefs
+#define __PYX_HAVE__zwatershed
+#define __PYX_HAVE_API__zwatershed
 #include <list>
 #include "ios"
 #include "new"
@@ -259,7 +259,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "stdlib.h"
 #include "numpy/arrayobject.h"
 #include "numpy/ufuncobject.h"
-#include "main2.h"
+#include "zwatershed.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -489,7 +489,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "mainDefs.pyx",
+  "zwatershed.pyx",
   "__init__.pxd",
   "stringsource",
   "type.pxd",
@@ -1204,7 +1204,7 @@ static PyTypeObject *__pyx_ptype_5numpy_ndarray = 0;
 static PyTypeObject *__pyx_ptype_5numpy_ufunc = 0;
 static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, char *, char *, int *); /*proto*/
 
-/* Module declarations from 'mainDefs' */
+/* Module declarations from 'zwatershed' */
 static std::string __pyx_convert_string_from_py_std__in_string(PyObject *); /*proto*/
 static std::list<int>  __pyx_convert_list_from_py_int(PyObject *); /*proto*/
 static std::list<std::string>  __pyx_convert_list_from_py_std_3a__3a_string(PyObject *); /*proto*/
@@ -1218,10 +1218,10 @@ static PyObject *__pyx_convert_map_to_py_std_3a__3a_string____std_3a__3a_vector_
 static PyObject *__pyx_convert_list_to_py_int(std::list<int>  const &); /*proto*/
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_uint32_t = { "uint32_t", NULL, sizeof(__pyx_t_5numpy_uint32_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_5numpy_uint32_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_5numpy_uint32_t), 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_float32_t = { "float32_t", NULL, sizeof(__pyx_t_5numpy_float32_t), { 0 }, 0, 'R', 0, 0 };
-#define __Pyx_MODULE_NAME "mainDefs"
-int __pyx_module_is_main_mainDefs = 0;
+#define __Pyx_MODULE_NAME "zwatershed"
+int __pyx_module_is_main_zwatershed = 0;
 
-/* Implementation of 'mainDefs' */
+/* Implementation of 'zwatershed' */
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
@@ -1286,7 +1286,6 @@ static char __pyx_k_evalAll[] = "evalAll";
 static char __pyx_k_f_score[] = "f_score";
 static char __pyx_k_reshape[] = "reshape";
 static char __pyx_k_endswith[] = "endswith";
-static char __pyx_k_mainDefs[] = "mainDefs";
 static char __pyx_k_makedirs[] = "makedirs";
 static char __pyx_k_threshes[] = "threshes";
 static char __pyx_k_returnMap[] = "returnMap";
@@ -1304,7 +1303,7 @@ static char __pyx_k_watershedAll_no_eval[] = "watershedAll_no_eval";
 static char __pyx_k_zwatershed_and_metrics[] = "zwatershed_and_metrics";
 static char __pyx_k_zwatershed_and_metrics_h5[] = "zwatershed_and_metrics_h5";
 static char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
-static char __pyx_k_groups_turaga_home_singhc_evalu[] = "/groups/turaga/home/singhc/evaluation/src_cython/mainDefs.pyx";
+static char __pyx_k_groups_turaga_home_singhc_evalu[] = "/groups/turaga/home/singhc/evaluation/src_cython/zwatershed.pyx";
 static char __pyx_k_unknown_dtype_code_in_numpy_pxd[] = "unknown dtype code in numpy.pxd (%d)";
 static char __pyx_k_Format_string_allocated_too_shor[] = "Format string allocated too short, see comment in numpy.pxd";
 static char __pyx_k_Non_native_byte_order_not_suppor[] = "Non-native byte order not supported";
@@ -1343,7 +1342,6 @@ static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_j;
 static PyObject *__pyx_n_s_main;
-static PyObject *__pyx_n_s_mainDefs;
 static PyObject *__pyx_n_s_main_2;
 static PyObject *__pyx_n_s_makedirs;
 static PyObject *__pyx_n_s_map;
@@ -1380,13 +1378,13 @@ static PyObject *__pyx_n_s_zwatershed;
 static PyObject *__pyx_n_s_zwatershed_and_metrics;
 static PyObject *__pyx_n_s_zwatershed_and_metrics_h5;
 static PyObject *__pyx_n_s_zwatershed_h5;
-static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, std::list<int>  __pyx_v_save_threshes, std::string __pyx_v_out); /* proto */
-static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path); /* proto */
-static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path); /* proto */
-static PyObject *__pyx_pf_8mainDefs_6zwatershed_and_metrics(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes); /* proto */
-static PyObject *__pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes, PyObject *__pyx_v_seg_save_path); /* proto */
-static PyObject *__pyx_pf_8mainDefs_10zwatershed(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes); /* proto */
-static PyObject *__pyx_pf_8mainDefs_12zwatershed_h5(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes); /* proto */
+static PyObject *__pyx_pf_10zwatershed_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, std::list<int>  __pyx_v_save_threshes, std::string __pyx_v_out); /* proto */
+static PyObject *__pyx_pf_10zwatershed_2evalAll(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path); /* proto */
+static PyObject *__pyx_pf_10zwatershed_4watershedAll_no_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path); /* proto */
+static PyObject *__pyx_pf_10zwatershed_6zwatershed_and_metrics(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes); /* proto */
+static PyObject *__pyx_pf_10zwatershed_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes, PyObject *__pyx_v_seg_save_path); /* proto */
+static PyObject *__pyx_pf_10zwatershed_10zwatershed(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes); /* proto */
+static PyObject *__pyx_pf_10zwatershed_12zwatershed_h5(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static PyObject *__pyx_int_0;
@@ -1418,7 +1416,7 @@ static PyObject *__pyx_codeobj__22;
 static PyObject *__pyx_codeobj__24;
 static PyObject *__pyx_codeobj__26;
 
-/* "mainDefs.pyx":16
+/* "zwatershed.pyx":16
  *     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
@@ -1427,9 +1425,9 @@ static PyObject *__pyx_codeobj__26;
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8mainDefs_1eval = {"eval", (PyCFunction)__pyx_pw_8mainDefs_1eval, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10zwatershed_1eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10zwatershed_1eval = {"eval", (PyCFunction)__pyx_pw_10zwatershed_1eval, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10zwatershed_1eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_gt = 0;
   PyArrayObject *__pyx_v_affs = 0;
   std::list<int>  __pyx_v_threshes;
@@ -1519,13 +1517,13 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("eval", 0, 5, 6, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("mainDefs.eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_gt), __pyx_ptype_5numpy_ndarray, 1, "gt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_eval(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_funcs, __pyx_v_save_threshes, __pyx_v_out);
+  __pyx_r = __pyx_pf_10zwatershed_eval(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_funcs, __pyx_v_save_threshes, __pyx_v_out);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1536,7 +1534,7 @@ static PyObject *__pyx_pw_8mainDefs_1eval(PyObject *__pyx_self, PyObject *__pyx_
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, std::list<int>  __pyx_v_save_threshes, std::string __pyx_v_out) {
+static PyObject *__pyx_pf_10zwatershed_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<std::string>  __pyx_v_funcs, std::list<int>  __pyx_v_save_threshes, std::string __pyx_v_out) {
   npy_intp *__pyx_v_dims;
   PyObject *__pyx_v_dirs = NULL;
   Py_ssize_t __pyx_v_i;
@@ -1588,7 +1586,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   }
   __pyx_pybuffernd_affs.diminfo[0].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_affs.diminfo[0].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_affs.diminfo[1].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_affs.diminfo[1].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_affs.diminfo[2].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_affs.diminfo[2].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_affs.diminfo[3].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_affs.diminfo[3].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[3];
 
-  /* "mainDefs.pyx":17
+  /* "zwatershed.pyx":17
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):
  *     dims = affs.shape             # <<<<<<<<<<<<<<
@@ -1598,7 +1596,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   __pyx_t_1 = __pyx_v_affs->dimensions;
   __pyx_v_dims = __pyx_t_1;
 
-  /* "mainDefs.pyx":18
+  /* "zwatershed.pyx":18
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):
  *     dims = affs.shape
  *     dirs = [out,out+'square']             # <<<<<<<<<<<<<<
@@ -1623,7 +1621,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   __pyx_v_dirs = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mainDefs.pyx":19
+  /* "zwatershed.pyx":19
  *     dims = affs.shape
  *     dirs = [out,out+'square']
  *     for i in range(len(dirs)):             # <<<<<<<<<<<<<<
@@ -1634,7 +1632,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
     __pyx_v_i = __pyx_t_6;
 
-    /* "mainDefs.pyx":20
+    /* "zwatershed.pyx":20
  *     dirs = [out,out+'square']
  *     for i in range(len(dirs)):
  *         if not os.path.exists(dirs[i]):             # <<<<<<<<<<<<<<
@@ -1682,7 +1680,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
     __pyx_t_10 = ((!__pyx_t_9) != 0);
     if (__pyx_t_10) {
 
-      /* "mainDefs.pyx":21
+      /* "zwatershed.pyx":21
  *     for i in range(len(dirs)):
  *         if not os.path.exists(dirs[i]):
  *             os.makedirs(dirs[i])             # <<<<<<<<<<<<<<
@@ -1724,7 +1722,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "mainDefs.pyx":20
+      /* "zwatershed.pyx":20
  *     dirs = [out,out+'square']
  *     for i in range(len(dirs)):
  *         if not os.path.exists(dirs[i]):             # <<<<<<<<<<<<<<
@@ -1734,7 +1732,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
     }
   }
 
-  /* "mainDefs.pyx":22
+  /* "zwatershed.pyx":22
  *         if not os.path.exists(dirs[i]):
  *             os.makedirs(dirs[i])
  *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,&save_threshes,&out)             # <<<<<<<<<<<<<<
@@ -1788,7 +1786,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   }
   __pyx_v_map = eval_c((__pyx_v_dims[0]), (__pyx_v_dims[1]), (__pyx_v_dims[2]), (__pyx_v_dims[3]), (&(*__Pyx_BufPtrStrided3d(__pyx_t_5numpy_uint32_t *, __pyx_pybuffernd_gt.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_gt.diminfo[0].strides, __pyx_t_12, __pyx_pybuffernd_gt.diminfo[1].strides, __pyx_t_13, __pyx_pybuffernd_gt.diminfo[2].strides))), (&(*__Pyx_BufPtrStrided4d(__pyx_t_5numpy_float32_t *, __pyx_pybuffernd_affs.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_affs.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_affs.diminfo[1].strides, __pyx_t_17, __pyx_pybuffernd_affs.diminfo[2].strides, __pyx_t_18, __pyx_pybuffernd_affs.diminfo[3].strides))), (&__pyx_v_threshes), (&__pyx_v_funcs), (&__pyx_v_save_threshes), (&__pyx_v_out));
 
-  /* "mainDefs.pyx":23
+  /* "zwatershed.pyx":23
  *             os.makedirs(dirs[i])
  *     map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,&save_threshes,&out)
  *     return map             # <<<<<<<<<<<<<<
@@ -1802,7 +1800,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "mainDefs.pyx":16
+  /* "zwatershed.pyx":16
  *     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
@@ -1822,7 +1820,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_affs.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_gt.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("mainDefs.eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -1835,7 +1833,7 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
   return __pyx_r;
 }
 
-/* "mainDefs.pyx":25
+/* "zwatershed.pyx":25
  *     return map
  * 
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
@@ -1844,9 +1842,9 @@ static PyObject *__pyx_pf_8mainDefs_eval(CYTHON_UNUSED PyObject *__pyx_self, PyA
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8mainDefs_3evalAll(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8mainDefs_3evalAll = {"evalAll", (PyCFunction)__pyx_pw_8mainDefs_3evalAll, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8mainDefs_3evalAll(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10zwatershed_3evalAll(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10zwatershed_3evalAll = {"evalAll", (PyCFunction)__pyx_pw_10zwatershed_3evalAll, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10zwatershed_3evalAll(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_gt = 0;
   PyArrayObject *__pyx_v_affs = 0;
   PyObject *__pyx_v_threshes = 0;
@@ -1942,13 +1940,13 @@ static PyObject *__pyx_pw_8mainDefs_3evalAll(PyObject *__pyx_self, PyObject *__p
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("evalAll", 0, 6, 7, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("mainDefs.evalAll", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.evalAll", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_gt), __pyx_ptype_5numpy_ndarray, 1, "gt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_2evalAll(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes, __pyx_v_eval, __pyx_v_h5, __pyx_v_seg_save_path);
+  __pyx_r = __pyx_pf_10zwatershed_2evalAll(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes, __pyx_v_eval, __pyx_v_h5, __pyx_v_seg_save_path);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1959,7 +1957,7 @@ static PyObject *__pyx_pw_8mainDefs_3evalAll(PyObject *__pyx_self, PyObject *__p
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path) {
+static PyObject *__pyx_pf_10zwatershed_2evalAll(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path) {
   npy_intp *__pyx_v_dims;
   PyObject *__pyx_v_segs = NULL;
   PyObject *__pyx_v_splits = NULL;
@@ -2023,7 +2021,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   }
   __pyx_pybuffernd_affs.diminfo[0].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_affs.diminfo[0].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_affs.diminfo[1].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_affs.diminfo[1].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_affs.diminfo[2].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_affs.diminfo[2].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_affs.diminfo[3].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_affs.diminfo[3].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[3];
 
-  /* "mainDefs.pyx":26
+  /* "zwatershed.pyx":26
  * 
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):             # <<<<<<<<<<<<<<
@@ -2040,7 +2038,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_t_4 = ((!__pyx_t_3) != 0);
   if (__pyx_t_4) {
 
-    /* "mainDefs.pyx":27
+    /* "zwatershed.pyx":27
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"             # <<<<<<<<<<<<<<
@@ -2052,7 +2050,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_DECREF_SET(__pyx_v_seg_save_path, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "mainDefs.pyx":28
+    /* "zwatershed.pyx":28
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"
  *         if not os.path.exists(seg_save_path):             # <<<<<<<<<<<<<<
@@ -2097,7 +2095,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __pyx_t_3 = ((!__pyx_t_4) != 0);
     if (__pyx_t_3) {
 
-      /* "mainDefs.pyx":29
+      /* "zwatershed.pyx":29
  *         seg_save_path = seg_save_path + "/"
  *         if not os.path.exists(seg_save_path):
  *             os.makedirs(seg_save_path)             # <<<<<<<<<<<<<<
@@ -2136,7 +2134,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "mainDefs.pyx":28
+      /* "zwatershed.pyx":28
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"
  *         if not os.path.exists(seg_save_path):             # <<<<<<<<<<<<<<
@@ -2145,7 +2143,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
     }
 
-    /* "mainDefs.pyx":26
+    /* "zwatershed.pyx":26
  * 
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):             # <<<<<<<<<<<<<<
@@ -2154,7 +2152,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
   }
 
-  /* "mainDefs.pyx":30
+  /* "zwatershed.pyx":30
  *         if not os.path.exists(seg_save_path):
  *             os.makedirs(seg_save_path)
  *     dims = affs.shape             # <<<<<<<<<<<<<<
@@ -2164,7 +2162,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_t_7 = __pyx_v_affs->dimensions;
   __pyx_v_dims = __pyx_t_7;
 
-  /* "mainDefs.pyx":31
+  /* "zwatershed.pyx":31
  *             os.makedirs(seg_save_path)
  *     dims = affs.shape
  *     segs = []             # <<<<<<<<<<<<<<
@@ -2176,7 +2174,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_v_segs = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "mainDefs.pyx":32
+  /* "zwatershed.pyx":32
  *     dims = affs.shape
  *     segs = []
  *     splits = []             # <<<<<<<<<<<<<<
@@ -2188,7 +2186,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_v_splits = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "mainDefs.pyx":33
+  /* "zwatershed.pyx":33
  *     segs = []
  *     splits = []
  *     merges = []             # <<<<<<<<<<<<<<
@@ -2200,7 +2198,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_v_merges = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "mainDefs.pyx":34
+  /* "zwatershed.pyx":34
  *     splits = []
  *     merges = []
  *     for i in range(len(threshes)):             # <<<<<<<<<<<<<<
@@ -2211,7 +2209,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "mainDefs.pyx":35
+    /* "zwatershed.pyx":35
  *     merges = []
  *     for i in range(len(threshes)):
  *         map = oneThresh(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],threshes[i],eval)             # <<<<<<<<<<<<<<
@@ -2269,7 +2267,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_map = oneThresh((__pyx_v_dims[0]), (__pyx_v_dims[1]), (__pyx_v_dims[2]), (__pyx_v_dims[3]), (&(*__Pyx_BufPtrStrided3d(__pyx_t_5numpy_uint32_t *, __pyx_pybuffernd_gt.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_gt.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_gt.diminfo[1].strides, __pyx_t_12, __pyx_pybuffernd_gt.diminfo[2].strides))), (&(*__Pyx_BufPtrStrided4d(__pyx_t_5numpy_float32_t *, __pyx_pybuffernd_affs.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_affs.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_affs.diminfo[1].strides, __pyx_t_16, __pyx_pybuffernd_affs.diminfo[2].strides, __pyx_t_17, __pyx_pybuffernd_affs.diminfo[3].strides))), __pyx_t_13, __pyx_v_eval);
 
-    /* "mainDefs.pyx":36
+    /* "zwatershed.pyx":36
  *     for i in range(len(threshes)):
  *         map = oneThresh(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],threshes[i],eval)
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))             # <<<<<<<<<<<<<<
@@ -2346,7 +2344,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_XDECREF_SET(__pyx_v_seg_np, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "mainDefs.pyx":37
+    /* "zwatershed.pyx":37
  *         map = oneThresh(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],threshes[i],eval)
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))             # <<<<<<<<<<<<<<
@@ -2388,7 +2386,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_DECREF_SET(__pyx_v_seg_np, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "mainDefs.pyx":38
+    /* "zwatershed.pyx":38
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))
  *         if threshes[i] in save_threshes:             # <<<<<<<<<<<<<<
@@ -2402,7 +2400,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __pyx_t_4 = (__pyx_t_3 != 0);
     if (__pyx_t_4) {
 
-      /* "mainDefs.pyx":39
+      /* "zwatershed.pyx":39
  *         seg_np = np.transpose(seg_np,(2,1,0))
  *         if threshes[i] in save_threshes:
  *             segs = segs + [seg_np]             # <<<<<<<<<<<<<<
@@ -2420,7 +2418,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
       __Pyx_DECREF_SET(__pyx_v_segs, ((PyObject*)__pyx_t_1));
       __pyx_t_1 = 0;
 
-      /* "mainDefs.pyx":40
+      /* "zwatershed.pyx":40
  *         if threshes[i] in save_threshes:
  *             segs = segs + [seg_np]
  *             if h5==1:             # <<<<<<<<<<<<<<
@@ -2430,7 +2428,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
       __pyx_t_4 = ((__pyx_v_h5 == 1) != 0);
       if (__pyx_t_4) {
 
-        /* "mainDefs.pyx":41
+        /* "zwatershed.pyx":41
  *             segs = segs + [seg_np]
  *             if h5==1:
  *                 f = h5py.File(seg_save_path+'seg_'+str(threshes[i])+'.h5','w')             # <<<<<<<<<<<<<<
@@ -2491,7 +2489,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
         __Pyx_XDECREF_SET(__pyx_v_f, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "mainDefs.pyx":42
+        /* "zwatershed.pyx":42
  *             if h5==1:
  *                 f = h5py.File(seg_save_path+'seg_'+str(threshes[i])+'.h5','w')
  *                 f["main"] = seg_np             # <<<<<<<<<<<<<<
@@ -2500,7 +2498,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
         if (unlikely(PyObject_SetItem(__pyx_v_f, __pyx_n_s_main, __pyx_v_seg_np) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-        /* "mainDefs.pyx":43
+        /* "zwatershed.pyx":43
  *                 f = h5py.File(seg_save_path+'seg_'+str(threshes[i])+'.h5','w')
  *                 f["main"] = seg_np
  *                 f.close()             # <<<<<<<<<<<<<<
@@ -2529,7 +2527,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
         __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "mainDefs.pyx":40
+        /* "zwatershed.pyx":40
  *         if threshes[i] in save_threshes:
  *             segs = segs + [seg_np]
  *             if h5==1:             # <<<<<<<<<<<<<<
@@ -2538,7 +2536,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
       }
 
-      /* "mainDefs.pyx":38
+      /* "zwatershed.pyx":38
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))
  *         if threshes[i] in save_threshes:             # <<<<<<<<<<<<<<
@@ -2547,7 +2545,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
     }
 
-    /* "mainDefs.pyx":44
+    /* "zwatershed.pyx":44
  *                 f["main"] = seg_np
  *                 f.close()
  *         splits = splits+[map['stats'][0]]             # <<<<<<<<<<<<<<
@@ -2568,7 +2566,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_DECREF_SET(__pyx_v_splits, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "mainDefs.pyx":45
+    /* "zwatershed.pyx":45
  *                 f.close()
  *         splits = splits+[map['stats'][0]]
  *         merges = merges+[map['stats'][1]]             # <<<<<<<<<<<<<<
@@ -2589,7 +2587,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_DECREF_SET(__pyx_v_merges, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "mainDefs.pyx":46
+    /* "zwatershed.pyx":46
  *         splits = splits+[map['stats'][0]]
  *         merges = merges+[map['stats'][1]]
  *         max_f_score = 2/(1/splits[0]+1/merges[0])             # <<<<<<<<<<<<<<
@@ -2617,7 +2615,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __pyx_t_2 = 0;
   }
 
-  /* "mainDefs.pyx":47
+  /* "zwatershed.pyx":47
  *         merges = merges+[map['stats'][1]]
  *         max_f_score = 2/(1/splits[0]+1/merges[0])
  *     for j in range(len(splits)):             # <<<<<<<<<<<<<<
@@ -2628,7 +2626,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_j = __pyx_t_9;
 
-    /* "mainDefs.pyx":48
+    /* "zwatershed.pyx":48
  *         max_f_score = 2/(1/splits[0]+1/merges[0])
  *     for j in range(len(splits)):
  *         f_score=2/(1/splits[j][0]+1/merges[j][1])             # <<<<<<<<<<<<<<
@@ -2661,7 +2659,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_XDECREF_SET(__pyx_v_f_score, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "mainDefs.pyx":49
+    /* "zwatershed.pyx":49
  *     for j in range(len(splits)):
  *         f_score=2/(1/splits[j][0]+1/merges[j][1])
  *         if f_score > max_f_score:             # <<<<<<<<<<<<<<
@@ -2674,7 +2672,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_4) {
 
-      /* "mainDefs.pyx":50
+      /* "zwatershed.pyx":50
  *         f_score=2/(1/splits[j][0]+1/merges[j][1])
  *         if f_score > max_f_score:
  *              max_f_score = f_score             # <<<<<<<<<<<<<<
@@ -2684,7 +2682,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
       __Pyx_INCREF(__pyx_v_f_score);
       __Pyx_XDECREF_SET(__pyx_v_max_f_score, __pyx_v_f_score);
 
-      /* "mainDefs.pyx":49
+      /* "zwatershed.pyx":49
  *     for j in range(len(splits)):
  *         f_score=2/(1/splits[j][0]+1/merges[j][1])
  *         if f_score > max_f_score:             # <<<<<<<<<<<<<<
@@ -2694,7 +2692,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     }
   }
 
-  /* "mainDefs.pyx":51
+  /* "zwatershed.pyx":51
  *         if f_score > max_f_score:
  *              max_f_score = f_score
  *     returnMap={}             # <<<<<<<<<<<<<<
@@ -2706,7 +2704,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_v_returnMap = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":52
+  /* "zwatershed.pyx":52
  *              max_f_score = f_score
  *     returnMap={}
  *     returnMap['V_Rand']=max_f_score             # <<<<<<<<<<<<<<
@@ -2716,7 +2714,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   if (unlikely(!__pyx_v_max_f_score)) { __Pyx_RaiseUnboundLocalError("max_f_score"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
   if (unlikely(PyDict_SetItem(__pyx_v_returnMap, __pyx_n_s_V_Rand, __pyx_v_max_f_score) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":53
+  /* "zwatershed.pyx":53
  *     returnMap={}
  *     returnMap['V_Rand']=max_f_score
  *     returnMap['V_Rand_split']=splits             # <<<<<<<<<<<<<<
@@ -2725,7 +2723,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
   if (unlikely(PyDict_SetItem(__pyx_v_returnMap, __pyx_n_s_V_Rand_split, __pyx_v_splits) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 53; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":54
+  /* "zwatershed.pyx":54
  *     returnMap['V_Rand']=max_f_score
  *     returnMap['V_Rand_split']=splits
  *     returnMap['V_Rand_merge']=merges             # <<<<<<<<<<<<<<
@@ -2734,7 +2732,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
   if (unlikely(PyDict_SetItem(__pyx_v_returnMap, __pyx_n_s_V_Rand_merge, __pyx_v_merges) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":55
+  /* "zwatershed.pyx":55
  *     returnMap['V_Rand_split']=splits
  *     returnMap['V_Rand_merge']=merges
  *     if h5==1:             # <<<<<<<<<<<<<<
@@ -2744,7 +2742,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_t_4 = ((__pyx_v_h5 == 1) != 0);
   if (__pyx_t_4) {
 
-    /* "mainDefs.pyx":56
+    /* "zwatershed.pyx":56
  *     returnMap['V_Rand_merge']=merges
  *     if h5==1:
  *         return returnMap             # <<<<<<<<<<<<<<
@@ -2756,7 +2754,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __pyx_r = __pyx_v_returnMap;
     goto __pyx_L0;
 
-    /* "mainDefs.pyx":55
+    /* "zwatershed.pyx":55
  *     returnMap['V_Rand_split']=splits
  *     returnMap['V_Rand_merge']=merges
  *     if h5==1:             # <<<<<<<<<<<<<<
@@ -2765,7 +2763,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
   }
 
-  /* "mainDefs.pyx":58
+  /* "zwatershed.pyx":58
  *         return returnMap
  *     else:
  *         return segs,returnMap             # <<<<<<<<<<<<<<
@@ -2787,7 +2785,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     goto __pyx_L0;
   }
 
-  /* "mainDefs.pyx":25
+  /* "zwatershed.pyx":25
  *     return map
  * 
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
@@ -2808,7 +2806,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_affs.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_gt.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("mainDefs.evalAll", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.evalAll", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -2829,7 +2827,7 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
   return __pyx_r;
 }
 
-/* "mainDefs.pyx":60
+/* "zwatershed.pyx":60
  *         return segs,returnMap
  * 
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
@@ -2838,9 +2836,9 @@ static PyObject *__pyx_pf_8mainDefs_2evalAll(CYTHON_UNUSED PyObject *__pyx_self,
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8mainDefs_5watershedAll_no_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8mainDefs_5watershedAll_no_eval = {"watershedAll_no_eval", (PyCFunction)__pyx_pw_8mainDefs_5watershedAll_no_eval, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8mainDefs_5watershedAll_no_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10zwatershed_5watershedAll_no_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10zwatershed_5watershedAll_no_eval = {"watershedAll_no_eval", (PyCFunction)__pyx_pw_10zwatershed_5watershedAll_no_eval, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10zwatershed_5watershedAll_no_eval(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_affs = 0;
   PyObject *__pyx_v_threshes = 0;
   PyObject *__pyx_v_save_threshes = 0;
@@ -2927,12 +2925,12 @@ static PyObject *__pyx_pw_8mainDefs_5watershedAll_no_eval(PyObject *__pyx_self, 
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("watershedAll_no_eval", 0, 5, 6, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("mainDefs.watershedAll_no_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.watershedAll_no_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_4watershedAll_no_eval(__pyx_self, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes, __pyx_v_eval, __pyx_v_h5, __pyx_v_seg_save_path);
+  __pyx_r = __pyx_pf_10zwatershed_4watershedAll_no_eval(__pyx_self, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes, __pyx_v_eval, __pyx_v_h5, __pyx_v_seg_save_path);
 
   /* function exit code */
   goto __pyx_L0;
@@ -2943,7 +2941,7 @@ static PyObject *__pyx_pw_8mainDefs_5watershedAll_no_eval(PyObject *__pyx_self, 
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path) {
+static PyObject *__pyx_pf_10zwatershed_4watershedAll_no_eval(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_affs, PyObject *__pyx_v_threshes, PyObject *__pyx_v_save_threshes, int __pyx_v_eval, int __pyx_v_h5, PyObject *__pyx_v_seg_save_path) {
   npy_intp *__pyx_v_dims;
   PyObject *__pyx_v_segs = NULL;
   Py_ssize_t __pyx_v_i;
@@ -2987,7 +2985,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
   }
   __pyx_pybuffernd_affs.diminfo[0].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_affs.diminfo[0].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_affs.diminfo[1].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_affs.diminfo[1].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_affs.diminfo[2].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_affs.diminfo[2].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_affs.diminfo[3].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_affs.diminfo[3].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[3];
 
-  /* "mainDefs.pyx":61
+  /* "zwatershed.pyx":61
  * 
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):             # <<<<<<<<<<<<<<
@@ -3004,7 +3002,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
   __pyx_t_4 = ((!__pyx_t_3) != 0);
   if (__pyx_t_4) {
 
-    /* "mainDefs.pyx":62
+    /* "zwatershed.pyx":62
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"             # <<<<<<<<<<<<<<
@@ -3016,7 +3014,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __Pyx_DECREF_SET(__pyx_v_seg_save_path, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "mainDefs.pyx":63
+    /* "zwatershed.pyx":63
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"
  *         if not os.path.exists(seg_save_path):             # <<<<<<<<<<<<<<
@@ -3061,7 +3059,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __pyx_t_3 = ((!__pyx_t_4) != 0);
     if (__pyx_t_3) {
 
-      /* "mainDefs.pyx":64
+      /* "zwatershed.pyx":64
  *         seg_save_path = seg_save_path + "/"
  *         if not os.path.exists(seg_save_path):
  *             os.makedirs(seg_save_path)             # <<<<<<<<<<<<<<
@@ -3100,7 +3098,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "mainDefs.pyx":63
+      /* "zwatershed.pyx":63
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"
  *         if not os.path.exists(seg_save_path):             # <<<<<<<<<<<<<<
@@ -3109,7 +3107,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
  */
     }
 
-    /* "mainDefs.pyx":61
+    /* "zwatershed.pyx":61
  * 
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):             # <<<<<<<<<<<<<<
@@ -3118,7 +3116,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
  */
   }
 
-  /* "mainDefs.pyx":65
+  /* "zwatershed.pyx":65
  *         if not os.path.exists(seg_save_path):
  *             os.makedirs(seg_save_path)
  *     dims = affs.shape             # <<<<<<<<<<<<<<
@@ -3128,7 +3126,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
   __pyx_t_7 = __pyx_v_affs->dimensions;
   __pyx_v_dims = __pyx_t_7;
 
-  /* "mainDefs.pyx":66
+  /* "zwatershed.pyx":66
  *             os.makedirs(seg_save_path)
  *     dims = affs.shape
  *     segs = []             # <<<<<<<<<<<<<<
@@ -3140,7 +3138,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
   __pyx_v_segs = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "mainDefs.pyx":67
+  /* "zwatershed.pyx":67
  *     dims = affs.shape
  *     segs = []
  *     for i in range(len(threshes)):             # <<<<<<<<<<<<<<
@@ -3151,7 +3149,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "mainDefs.pyx":68
+    /* "zwatershed.pyx":68
  *     segs = []
  *     for i in range(len(threshes)):
  *         map = oneThresh_no_gt(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes[i],eval)             # <<<<<<<<<<<<<<
@@ -3189,7 +3187,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_map = oneThresh_no_gt((__pyx_v_dims[0]), (__pyx_v_dims[1]), (__pyx_v_dims[2]), (__pyx_v_dims[3]), (&(*__Pyx_BufPtrStrided4d(__pyx_t_5numpy_float32_t *, __pyx_pybuffernd_affs.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_affs.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_affs.diminfo[1].strides, __pyx_t_12, __pyx_pybuffernd_affs.diminfo[2].strides, __pyx_t_13, __pyx_pybuffernd_affs.diminfo[3].strides))), __pyx_t_14, __pyx_v_eval);
 
-    /* "mainDefs.pyx":69
+    /* "zwatershed.pyx":69
  *     for i in range(len(threshes)):
  *         map = oneThresh_no_gt(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes[i],eval)
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))             # <<<<<<<<<<<<<<
@@ -3266,7 +3264,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __Pyx_XDECREF_SET(__pyx_v_seg_np, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "mainDefs.pyx":70
+    /* "zwatershed.pyx":70
  *         map = oneThresh_no_gt(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes[i],eval)
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))             # <<<<<<<<<<<<<<
@@ -3308,7 +3306,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __Pyx_DECREF_SET(__pyx_v_seg_np, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "mainDefs.pyx":71
+    /* "zwatershed.pyx":71
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))
  *         if threshes[i] in save_threshes:             # <<<<<<<<<<<<<<
@@ -3322,7 +3320,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __pyx_t_4 = (__pyx_t_3 != 0);
     if (__pyx_t_4) {
 
-      /* "mainDefs.pyx":72
+      /* "zwatershed.pyx":72
  *         seg_np = np.transpose(seg_np,(2,1,0))
  *         if threshes[i] in save_threshes:
  *             segs = segs + [seg_np]             # <<<<<<<<<<<<<<
@@ -3340,7 +3338,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
       __Pyx_DECREF_SET(__pyx_v_segs, ((PyObject*)__pyx_t_1));
       __pyx_t_1 = 0;
 
-      /* "mainDefs.pyx":73
+      /* "zwatershed.pyx":73
  *         if threshes[i] in save_threshes:
  *             segs = segs + [seg_np]
  *             if h5==1:             # <<<<<<<<<<<<<<
@@ -3350,7 +3348,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
       __pyx_t_4 = ((__pyx_v_h5 == 1) != 0);
       if (__pyx_t_4) {
 
-        /* "mainDefs.pyx":74
+        /* "zwatershed.pyx":74
  *             segs = segs + [seg_np]
  *             if h5==1:
  *                 f = h5py.File(seg_save_path+'seg_'+str(threshes[i])+'.h5','w')             # <<<<<<<<<<<<<<
@@ -3411,7 +3409,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
         __Pyx_XDECREF_SET(__pyx_v_f, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "mainDefs.pyx":75
+        /* "zwatershed.pyx":75
  *             if h5==1:
  *                 f = h5py.File(seg_save_path+'seg_'+str(threshes[i])+'.h5','w')
  *                 f["main"] = seg_np             # <<<<<<<<<<<<<<
@@ -3420,7 +3418,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
  */
         if (unlikely(PyObject_SetItem(__pyx_v_f, __pyx_n_s_main, __pyx_v_seg_np) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-        /* "mainDefs.pyx":76
+        /* "zwatershed.pyx":76
  *                 f = h5py.File(seg_save_path+'seg_'+str(threshes[i])+'.h5','w')
  *                 f["main"] = seg_np
  *                 f.close()             # <<<<<<<<<<<<<<
@@ -3449,7 +3447,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
         __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "mainDefs.pyx":73
+        /* "zwatershed.pyx":73
  *         if threshes[i] in save_threshes:
  *             segs = segs + [seg_np]
  *             if h5==1:             # <<<<<<<<<<<<<<
@@ -3458,7 +3456,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
  */
       }
 
-      /* "mainDefs.pyx":71
+      /* "zwatershed.pyx":71
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))
  *         if threshes[i] in save_threshes:             # <<<<<<<<<<<<<<
@@ -3468,7 +3466,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     }
   }
 
-  /* "mainDefs.pyx":77
+  /* "zwatershed.pyx":77
  *                 f["main"] = seg_np
  *                 f.close()
  *     if not h5==1:             # <<<<<<<<<<<<<<
@@ -3478,7 +3476,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
   __pyx_t_4 = ((!((__pyx_v_h5 == 1) != 0)) != 0);
   if (__pyx_t_4) {
 
-    /* "mainDefs.pyx":78
+    /* "zwatershed.pyx":78
  *                 f.close()
  *     if not h5==1:
  *         return segs             # <<<<<<<<<<<<<<
@@ -3490,7 +3488,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __pyx_r = __pyx_v_segs;
     goto __pyx_L0;
 
-    /* "mainDefs.pyx":77
+    /* "zwatershed.pyx":77
  *                 f["main"] = seg_np
  *                 f.close()
  *     if not h5==1:             # <<<<<<<<<<<<<<
@@ -3499,7 +3497,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
  */
   }
 
-  /* "mainDefs.pyx":60
+  /* "zwatershed.pyx":60
  *         return segs,returnMap
  * 
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
@@ -3521,7 +3519,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_affs.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("mainDefs.watershedAll_no_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.watershedAll_no_eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -3536,7 +3534,7 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
   return __pyx_r;
 }
 
-/* "mainDefs.pyx":81
+/* "zwatershed.pyx":81
  * 
  * 
  * def zwatershed_and_metrics(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):             # <<<<<<<<<<<<<<
@@ -3545,9 +3543,9 @@ static PyObject *__pyx_pf_8mainDefs_4watershedAll_no_eval(CYTHON_UNUSED PyObject
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8mainDefs_7zwatershed_and_metrics(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8mainDefs_7zwatershed_and_metrics = {"zwatershed_and_metrics", (PyCFunction)__pyx_pw_8mainDefs_7zwatershed_and_metrics, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8mainDefs_7zwatershed_and_metrics(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10zwatershed_7zwatershed_and_metrics(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10zwatershed_7zwatershed_and_metrics = {"zwatershed_and_metrics", (PyCFunction)__pyx_pw_10zwatershed_7zwatershed_and_metrics, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10zwatershed_7zwatershed_and_metrics(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_gt = 0;
   PyArrayObject *__pyx_v_affs = 0;
   std::list<int>  __pyx_v_threshes;
@@ -3613,13 +3611,13 @@ static PyObject *__pyx_pw_8mainDefs_7zwatershed_and_metrics(PyObject *__pyx_self
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("zwatershed_and_metrics", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("mainDefs.zwatershed_and_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed_and_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_gt), __pyx_ptype_5numpy_ndarray, 1, "gt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_6zwatershed_and_metrics(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes);
+  __pyx_r = __pyx_pf_10zwatershed_6zwatershed_and_metrics(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3630,7 +3628,7 @@ static PyObject *__pyx_pw_8mainDefs_7zwatershed_and_metrics(PyObject *__pyx_self
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_6zwatershed_and_metrics(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes) {
+static PyObject *__pyx_pf_10zwatershed_6zwatershed_and_metrics(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_affs;
   __Pyx_Buffer __pyx_pybuffer_affs;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_gt;
@@ -3664,7 +3662,7 @@ static PyObject *__pyx_pf_8mainDefs_6zwatershed_and_metrics(CYTHON_UNUSED PyObje
   }
   __pyx_pybuffernd_affs.diminfo[0].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_affs.diminfo[0].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_affs.diminfo[1].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_affs.diminfo[1].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_affs.diminfo[2].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_affs.diminfo[2].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_affs.diminfo[3].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_affs.diminfo[3].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[3];
 
-  /* "mainDefs.pyx":82
+  /* "zwatershed.pyx":82
  * 
  * def zwatershed_and_metrics(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)             # <<<<<<<<<<<<<<
@@ -3705,7 +3703,7 @@ static PyObject *__pyx_pf_8mainDefs_6zwatershed_and_metrics(CYTHON_UNUSED PyObje
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "mainDefs.pyx":81
+  /* "zwatershed.pyx":81
  * 
  * 
  * def zwatershed_and_metrics(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):             # <<<<<<<<<<<<<<
@@ -3724,7 +3722,7 @@ static PyObject *__pyx_pf_8mainDefs_6zwatershed_and_metrics(CYTHON_UNUSED PyObje
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_affs.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_gt.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("mainDefs.zwatershed_and_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed_and_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -3736,7 +3734,7 @@ static PyObject *__pyx_pf_8mainDefs_6zwatershed_and_metrics(CYTHON_UNUSED PyObje
   return __pyx_r;
 }
 
-/* "mainDefs.pyx":84
+/* "zwatershed.pyx":84
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
  * 
  * def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes,seg_save_path):             # <<<<<<<<<<<<<<
@@ -3745,9 +3743,9 @@ static PyObject *__pyx_pf_8mainDefs_6zwatershed_and_metrics(CYTHON_UNUSED PyObje
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8mainDefs_9zwatershed_and_metrics_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8mainDefs_9zwatershed_and_metrics_h5 = {"zwatershed_and_metrics_h5", (PyCFunction)__pyx_pw_8mainDefs_9zwatershed_and_metrics_h5, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8mainDefs_9zwatershed_and_metrics_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10zwatershed_9zwatershed_and_metrics_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10zwatershed_9zwatershed_and_metrics_h5 = {"zwatershed_and_metrics_h5", (PyCFunction)__pyx_pw_10zwatershed_9zwatershed_and_metrics_h5, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10zwatershed_9zwatershed_and_metrics_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_gt = 0;
   PyArrayObject *__pyx_v_affs = 0;
   std::list<int>  __pyx_v_threshes;
@@ -3822,13 +3820,13 @@ static PyObject *__pyx_pw_8mainDefs_9zwatershed_and_metrics_h5(PyObject *__pyx_s
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("zwatershed_and_metrics_h5", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("mainDefs.zwatershed_and_metrics_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed_and_metrics_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_gt), __pyx_ptype_5numpy_ndarray, 1, "gt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes, __pyx_v_seg_save_path);
+  __pyx_r = __pyx_pf_10zwatershed_8zwatershed_and_metrics_h5(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes, __pyx_v_save_threshes, __pyx_v_seg_save_path);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3839,7 +3837,7 @@ static PyObject *__pyx_pw_8mainDefs_9zwatershed_and_metrics_h5(PyObject *__pyx_s
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes, PyObject *__pyx_v_seg_save_path) {
+static PyObject *__pyx_pf_10zwatershed_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes, std::list<int>  __pyx_v_save_threshes, PyObject *__pyx_v_seg_save_path) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_affs;
   __Pyx_Buffer __pyx_pybuffer_affs;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_gt;
@@ -3873,7 +3871,7 @@ static PyObject *__pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyO
   }
   __pyx_pybuffernd_affs.diminfo[0].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_affs.diminfo[0].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_affs.diminfo[1].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_affs.diminfo[1].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_affs.diminfo[2].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_affs.diminfo[2].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_affs.diminfo[3].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_affs.diminfo[3].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[3];
 
-  /* "mainDefs.pyx":85
+  /* "zwatershed.pyx":85
  * 
  * def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes,seg_save_path):
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)             # <<<<<<<<<<<<<<
@@ -3915,7 +3913,7 @@ static PyObject *__pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyO
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "mainDefs.pyx":84
+  /* "zwatershed.pyx":84
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
  * 
  * def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes,seg_save_path):             # <<<<<<<<<<<<<<
@@ -3934,7 +3932,7 @@ static PyObject *__pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyO
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_affs.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_gt.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("mainDefs.zwatershed_and_metrics_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed_and_metrics_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -3946,7 +3944,7 @@ static PyObject *__pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyO
   return __pyx_r;
 }
 
-/* "mainDefs.pyx":87
+/* "zwatershed.pyx":87
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
  * 
  * def zwatershed(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
@@ -3955,9 +3953,9 @@ static PyObject *__pyx_pf_8mainDefs_8zwatershed_and_metrics_h5(CYTHON_UNUSED PyO
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8mainDefs_11zwatershed(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8mainDefs_11zwatershed = {"zwatershed", (PyCFunction)__pyx_pw_8mainDefs_11zwatershed, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8mainDefs_11zwatershed(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10zwatershed_11zwatershed(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10zwatershed_11zwatershed = {"zwatershed", (PyCFunction)__pyx_pw_10zwatershed_11zwatershed, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10zwatershed_11zwatershed(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   CYTHON_UNUSED PyArrayObject *__pyx_v_gt = 0;
   PyArrayObject *__pyx_v_affs = 0;
   std::list<int>  __pyx_v_threshes;
@@ -4014,13 +4012,13 @@ static PyObject *__pyx_pw_8mainDefs_11zwatershed(PyObject *__pyx_self, PyObject 
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("zwatershed", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("mainDefs.zwatershed", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_gt), __pyx_ptype_5numpy_ndarray, 1, "gt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_10zwatershed(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes);
+  __pyx_r = __pyx_pf_10zwatershed_10zwatershed(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes);
 
   /* function exit code */
   goto __pyx_L0;
@@ -4031,7 +4029,7 @@ static PyObject *__pyx_pw_8mainDefs_11zwatershed(PyObject *__pyx_self, PyObject 
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_10zwatershed(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes) {
+static PyObject *__pyx_pf_10zwatershed_10zwatershed(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_affs;
   __Pyx_Buffer __pyx_pybuffer_affs;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_gt;
@@ -4065,7 +4063,7 @@ static PyObject *__pyx_pf_8mainDefs_10zwatershed(CYTHON_UNUSED PyObject *__pyx_s
   }
   __pyx_pybuffernd_affs.diminfo[0].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_affs.diminfo[0].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_affs.diminfo[1].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_affs.diminfo[1].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_affs.diminfo[2].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_affs.diminfo[2].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_affs.diminfo[3].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_affs.diminfo[3].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[3];
 
-  /* "mainDefs.pyx":88
+  /* "zwatershed.pyx":88
  * 
  * def zwatershed(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
  *     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)             # <<<<<<<<<<<<<<
@@ -4103,7 +4101,7 @@ static PyObject *__pyx_pf_8mainDefs_10zwatershed(CYTHON_UNUSED PyObject *__pyx_s
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "mainDefs.pyx":87
+  /* "zwatershed.pyx":87
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
  * 
  * def zwatershed(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
@@ -4122,7 +4120,7 @@ static PyObject *__pyx_pf_8mainDefs_10zwatershed(CYTHON_UNUSED PyObject *__pyx_s
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_affs.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_gt.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("mainDefs.zwatershed", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -4134,7 +4132,7 @@ static PyObject *__pyx_pf_8mainDefs_10zwatershed(CYTHON_UNUSED PyObject *__pyx_s
   return __pyx_r;
 }
 
-/* "mainDefs.pyx":90
+/* "zwatershed.pyx":90
  *     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
  * 
  * def zwatershed_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
@@ -4143,9 +4141,9 @@ static PyObject *__pyx_pf_8mainDefs_10zwatershed(CYTHON_UNUSED PyObject *__pyx_s
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8mainDefs_13zwatershed_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_8mainDefs_13zwatershed_h5 = {"zwatershed_h5", (PyCFunction)__pyx_pw_8mainDefs_13zwatershed_h5, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8mainDefs_13zwatershed_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_10zwatershed_13zwatershed_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_10zwatershed_13zwatershed_h5 = {"zwatershed_h5", (PyCFunction)__pyx_pw_10zwatershed_13zwatershed_h5, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_10zwatershed_13zwatershed_h5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   CYTHON_UNUSED PyArrayObject *__pyx_v_gt = 0;
   PyArrayObject *__pyx_v_affs = 0;
   std::list<int>  __pyx_v_threshes;
@@ -4202,13 +4200,13 @@ static PyObject *__pyx_pw_8mainDefs_13zwatershed_h5(PyObject *__pyx_self, PyObje
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("zwatershed_h5", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("mainDefs.zwatershed_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_gt), __pyx_ptype_5numpy_ndarray, 1, "gt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_affs), __pyx_ptype_5numpy_ndarray, 1, "affs", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_8mainDefs_12zwatershed_h5(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes);
+  __pyx_r = __pyx_pf_10zwatershed_12zwatershed_h5(__pyx_self, __pyx_v_gt, __pyx_v_affs, __pyx_v_threshes);
 
   /* function exit code */
   goto __pyx_L0;
@@ -4219,7 +4217,7 @@ static PyObject *__pyx_pw_8mainDefs_13zwatershed_h5(PyObject *__pyx_self, PyObje
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8mainDefs_12zwatershed_h5(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes) {
+static PyObject *__pyx_pf_10zwatershed_12zwatershed_h5(CYTHON_UNUSED PyObject *__pyx_self, CYTHON_UNUSED PyArrayObject *__pyx_v_gt, PyArrayObject *__pyx_v_affs, std::list<int>  __pyx_v_threshes) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_affs;
   __Pyx_Buffer __pyx_pybuffer_affs;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_gt;
@@ -4253,7 +4251,7 @@ static PyObject *__pyx_pf_8mainDefs_12zwatershed_h5(CYTHON_UNUSED PyObject *__py
   }
   __pyx_pybuffernd_affs.diminfo[0].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_affs.diminfo[0].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_affs.diminfo[1].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_affs.diminfo[1].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_affs.diminfo[2].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_affs.diminfo[2].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[2]; __pyx_pybuffernd_affs.diminfo[3].strides = __pyx_pybuffernd_affs.rcbuffer->pybuffer.strides[3]; __pyx_pybuffernd_affs.diminfo[3].shape = __pyx_pybuffernd_affs.rcbuffer->pybuffer.shape[3];
 
-  /* "mainDefs.pyx":91
+  /* "zwatershed.pyx":91
  * 
  * def zwatershed_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):
  *     watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=1)             # <<<<<<<<<<<<<<
@@ -4287,7 +4285,7 @@ static PyObject *__pyx_pf_8mainDefs_12zwatershed_h5(CYTHON_UNUSED PyObject *__py
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "mainDefs.pyx":90
+  /* "zwatershed.pyx":90
  *     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
  * 
  * def zwatershed_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
@@ -4308,7 +4306,7 @@ static PyObject *__pyx_pf_8mainDefs_12zwatershed_h5(CYTHON_UNUSED PyObject *__py
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_affs.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_gt.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("mainDefs.zwatershed_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zwatershed.zwatershed_h5", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -7308,7 +7306,7 @@ static struct PyModuleDef __pyx_moduledef = {
   #else
     PyModuleDef_HEAD_INIT,
   #endif
-    "mainDefs",
+    "zwatershed",
     0, /* m_doc */
     -1, /* m_size */
     __pyx_methods /* m_methods */,
@@ -7353,7 +7351,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_j, __pyx_k_j, sizeof(__pyx_k_j), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
-  {&__pyx_n_s_mainDefs, __pyx_k_mainDefs, sizeof(__pyx_k_mainDefs), 0, 0, 1, 1},
   {&__pyx_n_s_main_2, __pyx_k_main_2, sizeof(__pyx_k_main_2), 0, 0, 1, 1},
   {&__pyx_n_s_makedirs, __pyx_k_makedirs, sizeof(__pyx_k_makedirs), 0, 0, 1, 1},
   {&__pyx_n_s_map, __pyx_k_map, sizeof(__pyx_k_map), 0, 0, 1, 1},
@@ -7405,7 +7402,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "mainDefs.pyx":26
+  /* "zwatershed.pyx":26
  * 
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):             # <<<<<<<<<<<<<<
@@ -7416,7 +7413,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "mainDefs.pyx":37
+  /* "zwatershed.pyx":37
  *         map = oneThresh(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],threshes[i],eval)
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))             # <<<<<<<<<<<<<<
@@ -7427,7 +7424,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "mainDefs.pyx":61
+  /* "zwatershed.pyx":61
  * 
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
  *     if not seg_save_path.endswith("/"):             # <<<<<<<<<<<<<<
@@ -7438,7 +7435,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__5);
   __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "mainDefs.pyx":70
+  /* "zwatershed.pyx":70
  *         map = oneThresh_no_gt(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes[i],eval)
  *         seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
  *         seg_np = np.transpose(seg_np,(2,1,0))             # <<<<<<<<<<<<<<
@@ -7515,7 +7512,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "mainDefs.pyx":16
+  /* "zwatershed.pyx":16
  *     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
@@ -7527,7 +7524,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__13);
   __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(6, 0, 10, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_eval, 16, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":25
+  /* "zwatershed.pyx":25
  *     return map
  * 
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
@@ -7539,7 +7536,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__15);
   __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(7, 0, 19, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_evalAll, 25, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":60
+  /* "zwatershed.pyx":60
  *         return segs,returnMap
  * 
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
@@ -7551,7 +7548,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__17);
   __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(6, 0, 12, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_watershedAll_no_eval, 60, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":81
+  /* "zwatershed.pyx":81
  * 
  * 
  * def zwatershed_and_metrics(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):             # <<<<<<<<<<<<<<
@@ -7563,7 +7560,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__19);
   __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_zwatershed_and_metrics, 81, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":84
+  /* "zwatershed.pyx":84
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
  * 
  * def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes,seg_save_path):             # <<<<<<<<<<<<<<
@@ -7575,7 +7572,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__21);
   __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_zwatershed_and_metrics_h5, 84, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":87
+  /* "zwatershed.pyx":87
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
  * 
  * def zwatershed(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
@@ -7587,7 +7584,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__23);
   __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_groups_turaga_home_singhc_evalu, __pyx_n_s_zwatershed, 87, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "mainDefs.pyx":90
+  /* "zwatershed.pyx":90
  *     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
  * 
  * def zwatershed_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
@@ -7616,11 +7613,11 @@ static int __Pyx_InitGlobals(void) {
 }
 
 #if PY_MAJOR_VERSION < 3
-PyMODINIT_FUNC initmainDefs(void); /*proto*/
-PyMODINIT_FUNC initmainDefs(void)
+PyMODINIT_FUNC initzwatershed(void); /*proto*/
+PyMODINIT_FUNC initzwatershed(void)
 #else
-PyMODINIT_FUNC PyInit_mainDefs(void); /*proto*/
-PyMODINIT_FUNC PyInit_mainDefs(void)
+PyMODINIT_FUNC PyInit_zwatershed(void); /*proto*/
+PyMODINIT_FUNC PyInit_zwatershed(void)
 #endif
 {
   PyObject *__pyx_t_1 = NULL;
@@ -7638,7 +7635,7 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
           Py_FatalError("failed to import 'refnanny' module");
   }
   #endif
-  __Pyx_RefNannySetupContext("PyMODINIT_FUNC PyInit_mainDefs(void)", 0);
+  __Pyx_RefNannySetupContext("PyMODINIT_FUNC PyInit_zwatershed(void)", 0);
   if (__Pyx_check_binary_version() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_empty_tuple = PyTuple_New(0); if (unlikely(!__pyx_empty_tuple)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_empty_bytes = PyBytes_FromStringAndSize("", 0); if (unlikely(!__pyx_empty_bytes)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -7666,7 +7663,7 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   #endif
   /*--- Module creation code ---*/
   #if PY_MAJOR_VERSION < 3
-  __pyx_m = Py_InitModule4("mainDefs", __pyx_methods, 0, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
+  __pyx_m = Py_InitModule4("zwatershed", __pyx_methods, 0, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
   #else
   __pyx_m = PyModule_Create(&__pyx_moduledef);
   #endif
@@ -7683,14 +7680,14 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   #endif
-  if (__pyx_module_is_main_mainDefs) {
+  if (__pyx_module_is_main_zwatershed) {
     if (PyObject_SetAttrString(__pyx_m, "__name__", __pyx_n_s_main_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    if (!PyDict_GetItemString(modules, "mainDefs")) {
-      if (unlikely(PyDict_SetItemString(modules, "mainDefs", __pyx_m) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!PyDict_GetItemString(modules, "zwatershed")) {
+      if (unlikely(PyDict_SetItemString(modules, "zwatershed", __pyx_m) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
   }
   #endif
@@ -7722,7 +7719,7 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   if (__Pyx_patch_abc() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   #endif
 
-  /* "mainDefs.pyx":6
+  /* "zwatershed.pyx":6
  * from libcpp.string cimport string
  * from libcpp.pair cimport pair
  * import numpy as np             # <<<<<<<<<<<<<<
@@ -7734,7 +7731,7 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":7
+  /* "zwatershed.pyx":7
  * from libcpp.pair cimport pair
  * import numpy as np
  * import os             # <<<<<<<<<<<<<<
@@ -7746,19 +7743,19 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_os, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 7; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":9
+  /* "zwatershed.pyx":9
  * import os
  * cimport numpy as np
  * import h5py             # <<<<<<<<<<<<<<
  * 
- * cdef extern from "main2.h":
+ * cdef extern from "zwatershed.h":
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_h5py, 0, -1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 9; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_h5py, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 9; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":16
+  /* "zwatershed.pyx":16
  *     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
  * 
  * def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):             # <<<<<<<<<<<<<<
@@ -7767,84 +7764,84 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
  */
   __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_kp_b_out_2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_k_ = __pyx_t_2;
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_1eval, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10zwatershed_1eval, NULL, __pyx_n_s_zwatershed); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_eval, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":25
+  /* "zwatershed.pyx":25
  *     return map
  * 
  * def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_3evalAll, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10zwatershed_3evalAll, NULL, __pyx_n_s_zwatershed); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_evalAll, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":60
+  /* "zwatershed.pyx":60
  *         return segs,returnMap
  * 
  * def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):             # <<<<<<<<<<<<<<
  *     if not seg_save_path.endswith("/"):
  *         seg_save_path = seg_save_path + "/"
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_5watershedAll_no_eval, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10zwatershed_5watershedAll_no_eval, NULL, __pyx_n_s_zwatershed); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_watershedAll_no_eval, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":81
+  /* "zwatershed.pyx":81
  * 
  * 
  * def zwatershed_and_metrics(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):             # <<<<<<<<<<<<<<
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_7zwatershed_and_metrics, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10zwatershed_7zwatershed_and_metrics, NULL, __pyx_n_s_zwatershed); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_zwatershed_and_metrics, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":84
+  /* "zwatershed.pyx":84
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
  * 
  * def zwatershed_and_metrics_h5(np.ndarray[np.uint32_t,ndim=3] gt, np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes,seg_save_path):             # <<<<<<<<<<<<<<
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_9zwatershed_and_metrics_h5, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10zwatershed_9zwatershed_and_metrics_h5, NULL, __pyx_n_s_zwatershed); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_zwatershed_and_metrics_h5, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":87
+  /* "zwatershed.pyx":87
  *     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
  * 
  * def zwatershed(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
  *     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_11zwatershed, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10zwatershed_11zwatershed, NULL, __pyx_n_s_zwatershed); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_zwatershed, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":90
+  /* "zwatershed.pyx":90
  *     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
  * 
  * def zwatershed_h5(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes):             # <<<<<<<<<<<<<<
  *     watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=1)
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8mainDefs_13zwatershed_h5, NULL, __pyx_n_s_mainDefs); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10zwatershed_13zwatershed_h5, NULL, __pyx_n_s_zwatershed); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_zwatershed_h5, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "mainDefs.pyx":1
+  /* "zwatershed.pyx":1
  * from libcpp.list cimport list             # <<<<<<<<<<<<<<
  * from libcpp.map cimport map
  * from libcpp.vector cimport vector
@@ -7869,11 +7866,11 @@ PyMODINIT_FUNC PyInit_mainDefs(void)
   __Pyx_XDECREF(__pyx_t_1);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init mainDefs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init zwatershed", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     Py_DECREF(__pyx_m); __pyx_m = 0;
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init mainDefs");
+    PyErr_SetString(PyExc_ImportError, "init zwatershed");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

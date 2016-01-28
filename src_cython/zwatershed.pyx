@@ -8,7 +8,7 @@ import os
 cimport numpy as np
 import h5py
 
-cdef extern from "main2.h":
+cdef extern from "zwatershed.h":
     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
     map[string,vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, int thresh, int evaluate)
     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
@@ -43,9 +43,9 @@ def evalAll(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] af
                 f.close()
         splits = splits+[map['stats'][0]]
         merges = merges+[map['stats'][1]]
-        max_f_score = 2/(1/splits[0]+1/merges[0])
+    max_f_score = 2/(1/splits[0]+1/merges[0])
     for j in range(len(splits)):
-        f_score=2/(1/splits[j][0]+1/merges[j][1])
+        f_score=2/(1/splits[j]+1/merges[j])
         if f_score > max_f_score:
              max_f_score = f_score
     returnMap={}
