@@ -3,7 +3,7 @@ from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
 ext_modules = [Extension("zwatershed",
-                         ["zwatershed.pyx", "zwatershed.cpp"],
+                         ["zwatershed.pyx", "zwatershed_main.cpp"],
                          library_dirs = ["."],
                          include_dirs = ["."],
                          language='c++',
