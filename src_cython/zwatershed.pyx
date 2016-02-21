@@ -12,6 +12,7 @@ cdef extern from "zwatershed.h":
     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
     map[string,vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, int thresh, int evaluate)
     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
+    map[string,vector[double]] oneThresh_no_gt_all(int dx, int dy, int dz, int dcons, np.float32_t* affs, list[int] *threshes, int evaluate)
 
 def eval(np.ndarray[np.uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):
     dims = affs.shape
@@ -70,9 +71,10 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
     affs = np.array(affs,order='F')
     dims = affs.shape
     segs = []
+    map = oneThresh_no_gt_all(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes,eval)
     for i in range(len(threshes)):
-        map = oneThresh_no_gt(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes[i],eval)
-        seg_np = np.array(map['seg'],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
+        # map = oneThresh_no_gt(dims[0],dims[1],dims[2],dims[3],&affs[0,0,0,0],threshes[i],eval)
+        seg_np = np.array(map['seg'+str(i)],dtype='uint32').reshape((dims[0],dims[1],dims[2]))
         seg_np = np.transpose(seg_np,(2,1,0))
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]

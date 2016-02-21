@@ -39,11 +39,13 @@ if gt_data_dimension != data_dimension:
     gt = gt[padding:(-1*padding),padding:(-1*padding),padding:(-1*padding)]
     print"New GT data shape :",gt.shape
 
-segs,rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
-# segs = zwatershed(aff, threshes)
+# segs,rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
+segs = zwatershed(aff, threshes)
 # rand = zwatershed_and_metrics_h5(gt, aff, threshes, save_threshes, out)
 # zwatershed_h5(aff, threshes, out)
 
+print(len(segs))
+print(segs[0][0:10])
 print(rand)
 assert(rand['V_Rand_merge']==[0.9694421367805383])
 assert(rand['V_Rand_split']==[0.8428707715667361])
