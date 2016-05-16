@@ -95,14 +95,18 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
         return segs
 
 def zwatershed_and_metrics(gt,affs,threshes,save_threshes):
+    threshes.sort()
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
 
 def zwatershed_and_metrics_h5(gt, affs, threshes, save_threshes,seg_save_path):
+    threshes.sort()
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=1,seg_save_path=seg_save_path)
 
 def zwatershed(affs, threshes):
+    threshes.sort()
     return watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=0)
 
 def zwatershed_h5(affs, threshes, seg_save_path):
+    threshes.sort()
     watershedAll_no_eval(affs,threshes,threshes,eval=0,h5=1,seg_save_path=seg_save_path)
 
