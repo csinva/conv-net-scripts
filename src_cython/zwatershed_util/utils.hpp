@@ -111,7 +111,7 @@ inline bool write_region_graph( const std::string& fname,
     std::ofstream f(fname.c_str(), (std::ios::out | std::ios::binary) );
     if ( !f ) return false;
 
-    F* data = new F[rg.size() * 3];
+    F* data = new F[rg->size() * 3];
 
     std::size_t idx = 0;
 

@@ -399,6 +399,95 @@ struct Vertex
 
 typedef vector<Vertex> VertexList;
 
+
+
+
+
+
+
+
+double * calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
+float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
+{
+/////////////////////////////////////////// LOAD DATA ///////////////////////////////////////////////////////////////
+    bool write_dats =0; // save_seg!=0;
+    bool recreate_rg = false;
+    bool debug = 1;
+    // these values based on 5% at iter = 10000
+    double LOW=  .0001;// 0.003785; //.00001; //default = .3
+    double HIGH= .9999;// 0.999971; //.99988; //default = .99
+
+    std::cout << "evaluating..." << std::endl;
+    std::string experiment_result_folder = ".";
+
+    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
+
+    int totalDim = dimX*dimY*dimZ;
+    for(int i=0;i<totalDim;i++){
+        gt_ptr->data()[i] = gt[i];
+    }
+
+    std::cout << std::endl;
+
+    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
+
+    totalDim*=dcons;
+    for(int i=0;i<totalDim;i++){
+        aff->data()[i] = affs[i];
+    }
+
+    std::cout << "0_dim of affinity " << aff->shape()[0] << "\n";
+    std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
+    std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
+    std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
+
+    std::list<int>::const_iterator iterator;
+    std::list<int> thresh_list = *threshes;
+
+    std::map<std::string,std::vector<double>> returnMap;
+    volume_ptr<uint32_t>     seg_ref   ;
+    std::vector<std::size_t> counts_ref;
+    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
+    auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
+    volume_ptr<uint32_t>     seg   ;
+
+/////////////////////////////////////////// SQUARE ///////////////////////////////////////////////////////////////
+
+
+         std::cout << "\n\n\nsquare" << "\n";
+         std::vector<double> r;
+
+         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
+                 int thold = *iterator;
+
+             std::cout << "THOLD: " << thold << "\n";
+             {
+                 seg.reset(new volume<uint32_t>(*seg_ref));
+                 std::vector<std::size_t> counts(counts_ref);
+                 merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
+
+                 auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
+                 r.push_back(x.first);
+                 r.push_back(x.second);
+                 cout << "stats: " << x.first << x.second << "\n";
+             }
+     }
+        double* data = new double[rg->size() * 3];
+
+
+     return data;
+
+ }
+
+
+
+
+
+
+
+
+
+
 std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
 float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list<int> * save_threshes, std::string* out_ptr)
 {
@@ -463,15 +552,16 @@ float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list
                  merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
                  if ( std::find(save_threshes->begin(), save_threshes->end(), thold) != save_threshes->end() ){
                     //copy seg to a 1d vector and return it
-                    std::vector<uint32_t> seg_vector;
-                    for(int i=0;i<5;i++)
-                        seg_vector.push_back(i);
-                    std::cout << "seg_vector: ";// << seg_vector;
-                    write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);  // return threshold
+                    //std::vector<uint32_t> seg_vector;
+                    //for(int i=0;i<5;i++)
+                    //    seg_vector.push_back(i);
+                    // std::cout << "seg_vector: ";// << seg_vector;
+                    // write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);  // return threshold
                  }
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
+                 cout << "stats: " << x.first << x.second << "\n";
              }
              write_to_file(out+"square.dat", r.data(), r.size());
          }
@@ -482,6 +572,7 @@ float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list
      return returnMap;
 
  }
+
 std::map<std::string,std::vector<double>> oneThresh(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
 float* affs, int thresh,int eval)
 {
