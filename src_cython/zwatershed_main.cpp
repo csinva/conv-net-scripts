@@ -44,7 +44,7 @@ double HIGH= .9999;// 0.999971; //.99988; //default = .99
 
 
 
-double * calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
+std::list<double> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
 float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
 {
     bool recreate_rg = false;
@@ -82,9 +82,6 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
     volume_ptr<uint32_t>     seg   ;
 
-/////////////////////////////////////////// SQUARE ///////////////////////////////////////////////////////////////
-
-
          std::cout << "\n\n\nsquare" << "\n";
          std::vector<double> r;
 
@@ -103,7 +100,9 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
                  cout << "stats: " << x.first << x.second << "\n";
              }
      }
-        double* data = new double[rg->size() * 3];
+     std::list<double> data = * (new std::list<double>(rg->size() * 3));
+
+     //   double* data = new double[rg->size() * 3];
 
 
      return data;

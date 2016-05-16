@@ -13,8 +13,15 @@ cdef extern from "zwatershed.h":
     map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
     map[string,vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, int thresh, int evaluate)
     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
-    double* calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,list[int] threshes, list[int] save_threshes)
+    list[double] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,list[int] *threshes, list[int] *save_threshes)
 
+def calc_region_graph_c(np.ndarray[uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):
+    dims = affs.shape
+    x = calc_region_graph(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&save_threshes)
+    return x
+
+def calc_rgn_graph(gt, affs, threshes, save_threshes):
+    return calc_region_graph_c(gt,affs,threshes,save_threshes)
 
 def eval(np.ndarray[uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):
     dims = affs.shape
@@ -86,7 +93,6 @@ def watershedAll_no_eval(np.ndarray[np.float32_t,ndim=4] affs, threshes, save_th
                 f.close()
     if not h5==1:
         return segs
-
 
 def zwatershed_and_metrics(gt,affs,threshes,save_threshes):
     return evalAll(gt,affs,threshes,save_threshes,eval=1,h5=0)
