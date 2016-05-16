@@ -1,4 +1,5 @@
 # metric functions
+- Most code is python wrappers around code from https://bitbucket.org/poozh/watershed with small modifications.  For use in https://github.com/naibaf7/PyGreentea.
 - *returns segmentations and metrics.  The first method returns the segmentations and metrics, the second method only computes segmentations and doesn't compute the metrics.*
 	1. `(segs, rand) = pygt.zwatershed_and_metrics(segTrue, aff_graph, eval_thresh_list, seg_save_thresh_list)`
 		- `segs`: list of segmentations
