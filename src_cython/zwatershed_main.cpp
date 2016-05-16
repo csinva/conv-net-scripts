@@ -48,7 +48,7 @@ std::list<double> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uin
 float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
 {
     bool recreate_rg = false;
-
+    cout << "recreate_rg=" << recreate_rg << "\n";
     std::cout << "evaluating..." << std::endl;
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
@@ -72,17 +72,17 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
     std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
     std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
 
-    std::list<int>::const_iterator iterator;
-    std::list<int> thresh_list = *threshes;
+
 
     std::map<std::string,std::vector<double>> returnMap;
     volume_ptr<uint32_t>     seg_ref   ;
     std::vector<std::size_t> counts_ref;
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
-    volume_ptr<uint32_t>     seg   ;
-
-         std::cout << "\n\n\nsquare" << "\n";
+    /*
+    volume_ptr<uint32_t>  seg   ;
+    std::list<int>::const_iterator iterator;
+    std::list<int> thresh_list = *threshes;
          std::vector<double> r;
 
          for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
@@ -97,22 +97,22 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
-                 cout << "stats: " << x.first << x.second << "\n";
              }
      }
+     */
      std::list<double> data = * (new std::list<double>(rg->size() * 3));
 
-     //   double* data = new double[rg->size() * 3];
-
+    for ( const auto& e: *rg )
+    {
+        data.push_back(std::get<1>(e));
+        data.push_back(std::get<2>(e));
+        data.push_back(std::get<0>(e));
+        // cout << std::get<0>(e) << "\n";
+    }
 
      return data;
 
  }
-
-
-
-
-
 
 
 
@@ -159,11 +159,7 @@ float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
     volume_ptr<uint32_t>     seg   ;
 
-/////////////////////////////////////////// SQUARE ///////////////////////////////////////////////////////////////
 
-     if ( std::find(funcs->begin(), funcs->end(), "square") != funcs->end() )
-     {
-         std::cout << "\n\n\nsquare" << "\n";
          std::vector<double> r;
 
          for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
@@ -174,14 +170,6 @@ float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list
                  seg.reset(new volume<uint32_t>(*seg_ref));
                  std::vector<std::size_t> counts(counts_ref);
                  merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
-                 if ( std::find(save_threshes->begin(), save_threshes->end(), thold) != save_threshes->end() ){
-                    //copy seg to a 1d vector and return it
-                    //std::vector<uint32_t> seg_vector;
-                    //for(int i=0;i<5;i++)
-                    //    seg_vector.push_back(i);
-                    // std::cout << "seg_vector: ";// << seg_vector;
-                    // write_volume(out+"square/" + std::to_string(thold) + ".dat", seg);  // return threshold
-                 }
                  auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
                  r.push_back(x.first);
                  r.push_back(x.second);
@@ -191,7 +179,6 @@ float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list
          }
 
         returnMap["square"] = r;
-     }
 
      return returnMap;
 
