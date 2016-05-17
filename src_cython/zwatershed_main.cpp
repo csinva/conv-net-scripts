@@ -73,7 +73,7 @@ float* affs)
     }
     std::list<float> seg_data = * (new std::list<float>());
     std::list<float> counts_data = * (new std::list<float>());
-    for(int i=0;i<totalDim;i++){
+    for(int i=0;i<dimX*dimY*dimZ;i++){
         seg_data.push_back(seg_ref->data()[i]);
     }
     for (const auto& x:counts_ref){
@@ -86,9 +86,8 @@ float* affs)
  }
 
 
-std::map<std::string,std::vector<double>> oneThresh(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
-float* affs, float* rgn_graph, int rgn_graph_len, int thresh,int eval)
-{
+std::map<std::string,std::vector<double>> oneThresh(int dimX,int dimY, int dimZ, int dcons, uint32_t * gt, float * affs, float * rgn_graph,
+int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh,int eval){
     std::cout << "oneThresh..." << std::endl;
 
     //read data

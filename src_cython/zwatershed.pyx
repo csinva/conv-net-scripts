@@ -12,7 +12,7 @@ import h5py
 cdef extern from "zwatershed.h":
     map[string,list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.uint32_t*seg, np.float32_t*affs)
     map[string, vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t*gt, np.float32_t*affs,
-                                          np.float32_t*rgn_graph, int rgn_graph_len, int thresh, int evaluate)
+                                          np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg, uint32_t*counts, int counts_len, int thresh, int evaluate)
     map[string, vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t*affs, int thresh,
                                                 int evaluate)
 
@@ -32,9 +32,10 @@ def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] af
     gt = np.array(gt, order='F')
     affs = np.array(affs, order='F')
     map = calc_rgn_graph(gt,affs)
-    cdef np.ndarray[np.uint32_t, ndim=1] seg_out = map['seg']
-    cdef np.ndarray[np.uint32_t, ndim=1] counts_out = map['counts']
+    cdef np.ndarray[uint32_t, ndim=1] seg_out = map['seg']
+    cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
+    counts_len = len(map['counts'])
     if not seg_save_path.endswith("/"):
         seg_save_path = seg_save_path + "/"
         if not os.path.exists(seg_save_path):
@@ -43,7 +44,7 @@ def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] af
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
         map = oneThresh(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
-                        rgn_graph.shape[0], threshes[i], eval)
+                        rgn_graph.shape[0], &seg_out[0], &counts_out[0], counts_len, threshes[i], eval)
         seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         seg_np = np.transpose(seg_np, (2, 1, 0))
         if threshes[i] in save_threshes:
