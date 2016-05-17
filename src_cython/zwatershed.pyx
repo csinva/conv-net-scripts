@@ -16,11 +16,12 @@ cdef extern from "zwatershed.h":
 
 def calc_region_graph_c(np.ndarray[uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[int] save_threshes):
     dims = affs.shape
-    x = calc_region_graph(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&save_threshes)
-    return x
+    return calc_region_graph(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&save_threshes)
 
 def calc_rgn_graph(gt, affs, threshes, save_threshes):
-    return calc_region_graph_c(gt,affs,threshes,save_threshes)
+    graph = np.array(calc_region_graph_c(gt,affs,threshes,save_threshes))
+    rgn_graph = graph.reshape(len(graph)/3,3) # num, num, float
+    return rgn_graph
 
 def evalAll(np.ndarray[uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
     if not seg_save_path.endswith("/"):

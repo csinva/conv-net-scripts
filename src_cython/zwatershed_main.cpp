@@ -69,7 +69,7 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
 
-     std::list<double> data = * (new std::list<double>(rg->size() * 3));
+     std::list<double> data = * (new std::list<double>());
 
     for ( const auto& e: *rg )
     {
