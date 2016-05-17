@@ -42,22 +42,16 @@ bool RECREATE_RG = false;
 
 
 std::list<double> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
-float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
+float* affs)
 {
     std::cout << "evaluating..." << std::endl;
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
 
     int totalDim = dimX*dimY*dimZ;
-    for(int i=0;i<totalDim;i++){
-        gt_ptr->data()[i] = gt[i];
-    }
-
-    std::cout << std::endl;
+    totalDim*=dcons;
 
     affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
-
-    totalDim*=dcons;
     for(int i=0;i<totalDim;i++){
         aff->data()[i] = affs[i];
     }
@@ -76,7 +70,6 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
         data.push_back(std::get<1>(e));
         data.push_back(std::get<2>(e));
         data.push_back(std::get<0>(e));
-        // cout << std::get<0>(e) << "\n";
     }
 
      return data;
@@ -96,10 +89,7 @@ float* affs, int thresh,int eval)
         gt_ptr->data()[i] = gt[i];
     }
 
-    std::cout << std::endl;
-
     affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
-
     totalDim*=dcons;
     for(int i=0;i<totalDim;i++){
         aff->data()[i] = affs[i];
@@ -127,8 +117,6 @@ float* affs, int thresh,int eval)
 	 merge_segments_with_function(seg, rg, counts, square(thold), 10,RECREATE_RG);
 	    //copy seg to a 1d vector and return it
 	    std::vector<double> seg_vector;
-    		//for(int i=0;i<totalDim;i++){
-        	//	aff->data()[i] = affs[i];
 	    for(int i=0;i<dimX*dimY*dimZ;i++)
 		seg_vector.push_back(((double)(seg->data()[i])));
 	    std::cout << "seg_vector: ";// << seg_vector;
@@ -180,8 +168,7 @@ std::map<std::string,std::vector<double>> oneThresh_no_gt(int dimX, int dimY, in
 	    std::vector<double> seg_vector;
 	    for(int i=0;i<dimX*dimY*dimZ;i++)
 		seg_vector.push_back(((double)(seg->data()[i])));
-	    std::cout << "seg_vector: ";
-	returnMap["seg"] = seg_vector; 
+	returnMap["seg"] = seg_vector;
 	//}
      return returnMap;
 
