@@ -92,33 +92,23 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
 
     //read data
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
-    int totalDim = dimX*dimY*dimZ;
-    for(int i=0;i<totalDim;i++)
-        gt_ptr->data()[i] = gt[i];
-    totalDim*=dcons;
     affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
-    for(int i=0;i<totalDim;i++)
-        aff->data()[i] = affs[i];
-
-    // rgn_graph, watershed
-    volume_ptr<uint32_t>     seg_ref   ;
-    std::vector<std::size_t> counts_ref;
-    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
-
-    // construct rg from rgn_graph
+    volume_ptr<uint32_t> seg = read_volumes<uint32_t>("", dimX, dimY, dimZ);
+    std::vector<std::size_t> counts = * new std::vector<std::size_t>();
     region_graph_ptr<uint32_t,float> rg( new region_graph<uint32_t,float> );
-    region_graph<uint32_t,float>& rg_temp = *rg;
-    for(int i=0;i<rgn_graph_len;i++){
-        int i3 = i*3;
-        rg_temp.emplace_back(rgn_graph[i3+2],rgn_graph[i3],rgn_graph[i3+1]);
+    for(int i=0;i<dimX*dimY*dimZ;i++){
+        gt_ptr->data()[i] = gt[i];
+        seg->data()[i] = seg_in[i];
     }
+    for(int i=0;i<counts_len;i++)
+        counts.push_back(counts_in[i]);
+    for(int i=0;i<dimX*dimY*dimZ*dcons;i++)
+        aff->data()[i] = affs[i];
+    for(int i=0;i<rgn_graph_len;i++)
+        (*rg).emplace_back(rgn_graph[i*3+2],rgn_graph[i*3],rgn_graph[i*3+1]);
 
     // merge
-    volume_ptr<uint32_t> seg   ;
-    std::vector<double> r;
     std::cout << "thresh: " << thresh << "\n";
-	seg.reset(new volume<uint32_t>(*seg_ref));
-	std::vector<std::size_t> counts(counts_ref);
 	merge_segments_with_function(seg, rg, counts, square(thresh), 10,RECREATE_RG);
 
     // save
@@ -127,9 +117,9 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
     for(int i=0;i<dimX*dimY*dimZ;i++)
         seg_vector.push_back(((double)(seg->data()[i])));
 	returnMap["seg"] = seg_vector; 
-
 	if(eval==1){
 		auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
+		std::vector<double> r;
 		r.push_back(x.first);
 		r.push_back(x.second);
 		returnMap["stats"] = r;
