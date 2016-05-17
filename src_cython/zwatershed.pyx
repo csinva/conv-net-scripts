@@ -10,7 +10,6 @@ cimport numpy as np
 import h5py
 
 cdef extern from "zwatershed.h":
-    map[string,vector[double]] eval_c(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, list[int] *threshes, list[string] *funcs, list[int] *save_threshes, string* out)
     map[string,vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t* gt, np.float32_t* affs, int thresh, int evaluate)
     map[string,vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t* affs, int thresh, int evaluate)
     list[double] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt, float* affs,list[int] *threshes, list[int] *save_threshes)
@@ -22,16 +21,6 @@ def calc_region_graph_c(np.ndarray[uint32_t,ndim=3] gt,np.ndarray[np.float32_t,n
 
 def calc_rgn_graph(gt, affs, threshes, save_threshes):
     return calc_region_graph_c(gt,affs,threshes,save_threshes)
-
-def eval(np.ndarray[uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, list[int] threshes, list[string] funcs, list[int] save_threshes, string out='out/'):
-    dims = affs.shape
-    dirs = [out,out+'square']
-    for i in range(len(dirs)):
-        if not os.path.exists(dirs[i]):
-            os.makedirs(dirs[i])
-    map = eval_c(dims[0],dims[1],dims[2],dims[3],&gt[0,0,0],&affs[0,0,0,0],&threshes,&funcs,&save_threshes,&out)
-    return map
-
 
 def evalAll(np.ndarray[uint32_t,ndim=3] gt,np.ndarray[np.float32_t,ndim=4] affs, threshes, save_threshes,int eval, int h5, seg_save_path="NULL/"):
     if not seg_save_path.endswith("/"):

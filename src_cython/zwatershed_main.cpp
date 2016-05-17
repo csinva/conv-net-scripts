@@ -37,18 +37,13 @@ using namespace std;
 // these values based on 5% at iter = 10000
 double LOW=  .0001;// 0.003785; //.00001; //default = .3
 double HIGH= .9999;// 0.999971; //.99988; //default = .99
-
-
-
-
+bool RECREATE_RG = false;
 
 
 
 std::list<double> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
 float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
 {
-    bool recreate_rg = false;
-    cout << "recreate_rg=" << recreate_rg << "\n";
     std::cout << "evaluating..." << std::endl;
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
@@ -66,40 +61,14 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
     for(int i=0;i<totalDim;i++){
         aff->data()[i] = affs[i];
     }
-
-    std::cout << "0_dim of affinity " << aff->shape()[0] << "\n";
-    std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
-    std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
-    std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
-
-
+    std::cout << "dims:  " << aff->shape()[0] << " " << aff->shape()[1] << " " << aff->shape()[2] << " " << aff->shape()[3] << "\n";
 
     std::map<std::string,std::vector<double>> returnMap;
     volume_ptr<uint32_t>     seg_ref   ;
     std::vector<std::size_t> counts_ref;
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
-    /*
-    volume_ptr<uint32_t>  seg   ;
-    std::list<int>::const_iterator iterator;
-    std::list<int> thresh_list = *threshes;
-         std::vector<double> r;
 
-         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
-                 int thold = *iterator;
-
-             std::cout << "THOLD: " << thold << "\n";
-             {
-                 seg.reset(new volume<uint32_t>(*seg_ref));
-                 std::vector<std::size_t> counts(counts_ref);
-                 merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
-
-                 auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
-                 r.push_back(x.first);
-                 r.push_back(x.second);
-             }
-     }
-     */
      std::list<double> data = * (new std::list<double>(rg->size() * 3));
 
     for ( const auto& e: *rg )
@@ -115,80 +84,9 @@ float* affs,std::list<int> * threshes, std::list<int> * save_threshes)
  }
 
 
-
-
-
-std::map<std::string,std::vector<double>> eval_c(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
-float* affs,std::list<int> * threshes, std::list<std::string> * funcs, std::list<int> * save_threshes, std::string* out_ptr)
-{
-/////////////////////////////////////////// LOAD DATA ///////////////////////////////////////////////////////////////
-    bool recreate_rg = false;
-
-    std::string out = *out_ptr;
-    std::cout << "evaluating..." << std::endl;
-    std::cout << "output: "<< out << std::endl;
-
-    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
-
-    int totalDim = dimX*dimY*dimZ;
-    for(int i=0;i<totalDim;i++){
-        gt_ptr->data()[i] = gt[i];
-    }
-
-    std::cout << std::endl;
-
-    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
-
-    totalDim*=dcons;
-    for(int i=0;i<totalDim;i++){
-        aff->data()[i] = affs[i];
-    }
-
-    std::cout << "0_dim of affinity " << aff->shape()[0] << "\n";
-    std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
-    std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
-    std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
-
-    std::list<int>::const_iterator iterator;
-    std::list<int> thresh_list = *threshes;
-
-    std::map<std::string,std::vector<double>> returnMap;
-    volume_ptr<uint32_t>     seg_ref   ;
-    std::vector<std::size_t> counts_ref;
-    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
-    auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
-    volume_ptr<uint32_t>     seg   ;
-
-
-         std::vector<double> r;
-
-         for (iterator = thresh_list.begin(); iterator != thresh_list.end(); ++iterator) {
-                 int thold = *iterator;
-
-             std::cout << "THOLD: " << thold << "\n";
-             {
-                 seg.reset(new volume<uint32_t>(*seg_ref));
-                 std::vector<std::size_t> counts(counts_ref);
-                 merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
-                 auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
-                 r.push_back(x.first);
-                 r.push_back(x.second);
-                 cout << "stats: " << x.first << x.second << "\n";
-             }
-             write_to_file(out+"square.dat", r.data(), r.size());
-         }
-
-        returnMap["square"] = r;
-
-     return returnMap;
-
- }
-
 std::map<std::string,std::vector<double>> oneThresh(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
 float* affs, int thresh,int eval)
 {
-    bool recreate_rg = false;
-
     std::cout << "evaluating..." << std::endl;
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
@@ -207,10 +105,7 @@ float* affs, int thresh,int eval)
         aff->data()[i] = affs[i];
     }
 
-    std::cout << "0_dim of affinity " << aff->shape()[0] << "\n";
-    std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
-    std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
-    std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
+    std::cout << "dims:  " << aff->shape()[0] << " " << aff->shape()[1] << " " << aff->shape()[2] << " " << aff->shape()[3] << "\n";
 
     std::list<int>::const_iterator iterator;
     //std::list<int> thresh_list = *threshes;
@@ -229,7 +124,7 @@ float* affs, int thresh,int eval)
      std::cout << "THOLD: " << thold << "\n";
 	 seg.reset(new volume<uint32_t>(*seg_ref));
 	 std::vector<std::size_t> counts(counts_ref);
-	 merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
+	 merge_segments_with_function(seg, rg, counts, square(thold), 10,RECREATE_RG);
 	    //copy seg to a 1d vector and return it
 	    std::vector<double> seg_vector;
     		//for(int i=0;i<totalDim;i++){
@@ -251,7 +146,6 @@ float* affs, int thresh,int eval)
  }
 std::map<std::string,std::vector<double>> oneThresh_no_gt(int dimX, int dimY, int dimZ, int dcons, float* affs, int thresh,int eval)
 {
-    bool recreate_rg = false;
     std::cout << "evaluating..." << std::endl;
 
     int totalDim = dimX*dimY*dimZ;
@@ -263,10 +157,7 @@ std::map<std::string,std::vector<double>> oneThresh_no_gt(int dimX, int dimY, in
         aff->data()[i] = affs[i];
     }
 
-    std::cout << "0_dim of affinity " << aff->shape()[0] << "\n";
-    std::cout << "1_dim of affinity " << aff->shape()[1] << "\n";
-    std::cout << "2_dim of affinity " << aff->shape()[2] << "\n";
-    std::cout << "3_dim of affinity " << aff->shape()[3] << "\n";
+    std::cout << "dims:  " << aff->shape()[0] << " " << aff->shape()[1] << " " << aff->shape()[2] << " " << aff->shape()[3] << "\n";
 
     std::list<int>::const_iterator iterator;
     //std::list<int> thresh_list = *threshes;
@@ -285,14 +176,11 @@ std::map<std::string,std::vector<double>> oneThresh_no_gt(int dimX, int dimY, in
      std::cout << "THOLD: " << thold << "\n";
 	 seg.reset(new volume<uint32_t>(*seg_ref));
 	 std::vector<std::size_t> counts(counts_ref);
-	 merge_segments_with_function(seg, rg, counts, square(thold), 10,recreate_rg);
-	    //copy seg to a 1d vector and return it
+	 merge_segments_with_function(seg, rg, counts, square(thold), 10,RECREATE_RG);
 	    std::vector<double> seg_vector;
-    		//for(int i=0;i<totalDim;i++){
-        	//	aff->data()[i] = affs[i];
 	    for(int i=0;i<dimX*dimY*dimZ;i++)
 		seg_vector.push_back(((double)(seg->data()[i])));
-	    std::cout << "seg_vector: ";// << seg_vector;
+	    std::cout << "seg_vector: ";
 	returnMap["seg"] = seg_vector; 
 	//}
      return returnMap;
