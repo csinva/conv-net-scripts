@@ -55,6 +55,7 @@ get_region_graph( const affinity_graph_ptr<F>& aff_ptr,
         for ( const auto& p: edges[id1] )
         {
             rg.emplace_back(p.second, id1, p.first);
+            //std::cout << p.second << " " << id1 << " " << p.first << "\n";
         }
     }
 
@@ -62,6 +63,7 @@ get_region_graph( const affinity_graph_ptr<F>& aff_ptr,
 
     std::stable_sort(std::begin(rg), std::end(rg),
                      std::greater<std::tuple<F,ID,ID>>());
+
 
     std::cout << "Sorted" << std::endl;
 

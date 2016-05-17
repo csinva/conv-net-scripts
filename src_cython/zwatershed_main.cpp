@@ -41,13 +41,12 @@ bool RECREATE_RG = false;
 
 
 
-std::list<double> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
+std::list<float> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
 float* affs)
 {
-    std::cout << "evaluating..." << std::endl;
+    std::cout << "calculating rgn graph..." << std::endl;
 
     volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
-
     int totalDim = dimX*dimY*dimZ;
     totalDim*=dcons;
 
@@ -55,15 +54,14 @@ float* affs)
     for(int i=0;i<totalDim;i++){
         aff->data()[i] = affs[i];
     }
-    std::cout << "dims:  " << aff->shape()[0] << " " << aff->shape()[1] << " " << aff->shape()[2] << " " << aff->shape()[3] << "\n";
+    // std::cout << "dims:  " << aff->shape()[0] << " " << aff->shape()[1] << " " << aff->shape()[2] << " " << aff->shape()[3] << "\n";
 
-    std::map<std::string,std::vector<double>> returnMap;
     volume_ptr<uint32_t>     seg_ref   ;
     std::vector<std::size_t> counts_ref;
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
 
-     std::list<double> data = * (new std::list<double>());
+     std::list<float> data = * (new std::list<float>());
 
     for ( const auto& e: *rg )
     {
@@ -78,7 +76,7 @@ float* affs)
 
 
 std::map<std::string,std::vector<double>> oneThresh(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
-float* affs, int thresh,int eval)
+float* affs, float* rgn_graph, int rgn_graph_len, int thresh,int eval)
 {
     std::cout << "evaluating..." << std::endl;
 
@@ -97,15 +95,21 @@ float* affs, int thresh,int eval)
 
     std::cout << "dims:  " << aff->shape()[0] << " " << aff->shape()[1] << " " << aff->shape()[2] << " " << aff->shape()[3] << "\n";
 
-    std::list<int>::const_iterator iterator;
-    //std::list<int> thresh_list = *threshes;
-
-    std::map<std::string,std::vector<double>> returnMap;
     volume_ptr<uint32_t>     seg_ref   ;
     std::vector<std::size_t> counts_ref;
+
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
-    auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
-    volume_ptr<uint32_t>     seg   ;
+
+    // construct rg from rgn_graph
+    region_graph_ptr<uint32_t,float> rg( new region_graph<uint32_t,float> );
+    region_graph<uint32_t,float>& rg_temp = *rg;
+    for(int i=0;i<rgn_graph_len;i++){
+        int i3 = i*3;
+        rg_temp.emplace_back(rgn_graph[i3+2],rgn_graph[i3],rgn_graph[i3+1]);
+    }
+
+    volume_ptr<uint32_t> seg   ;
+    std::map<std::string,std::vector<double>> returnMap;
 
  std::vector<double> r;
 

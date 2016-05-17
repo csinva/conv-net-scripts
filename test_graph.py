@@ -51,9 +51,8 @@ if gt_data_dimension != data_dimension:
 val = calc_rgn_graph(gt, aff)
 print val.shape
 print len(val)
-print 32 * 32
 dim = len(val) / 3
 # rgn_graph = val.reshape(dim,3)
 # rgn_flat= rgn_graph.flatten()
-print val[0:20]
+# print val[0:20]
 # x = sum(rgn_flat==0)
