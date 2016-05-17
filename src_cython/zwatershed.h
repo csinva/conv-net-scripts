@@ -8,7 +8,7 @@
 #include <vector>
 #include <utility>
 
-std::list<float> calc_region_graph(int dx, int dy, int dz, int dcons, uint32_t* gt, float* affs);
+std::map<std::string,std::list<float>> calc_region_graph(int dx, int dy, int dz, int dcons, uint32_t* seg, float* affs);
 
 std::map<std::string,std::vector<double>> oneThresh(int dx,int dy, int dz, int dcons, uint32_t * gt, float * affs, float * rgn_graph, int rgn_graph_len, int thresh,int eval);
 

@@ -10,16 +10,16 @@ cimport numpy as np
 import h5py
 
 cdef extern from "zwatershed.h":
-    list[float] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.uint32_t*gt, np.float32_t*affs)
+    map[string,list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.uint32_t*seg, np.float32_t*affs)
     map[string, vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t*gt, np.float32_t*affs,
                                           np.float32_t*rgn_graph, int rgn_graph_len, int thresh, int evaluate)
     map[string, vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t*affs, int thresh,
                                                 int evaluate)
 
-def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] affs):
+def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, ndim=4] affs):
     dims = affs.shape
-    graph = calc_region_graph(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &affs[0, 0, 0, 0])
-    graph = np.array(graph, dtype='float32')
+    map = calc_region_graph(dims[0], dims[1], dims[2], dims[3], &seg[0, 0, 0], &affs[0, 0, 0, 0])
+    graph = np.array(map['rg'], dtype='float32')
     rgn_graph = graph.reshape(len(graph) / 3, 3)  # num, num, float
     return rgn_graph
 

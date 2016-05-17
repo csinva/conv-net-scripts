@@ -41,22 +41,25 @@ bool RECREATE_RG = false;
 
 
 
-std::list<float> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* gt,
+std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* seg,
 float* affs)
 {
     std::cout << "calculating rgn graph..." << std::endl;
 
-    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
-    int totalDim = dimX*dimY*dimZ;
-    totalDim*=dcons;
+    volume_ptr<uint32_t> seg_ref = read_volumes<uint32_t>("", dimX, dimY, dimZ);
 
+
+    int totalDim = dimX*dimY*dimZ;
+    for(int i=0;i<totalDim;i++){
+        seg_ref->data()[i] = seg[i];
+    }
+
+    totalDim*=dcons;
     affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
     for(int i=0;i<totalDim;i++){
         aff->data()[i] = affs[i];
     }
-    // std::cout << "dims:  " << aff->shape()[0] << " " << aff->shape()[1] << " " << aff->shape()[2] << " " << aff->shape()[3] << "\n";
 
-    volume_ptr<uint32_t>     seg_ref   ;
     std::vector<std::size_t> counts_ref;
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
@@ -70,7 +73,11 @@ float* affs)
         data.push_back(std::get<0>(e));
     }
 
-     return data;
+    std::map<std::string,std::list<float>> returnMap;
+
+    returnMap["rg"]=data;
+    return returnMap;
+    //return data;
 
  }
 
@@ -113,7 +120,7 @@ float* affs, float* rgn_graph, int rgn_graph_len, int thresh,int eval)
 
  std::vector<double> r;
 
- int thold = thresh;
+    int thold = thresh;
 
      std::cout << "THOLD: " << thold << "\n";
 	 seg.reset(new volume<uint32_t>(*seg_ref));
