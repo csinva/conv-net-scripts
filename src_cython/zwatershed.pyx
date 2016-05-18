@@ -22,42 +22,42 @@ cdef extern from "zwatershed.h":
                                                 int evaluate)
 
 def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, ndim=4] affs):
-    dims = affs.shape
     cdef np.ndarray[uint32_t, ndim=1] counts = np.empty(1,dtype='uint32')
-    counts_len = len(counts)
-    map = calc_region_graph(dims[0], dims[1], dims[2], dims[3], &seg[0, 0, 0], &counts[0], counts_len, 0, &affs[0, 0, 0, 0])
+    dims = affs.shape
+    map = calc_region_graph(dims[0], dims[1], dims[2], dims[3], &seg[0, 0, 0], &counts[0], len(counts), 0, &affs[0, 0, 0, 0])
     graph = np.array(map['rg'], dtype='float32')
-    returnMap = {}
-    returnMap['rg'] = graph.reshape(len(graph) / 3, 3)  # num, num, float
-    returnMap['seg'] = np.array(map['seg'], dtype='uint32')
-    returnMap['counts'] = np.array(map['counts'], dtype='uint32')
-    return returnMap
+    return_map = {}
+    return_map['rg'] = graph.reshape(len(graph) / 3, 3)  # num, num, float
+    return_map['seg'] = np.array(map['seg'], dtype='uint32')
+    return_map['counts'] = np.array(map['counts'], dtype='uint32')
+    return return_map
+
+def makedirs(seg_save_path):
+    if not seg_save_path.endswith("/"):
+            seg_save_path = seg_save_path + "/"
+            if not os.path.exists(seg_save_path):
+                os.makedirs(seg_save_path)
 
 def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int eval,
             int h5, seg_save_path="NULL/"):
-    print "\nevalAll"
-    affs = np.transpose(affs, (1, 2, 3, 0))
+    if h5==1:
+        makedirs(seg_save_path)
+
+    # get seg,rg
+    affs = np.asfortranarray(np.transpose(affs, (1, 2, 3, 0)))
     gt = np.array(gt, order='F')
-    affs = np.array(affs, order='F')
-    print np.shape(affs)
     map = calc_rgn_graph(gt, affs)
     cdef np.ndarray[uint32_t, ndim=1] seg_out = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
     counts_len = len(map['counts'])
-    if not seg_save_path.endswith("/"):
-        seg_save_path = seg_save_path + "/"
-        if not os.path.exists(seg_save_path):
-            os.makedirs(seg_save_path)
+
     dims = affs.shape
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
         map = oneThresh_with_stats(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
                         rgn_graph.shape[0], &seg_out[0], &counts_out[0], counts_len, threshes[i], eval)
-        seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
-        seg_np = np.transpose(seg_np, (2, 1, 0))
-        shape = seg_np.shape
-        seg_np = seg_np.transpose((2, 1, 0)).reshape(shape).transpose((2, 1, 0))
+        seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2,1,0)
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
             if h5 == 1:
@@ -82,10 +82,8 @@ def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] af
 
 def watershedAll_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int eval, int h5,
                          seg_save_path="NULL/"):
-    if not seg_save_path.endswith("/"):
-        seg_save_path = seg_save_path + "/"
-        if not os.path.exists(seg_save_path):
-            os.makedirs(seg_save_path)
+    if h5==1:
+        makedirs(seg_save_path)
     # change both to fortran order
     affs = np.transpose(affs, (1, 2, 3, 0))
     affs = np.array(affs, order='F')
@@ -100,10 +98,7 @@ def watershedAll_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_t
     for i in range(len(threshes)):
         map = oneThresh(dims[0], dims[1], dims[2], dims[3], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
                               rgn_graph.shape[0], &seg_out[0], &counts_out[0], counts_len, threshes[i], eval)
-        seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
-        seg_np = np.transpose(seg_np, (2, 1, 0))
-        shape = seg_np.shape
-        seg_np = seg_np.transpose((2, 1, 0)).reshape(shape).transpose((2, 1, 0))
+        seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2,1,0)
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
             if h5 == 1:
