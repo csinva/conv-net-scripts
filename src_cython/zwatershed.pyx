@@ -10,9 +10,11 @@ cimport numpy as np
 import h5py
 
 cdef extern from "zwatershed.h":
-    map[string,list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.uint32_t*seg, np.float32_t*affs)
+    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.uint32_t*seg,
+                                               np.float32_t*affs)
     map[string, vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t*gt, np.float32_t*affs,
-                                          np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg, uint32_t*counts, int counts_len, int thresh, int evaluate)
+                                          np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg, uint32_t*counts,
+                                          int counts_len, int thresh, int evaluate)
     map[string, vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t*affs, int thresh,
                                                 int evaluate)
 
@@ -22,8 +24,8 @@ def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, nd
     graph = np.array(map['rg'], dtype='float32')
     returnMap = {}
     returnMap['rg'] = graph.reshape(len(graph) / 3, 3)  # num, num, float
-    returnMap['seg'] = np.array(map['seg'],dtype='uint32')
-    returnMap['counts'] = np.array(map['counts'],dtype='uint32')
+    returnMap['seg'] = np.array(map['seg'], dtype='uint32')
+    returnMap['counts'] = np.array(map['counts'], dtype='uint32')
     return returnMap
 
 def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int eval,
@@ -31,7 +33,7 @@ def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] af
     affs = np.transpose(affs, (1, 2, 3, 0))
     gt = np.array(gt, order='F')
     affs = np.array(affs, order='F')
-    map = calc_rgn_graph(gt,affs)
+    map = calc_rgn_graph(gt, affs)
     cdef np.ndarray[uint32_t, ndim=1] seg_out = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
@@ -47,6 +49,8 @@ def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] af
                         rgn_graph.shape[0], &seg_out[0], &counts_out[0], counts_len, threshes[i], eval)
         seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         seg_np = np.transpose(seg_np, (2, 1, 0))
+        shape = seg_np.shape
+        seg_np = seg_np.transpose((2,1,0)).reshape(shape).transpose((2,1,0))
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
             if h5 == 1:
@@ -84,6 +88,8 @@ def watershedAll_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_t
         map = oneThresh_no_gt(dims[0], dims[1], dims[2], dims[3], &affs[0, 0, 0, 0], threshes[i], eval)
         seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         seg_np = np.transpose(seg_np, (2, 1, 0))
+        shape = seg_np.shape
+        seg_np = seg_np.transpose((2,1,0)).reshape(shape).transpose((2,1,0))
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
             if h5 == 1:
