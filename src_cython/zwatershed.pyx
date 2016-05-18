@@ -12,10 +12,13 @@ import h5py
 cdef extern from "zwatershed.h":
     map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.uint32_t*seg,
                                                np.float32_t*affs)
-    map[string, vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.uint32_t*gt, np.float32_t*affs,
+    map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, int dcons, np.uint32_t*gt, np.float32_t*affs,
                                           np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg, uint32_t*counts,
                                           int counts_len, int thresh, int evaluate)
-    map[string, vector[double]] oneThresh_no_gt(int dx, int dy, int dz, int dcons, np.float32_t*affs, int thresh,
+    map[string, vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.float32_t*affs,
+                                                np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
+                                                uint32_t*counts,
+                                                int counts_len, int thresh,
                                                 int evaluate)
 
 def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, ndim=4] affs):
@@ -45,12 +48,12 @@ def evalAll(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] af
     dims = affs.shape
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
-        map = oneThresh(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
+        map = oneThresh_with_stats(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
                         rgn_graph.shape[0], &seg_out[0], &counts_out[0], counts_len, threshes[i], eval)
         seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         seg_np = np.transpose(seg_np, (2, 1, 0))
         shape = seg_np.shape
-        seg_np = seg_np.transpose((2,1,0)).reshape(shape).transpose((2,1,0))
+        seg_np = seg_np.transpose((2, 1, 0)).reshape(shape).transpose((2, 1, 0))
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
             if h5 == 1:
@@ -83,13 +86,20 @@ def watershedAll_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_t
     affs = np.transpose(affs, (1, 2, 3, 0))
     affs = np.array(affs, order='F')
     dims = affs.shape
+    seg = np.empty((dims[0], dims[1], dims[2]), dtype='uint32')
+    map = calc_rgn_graph(seg, affs)
+    cdef np.ndarray[uint32_t, ndim=1] seg_out = map['seg']
+    cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
+    cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
+    counts_len = len(map['counts'])
     segs = []
     for i in range(len(threshes)):
-        map = oneThresh_no_gt(dims[0], dims[1], dims[2], dims[3], &affs[0, 0, 0, 0], threshes[i], eval)
+        map = oneThresh(dims[0], dims[1], dims[2], dims[3], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
+                              rgn_graph.shape[0], &seg_out[0], &counts_out[0], counts_len, threshes[i], eval)
         seg_np = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         seg_np = np.transpose(seg_np, (2, 1, 0))
         shape = seg_np.shape
-        seg_np = seg_np.transpose((2,1,0)).reshape(shape).transpose((2,1,0))
+        seg_np = seg_np.transpose((2, 1, 0)).reshape(shape).transpose((2, 1, 0))
         if threshes[i] in save_threshes:
             segs = segs + [seg_np]
             if h5 == 1:
