@@ -2,6 +2,8 @@
 
 #include <cstddef>
 
+double LOW_THRESH=  .0001;
+
 struct linear
 {
 private:
@@ -14,7 +16,7 @@ public:
 
     std::size_t operator()( float v ) const
     {
-        if ( v < 0.3 ) return 0;
+        if ( v < LOW_THRESH ) return 0;
         return v * coef_;
     }
 };
@@ -31,7 +33,7 @@ public:
 
     std::size_t operator()( float v ) const
     {
-        if ( v < 0.3 ) return 0;
+        if ( v < LOW_THRESH ) return 0;
         return v * v * coef_;
     }
 };
@@ -51,7 +53,7 @@ public:
 
     std::size_t operator()( float v ) const
     {
-        if ( v < 0.3 ) return 0;
+        if ( v < LOW_THRESH ) return 0;
         //v; //= (v-0.7-0.01) / 0.69;
 
         return v * max_;
@@ -73,9 +75,9 @@ public:
 
     std::size_t operator()( float v ) const
     {
-        if ( v < 0.3 ) return 0;
+        if ( v < LOW_THRESH ) return 0;
 
-        float x = v - 0.3;
+        float x = v - LOW_THRESH;
 
         float max = thold_;
         float rate = rate_;

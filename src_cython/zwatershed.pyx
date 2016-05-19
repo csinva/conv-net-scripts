@@ -11,7 +11,6 @@ import h5py
 
 # interface methods
 def zwatershed_and_metrics(gt, affs, threshes, save_threshes):
-    threshes.sort()
     return eval_all(gt, affs, threshes, save_threshes, eval=1, h5=0)
 
 def zwatershed_and_metrics_h5(gt, affs, threshes, save_threshes, seg_save_path):
@@ -45,7 +44,8 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] a
     # get segs, stats
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
-        print "thresh:",threshes[i],"rgn sum",sum((rgn_graph.flatten()))
+        print "\nthresh:",threshes[i],"rgn sum",sum((rgn_graph.flatten()))
+        print rgn_graph[0:5,:],"\n"
         map = oneThresh_with_stats(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &affs[0, 0, 0, 0],
                                    &rgn_graph[0, 0],
                                    rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i], eval)
