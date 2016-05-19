@@ -26,15 +26,6 @@ def zwatershed_h5(affs, threshes, seg_save_path):
     threshes.sort()
     watershed_all_no_eval(affs, threshes, threshes, eval=0, h5=1, seg_save_path=seg_save_path)
 
-def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, ndim=4] affs):
-    cdef np.ndarray[uint32_t, ndim=1] counts = np.empty(1, dtype='uint32')
-    dims = affs.shape
-    map = calc_region_graph(dims[0], dims[1], dims[2], dims[3], &seg[0, 0, 0], &counts[0], len(counts), 0,
-                            &affs[0, 0, 0, 0])
-    graph = np.array(map['rg'], dtype='float32')
-    return {'rg': graph.reshape(len(graph) / 3, 3), 'seg': np.array(map['seg'], dtype='uint32'),
-            'counts': np.array(map['counts'], dtype='uint32')}
-
 # helper methods
 def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int eval,
              int h5, seg_save_path="NULL/"):
@@ -108,6 +99,14 @@ def watershed_all_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_
     if not h5:
         return segs
 
+def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, ndim=4] affs):
+    cdef np.ndarray[uint32_t, ndim=1] counts = np.empty(1, dtype='uint32')
+    dims = affs.shape
+    map = calc_region_graph(dims[0], dims[1], dims[2], dims[3], &affs[0, 0, 0, 0])
+    graph = np.array(map['rg'], dtype='float32')
+    return {'rg': graph.reshape(len(graph) / 3, 3), 'seg': np.array(map['seg'], dtype='uint32'),
+            'counts': np.array(map['counts'], dtype='uint32')}
+
 def makedirs(seg_save_path):
     if not seg_save_path.endswith("/"):
         seg_save_path += "/"
@@ -116,9 +115,7 @@ def makedirs(seg_save_path):
 
 # c++ methods
 cdef extern from "zwatershed.h":
-    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.uint32_t*seg,
-                                               uint32_t*counts,
-                                               int counts_len, int use_seg, np.float32_t*affs)
+    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, np.float32_t*affs)
     map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, int dcons, np.uint32_t*gt,
                                                      np.float32_t*affs,
                                                      np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,

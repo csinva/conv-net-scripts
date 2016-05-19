@@ -40,25 +40,17 @@ double HIGH= .9999;// 0.999971; //.99988; //default = .99
 bool RECREATE_RG = false;
 
 
-std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, uint32_t* seg, uint32_t*counts_in,
-                                          int counts_len, int use_seg, float* affs)
+std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, float* affs)
 {
     std::cout << "calculating rgn graph..." << std::endl;
 
     // read data
-    volume_ptr<uint32_t> seg_ref = read_volumes<uint32_t>("", dimX, dimY, dimZ);
-    std::vector<std::size_t> counts_ref = * new std::vector<std::size_t>();;
+    volume_ptr<uint32_t> seg_ref;
+    std::vector<std::size_t> counts_ref;
     affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
     for(int i=0;i<dimX*dimY*dimZ*dcons;i++)
         aff->data()[i] = affs[i];
-    if(use_seg==1){
-        for(int i=0;i<dimX*dimY*dimZ;i++)
-            seg_ref->data()[i] = seg[i];
-        for(int i=0;i<counts_len;i++)
-            counts_ref.push_back(counts_in[i]);
-    }
-    else
-        std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
+    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
 
 
     // calculate region graph
