@@ -45,8 +45,6 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
         }
     }
 
-    std::cout << "Done with merging" << std::endl;
-
     std::vector<ID> remaps(counts.size());
 
     ID next_id = 1;

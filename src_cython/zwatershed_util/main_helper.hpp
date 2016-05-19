@@ -379,7 +379,6 @@ compare_volumes_arb(
     //std::cout << sum_p_ij << "\n";
     std::cout << "Rand Split: " << (sum_p_ij/sum_t_k) << "\n";
     std::cout << "Rand Merge: " << (sum_p_ij/sum_s_k) << "\n";
-    std::cout << "Rand alpha: " << (sum_p_ij*2/(sum_t_k+sum_s_k)) << "\n";
 
     return std::make_pair(sum_p_ij/sum_t_k,
                           sum_p_ij/sum_s_k);
