@@ -17,6 +17,8 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
 {
     zi::disjoint_sets<ID> sets(counts.size());
 
+    std::cout << "counts.size: " << counts.size() << "\n";
+
     region_graph<ID,F>& rg  = *rg_ptr;
 
     for ( auto& it: rg )
@@ -30,6 +32,8 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
 
         ID s1 = sets.find_set(std::get<1>(it));
         ID s2 = sets.find_set(std::get<2>(it));
+
+        // std::cout << s1 << " " << s2 << " " << size << "\n";
 
         if ( s1 != s2 && s1 && s2 )
         {

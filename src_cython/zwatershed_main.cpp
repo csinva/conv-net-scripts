@@ -37,7 +37,7 @@ using namespace std;
 // these values based on 5% at iter = 10000
 double LOW=  .0001;// 0.003785; //.00001; //default = .3
 double HIGH= .9999;// 0.999971; //.99988; //default = .99
-bool RECREATE_RG = false;
+bool RECREATE_RG = true;
 
 std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, float* affs)
 {
@@ -107,6 +107,7 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
     std::vector<double> seg_vector;
     std::vector<double> r;
     std::vector<double> rg_data; // = * (new std::list<float>());
+    std::vector<double> counts_data; // = * (new std::list<float>());
     for(int i=0;i<dimX*dimY*dimZ;i++)
         seg_vector.push_back(((double)(seg->data()[i])));
 	if(eval==1){
@@ -119,9 +120,13 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
         rg_data.push_back(std::get<2>(e));
         rg_data.push_back(std::get<0>(e));
     }
+    for (const auto& x:counts){
+        counts_data.push_back(x);
+    }
     returnMap["seg"] = seg_vector;
     returnMap["stats"] = r;
     returnMap["rg"]=rg_data;
+    returnMap["counts"] = counts_data;
     return returnMap;
 }
 
