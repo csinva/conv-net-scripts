@@ -16,7 +16,7 @@ from zwatershed import *
 path_to_folder = '/Users/chandansingh/drive/janelia/conv_net_scripts/'
 path_to_data = path_to_folder + 'data/'
 
-threshes = [1000, 2000]  # for i in range(1,6)]+[i*20000 for i in range(2,16)] # 100...1,000...100,000
+threshes = [500, 1000, 2000]  # for i in range(1,6)]+[i*20000 for i in range(2,16)] # 100...1,000...100,000
 iters = [10000]
 strs = ["2"]
 hdf5_gt_file = path_to_data + 'groundtruth_seg_thick.h5'  # /groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'

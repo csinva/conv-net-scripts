@@ -357,7 +357,7 @@ merge_segments_with_function_err( const volume_ptr<ID>& seg_ptr,
         }
     }
 
-    std::cout << "Done with merging" << std::endl;
+    //std::cout << "Done with merging" << std::endl;
 
 
     for ( auto& it: rg )

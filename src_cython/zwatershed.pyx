@@ -45,10 +45,13 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] a
     # get segs, stats
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
+        print "thresh:",threshes[i],"rgn sum",sum((rgn_graph.flatten()))
         map = oneThresh_with_stats(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &affs[0, 0, 0, 0],
                                    &rgn_graph[0, 0],
                                    rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i], eval)
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
+        graph = np.array(map['rg'], dtype='float32')
+        rgn_graph = graph.reshape(len(graph)/3,3)
         if threshes[i] in save_threshes:
             if h5:
                 f = h5py.File(seg_save_path + 'seg_' + str(threshes[i]) + '.h5', 'w')
