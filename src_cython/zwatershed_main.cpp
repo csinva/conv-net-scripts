@@ -120,9 +120,8 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
         rg_data.push_back(std::get<2>(e));
         rg_data.push_back(std::get<0>(e));
     }
-    for (const auto& x:counts){
+    for (const auto& x:counts)
         counts_data.push_back(x);
-    }
     returnMap["seg"] = seg_vector;
     returnMap["stats"] = r;
     returnMap["rg"]=rg_data;
@@ -155,8 +154,19 @@ std::map<std::string,std::vector<double>> oneThresh(int dimX, int dimY, int dimZ
 	// save and return
 	std::map<std::string,std::vector<double>> returnMap;
     std::vector<double> seg_vector;
+    std::vector<double> rg_data; // = * (new std::list<float>());
+    std::vector<double> counts_data; // = * (new std::list<float>());
     for(int i=0;i<dimX*dimY*dimZ;i++)
         seg_vector.push_back(((double)(seg->data()[i])));
+    for ( const auto& e: *rg ){
+        rg_data.push_back(std::get<1>(e));
+        rg_data.push_back(std::get<2>(e));
+        rg_data.push_back(std::get<0>(e));
+    }
+    for (const auto& x:counts)
+        counts_data.push_back(x);
     returnMap["seg"] = seg_vector;
+    returnMap["rg"]=rg_data;
+    returnMap["counts"] = counts_data;
     return returnMap;
  }

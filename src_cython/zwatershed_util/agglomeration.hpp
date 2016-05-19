@@ -17,8 +17,6 @@ inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
 {
     zi::disjoint_sets<ID> sets(counts.size());
 
-    std::cout << "counts.size: " << counts.size() << "\n";
-
     region_graph<ID,F>& rg  = *rg_ptr;
 
     for ( auto& it: rg )
