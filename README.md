@@ -1,8 +1,11 @@
 # convolutional network metric scripts
-- Most code is python wrappers around code from https://bitbucket.org/poozh/watershed with small modifications.  For use in https://github.com/naibaf7/PyGreentea.
+- Most code is cython wrappers around code from https://bitbucket.org/poozh/watershed with small modifications.  For use in https://github.com/naibaf7/PyGreentea.
 - *returns segmentations and metrics.  The first method returns the segmentations and metrics, the second method only computes segmentations and doesn't compute the metrics.*
 
-# metric functions
+# building cython
+- run python setup.py build_ext --inplace from the directory containing zwatershed.pyx
+
+# function api
 - *returns segmentations and metrics.  The first method returns the segmentations and metrics, the second method only computes segmentations and doesn't compute the metrics.*
 	1. `(segs, rand) = pygt.zwatershed_and_metrics(segTrue, aff_graph, eval_thresh_list, seg_save_thresh_list)`
 		- ** want to reuse computation **
