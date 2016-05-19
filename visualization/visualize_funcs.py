@@ -187,6 +187,20 @@ def trim_arbitrary(gt_seg, label_set, seg):
         label_set = label_set[:, :, padding:(-1 * padding), :]
     return gt_seg, label_set
 
+def trim_arbitrary_aff(gt_seg, aff_set):
+    diff0 = gt_seg.shape[0] - aff_set.shape[1]
+    if not diff0 == 0:
+        padding = diff0 / 2
+        gt_seg = gt_seg[padding:(-1 * padding), :, :]
+    diff1 = gt_seg.shape[1] - aff_set.shape[2]
+    if not diff1 == 0:
+        padding = diff1 / 2
+        gt_seg = gt_seg[:, padding:(-1 * padding), :]
+    diff2 = gt_seg.shape[2] - aff_set.shape[3]
+    if not diff2 == 0:
+        padding = diff2 / 2
+        gt_seg = gt_seg[:, :, padding:(-1 * padding)]
+    return gt_seg
 
 def trim_seg(seg, newSize):
     # reshape labels, image

@@ -35,8 +35,8 @@
 #include <boost/make_shared.hpp>
 using namespace std;
 // these values based on 5% at iter = 10000
-double LOW=  .0001;// 0.003785; //.00001; //default = .3
-double HIGH= .9999;// 0.999971; //.99988; //default = .99
+double LOW=  .0001;
+double HIGH= .9999;
 bool RECREATE_RG = true;
 
 std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, float* affs)
