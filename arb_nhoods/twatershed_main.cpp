@@ -83,9 +83,9 @@ map<pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marke
     /* Start MST */
     int set1, set2, label_of_set1, label_of_set2;
     for (unsigned int i = 0; i < pqueue.size(); ++i ) {
-
-        set1=dsets.find_set(node1[i]);
-        set2=dsets.find_set(node2[i]);
+        int e = pqueue[i];
+        set1=dsets.find_set(node1[e]);
+        set2=dsets.find_set(node2[e]);
         label_of_set1 = seg[set1];
         label_of_set2 = seg[set2];
 
@@ -105,25 +105,27 @@ map<pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marke
     for (int i=0; i<nVert; i++)
         seg[i] = seg[dsets.find_set(i)];
 
-    map<pair<int,int>, float> rg;
-
     // calculate the region graph (remember seg1 < seg2)
+    map<pair<int,int>, float> rg;
     cout << "calculating rgn graph init\n";
-    for(int i=0;i<nEdge;i++){
-        set1=dsets.find_set(node1[i]);
-        set2=dsets.find_set(node2[i]);
-        auto pair = make_pair(set1,set2);
-        if(set2<set1)
-            pair = make_pair(set2,set1);
-        float w_new = edgeWeight[i];
-        float w_old = 0;
-        auto iter = rg.find(pair);
-        if(iter == rg.end())
-            rg[pair] = w_new;
-        else{
-            w_old = iter->second;
-            if(w_new < w_old)
+    for (unsigned int i = 0; i < pqueue.size(); ++i ) {
+        int e = pqueue[i];
+        set1=seg[dsets.find_set(node1[e])];
+        set2=seg[dsets.find_set(node2[e])];
+        if(set1!=set2){
+            auto pair = make_pair(set1,set2);
+            if(set2<set1)
+                pair = make_pair(set2,set1);
+            float w_new = edgeWeight[i];
+            float w_old = 0;
+            auto iter = rg.find(pair);
+            if(iter == rg.end())
                 rg[pair] = w_new;
+            else{
+                w_old = iter->second;
+                if(w_new < w_old)
+                    rg[pair] = w_new;
+            }
         }
     }
     return rg;
@@ -132,7 +134,9 @@ map<pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marke
 
 map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const int* marker,
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
-               int* seg, float thresh, map<pair<int,int>, float> rg_in){
+               int* seg, float thresh, map<pair<int,int>, float> rg){
+
+    cout << "merge segments\n";
 
     /* Make disjoint sets */
     vector<int> rank(nVert);
@@ -154,7 +158,24 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
         if (seg[i] > 0)
             dsets.union_set(components[seg[i]],i);
 
+    // write out the final coloring
+    for (int i=0; i<nVert; i++)
+        seg[i] = seg[dsets.find_set(i)];
+
+    // merge segments based on rg
+    for(auto it = rg.begin(); it != rg.end(); it++){
+
+
+    }
+    // iterator->first = key
+    // iterator->second = value
+    // Repeat if you also want to iterate through the second map.
+    return rg;
+
+}
+
     /* Sort all the edges in decreasing order of weight */
+    /*
     vector<int> pqueue( nEdge );
     int j = 0;
     for (int i = 0; i < nEdge; ++i)
@@ -166,8 +187,10 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
     unsigned long nValidEdge = j;
     pqueue.resize(nValidEdge);
     sort( pqueue.begin(), pqueue.end(), AffinityGraphCompare<float>( edgeWeight ) );
+    */
 
     /* Start MST */
+    /*
     int set1, set2, label_of_set1, label_of_set2;
     for (unsigned int i = 0; i < pqueue.size(); ++i ) {
 
@@ -185,17 +208,16 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
             seg[dsets.find_set(set1)] = max(label_of_set1,label_of_set2);
 
         }
-
     }
+    */
 
-    // write out the final coloring
-    for (int i=0; i<nVert; i++)
-        seg[i] = seg[dsets.find_set(i)];
 
-    map<pair<int,int>, float> rg;
+
+
 
     // calculate the region graph (remember seg1 < seg2)
-    cout << "calculating rgn graph 2\n";
+    /*
+    map<pair<int,int>, float> rg;
     for(int i=0;i<nEdge;i++){
         set1=dsets.find_set(node1[i]);
         set2=dsets.find_set(node2[i]);
@@ -213,5 +235,6 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
                 rg[pair] = w_new;
         }
     }
-    return rg;
-}
+    */
+
+

@@ -28,7 +28,7 @@ def connected_components(int nVert,
     cdef np.ndarray[int, ndim=1] seg = np.zeros(nVert, dtype=np.int32)
     connected_components_cpp(nVert,
                              nEdge, &node1[0], &node2[0], &edgeWeight[0],
-                             &seg[0]);
+                             &seg[0])
     (seg, segSizes) = prune_and_renum(seg, sizeThreshold)
     return (seg, segSizes)
 
@@ -46,13 +46,16 @@ def marker_watershed(np.ndarray[int, ndim=1] marker,
     cdef np.ndarray[int, ndim=1] seg = np.zeros(nVert, dtype=np.int32)
     rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0])
     print "rgn_graph pyx", rgn_graph
-    (seg, segSizes) = prune_and_renum(seg, sizeThreshold)
+    print "max seg:",max(seg.ravel())
+    # print "max rg:",max(np.flatten(seg))
+    (seg, segSizes, rgn_graph) = prune_and_renum(seg, rgn_graph, sizeThreshold)
+    print "rg pruned:",rgn_graph
     print "\nmarker watershed 2"
     thresh = 100
     rgn_graph_2 = marker_watershed_with_thresh(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0], thresh, rgn_graph)
     return (seg, segSizes)
 
-def prune_and_renum(np.ndarray[int, ndim=1] seg,
+def prune_and_renum(np.ndarray[int, ndim=1] seg, rg,
                     int sizeThreshold=1):
     # renumber the components in descending order by size
     segId, segSizes = np.unique(seg, return_counts=True)
@@ -67,7 +70,12 @@ def prune_and_renum(np.ndarray[int, ndim=1] seg,
         segSizes = segSizes[segSizes > sizeThreshold]
 
     seg = renum[seg]
-    return (seg, segSizes)
+    rg_new = {}
+    for key in rg:
+        rg_new[(renum[key[0]],renum[key[1]])] = rg[key]
+
+    print rg.keys()
+    return (seg, segSizes, rg_new)
 
 def bmap_to_affgraph(bmap, nhood, return_min_idx=False):
     # constructs an affinity graph from a boundary map
