@@ -43,7 +43,7 @@ void connected_components_cpp(const int nVert,
         seg[i] = dsets.find_set(i);
 }
 
-std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marker,
+map<pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marker,
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
                int* seg){
 
@@ -55,7 +55,7 @@ std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const 
         dsets.make_set(i);
 
     /* initialize output array and find representatives of each class */
-    std::map<int,int> components;
+    map<int,int> components;
     for (int i=0; i<nVert; ++i){
         seg[i] = marker[i];
         if (seg[i] > 0)
@@ -68,7 +68,7 @@ std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const 
             dsets.union_set(components[seg[i]],i);
 
     /* Sort all the edges in decreasing order of weight */
-    std::vector<int> pqueue( nEdge );
+    vector<int> pqueue( nEdge );
     int j = 0;
     for (int i = 0; i < nEdge; ++i)
         if ((edgeWeight[i]!=0) &&
@@ -95,7 +95,7 @@ std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const 
 
             dsets.link(set1, set2);
             // either label_of_set1 is 0 or label_of_set2 is 0.
-            seg[dsets.find_set(set1)] = std::max(label_of_set1,label_of_set2);
+            seg[dsets.find_set(set1)] = max(label_of_set1,label_of_set2);
             
         }
 
@@ -105,16 +105,16 @@ std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const 
     for (int i=0; i<nVert; i++)
         seg[i] = seg[dsets.find_set(i)];
 
-    std::map<std::pair<int,int>, float> rg;
+    map<pair<int,int>, float> rg;
 
     // calculate the region graph (remember seg1 < seg2)
-    cout << "calculating rgn graph\n";
+    cout << "calculating rgn graph init\n";
     for(int i=0;i<nEdge;i++){
         set1=dsets.find_set(node1[i]);
         set2=dsets.find_set(node2[i]);
-        auto pair = std::make_pair(set1,set2);
+        auto pair = make_pair(set1,set2);
         if(set2<set1)
-            pair = std::make_pair(set2,set1);
+            pair = make_pair(set2,set1);
         float w_new = edgeWeight[i];
         float w_old = 0;
         auto iter = rg.find(pair);
@@ -130,9 +130,9 @@ std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const 
 }
 
 
-std::map<std::pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const int* marker,
+map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const int* marker,
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
-               int* seg, float thresh){
+               int* seg, float thresh, map<pair<int,int>, float> rg_in){
 
     /* Make disjoint sets */
     vector<int> rank(nVert);
@@ -142,7 +142,7 @@ std::map<std::pair<int,int>, float> marker_watershed_with_thresh(const int nVert
         dsets.make_set(i);
 
     /* initialize output array and find representatives of each class */
-    std::map<int,int> components;
+    map<int,int> components;
     for (int i=0; i<nVert; ++i){
         seg[i] = marker[i];
         if (seg[i] > 0)
@@ -155,7 +155,7 @@ std::map<std::pair<int,int>, float> marker_watershed_with_thresh(const int nVert
             dsets.union_set(components[seg[i]],i);
 
     /* Sort all the edges in decreasing order of weight */
-    std::vector<int> pqueue( nEdge );
+    vector<int> pqueue( nEdge );
     int j = 0;
     for (int i = 0; i < nEdge; ++i)
         if ((edgeWeight[i]!=0) &&
@@ -182,7 +182,7 @@ std::map<std::pair<int,int>, float> marker_watershed_with_thresh(const int nVert
 
             dsets.link(set1, set2);
             // either label_of_set1 is 0 or label_of_set2 is 0.
-            seg[dsets.find_set(set1)] = std::max(label_of_set1,label_of_set2);
+            seg[dsets.find_set(set1)] = max(label_of_set1,label_of_set2);
 
         }
 
@@ -192,16 +192,16 @@ std::map<std::pair<int,int>, float> marker_watershed_with_thresh(const int nVert
     for (int i=0; i<nVert; i++)
         seg[i] = seg[dsets.find_set(i)];
 
-    std::map<std::pair<int,int>, float> rg;
+    map<pair<int,int>, float> rg;
 
     // calculate the region graph (remember seg1 < seg2)
-    cout << "calculating rgn graph\n";
+    cout << "calculating rgn graph 2\n";
     for(int i=0;i<nEdge;i++){
         set1=dsets.find_set(node1[i]);
         set2=dsets.find_set(node2[i]);
-        auto pair = std::make_pair(set1,set2);
+        auto pair = make_pair(set1,set2);
         if(set2<set1)
-            pair = std::make_pair(set2,set1);
+            pair = make_pair(set2,set1);
         float w_new = edgeWeight[i];
         float w_old = 0;
         auto iter = rg.find(pair);

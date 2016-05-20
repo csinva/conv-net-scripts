@@ -57,8 +57,8 @@ node1, node2, edge_affs = tw.affgraph_to_edgelist(aff, nhood)
 node1 = np.array(node1,dtype='int32')
 node2 = np.array(node2,dtype='int32')
 THRESH = .9999 # higher is more connected
-print node1[0:40]
-print node2[0:40]
+# print node1[0:40]
+# print node2[0:40]
 edge_affs_thresh = np.array(edge_affs <= THRESH, dtype='int32')
 print "edge_affs: ",edge_affs_thresh
 print "percent below thresh",sum(edge_affs <=THRESH)/float(len(edge_affs))

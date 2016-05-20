@@ -11,6 +11,6 @@ std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const 
 
 std::map<std::pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const int* marker,
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
-               int* seg, float thresh);
+               int* seg, float thresh, std::map<std::pair<int,int>, float>);
 
 #endif

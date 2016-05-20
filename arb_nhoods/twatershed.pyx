@@ -14,7 +14,7 @@ cdef extern from "twatershed.h":
                                                     const int*node1, const int*node2, const float*edgeWeight, int*seg);
     map[pair[int, int], float] marker_watershed_with_thresh(const int nVert, const int*marker, const int nEdge,
                                                             const int*node1, const int*node2, const float*edgeWeight,
-                                                            int*seg, float thresh);
+                                                            int*seg, float thresh, map[pair[int, int], float] rg);
 
 def connected_components(int nVert,
                          np.ndarray[int, ndim=1] node1,
@@ -47,6 +47,9 @@ def marker_watershed(np.ndarray[int, ndim=1] marker,
     rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0])
     print "rgn_graph pyx", rgn_graph
     (seg, segSizes) = prune_and_renum(seg, sizeThreshold)
+    print "\nmarker watershed 2"
+    thresh = 100
+    rgn_graph_2 = marker_watershed_with_thresh(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0], thresh, rgn_graph)
     return (seg, segSizes)
 
 def prune_and_renum(np.ndarray[int, ndim=1] seg,
