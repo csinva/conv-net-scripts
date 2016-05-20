@@ -10,9 +10,11 @@ cdef extern from "twatershed.h":
     void connected_components_cpp(const int nVert,
                                   const int nEdge, const int*node1, const int*node2, const int*edgeWeight,
                                   int*seg);
-    map[pair[int,int], float] marker_watershed_cpp(const int nVert, const int*marker,
-                              const int nEdge, const int*node1, const int*node2, const float*edgeWeight,
-                              int*seg);
+    map[pair[int, int], float] marker_watershed_cpp(const int nVert, const int*marker, const int nEdge,
+                                                    const int*node1, const int*node2, const float*edgeWeight, int*seg);
+    map[pair[int, int], float] marker_watershed_with_thresh(const int nVert, const int*marker, const int nEdge,
+                                                            const int*node1, const int*node2, const float*edgeWeight,
+                                                            int*seg, float thresh);
 
 def connected_components(int nVert,
                          np.ndarray[int, ndim=1] node1,
@@ -42,8 +44,8 @@ def marker_watershed(np.ndarray[int, ndim=1] marker,
     node2 = np.ascontiguousarray(node2)
     edgeWeight = np.ascontiguousarray(edgeWeight)
     cdef np.ndarray[int, ndim=1] seg = np.zeros(nVert, dtype=np.int32)
-    rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0],&seg[0])
-    print "rgn_graph pyx",rgn_graph
+    rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0])
+    print "rgn_graph pyx", rgn_graph
     (seg, segSizes) = prune_and_renum(seg, sizeThreshold)
     return (seg, segSizes)
 
