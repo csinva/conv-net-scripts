@@ -9,7 +9,6 @@
 #include "zwatershed_util/basic_watershed.hpp"
 #include "zwatershed_util/limit_functions.hpp"
 #include "zwatershed_util/types.hpp"
-#include "zwatershed_util/utils.hpp"
 #include "zwatershed_util/main_helper.hpp"
 
 
@@ -46,7 +45,9 @@ std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int
     // read data
     volume_ptr<uint32_t> seg_ref;
     std::vector<std::size_t> counts_ref;
-    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
+    affinity_graph_ptr<float> aff(new affinity_graph<float>
+                              (boost::extents[dimX][dimY][dimZ][dcons],
+                               boost::fortran_storage_order()));
     for(int i=0;i<dimX*dimY*dimZ*dcons;i++)
         aff->data()[i] = affs[i];
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
@@ -82,9 +83,9 @@ std::map<std::string,std::vector<double>> oneThresh_with_stats(int dimX,int dimY
 int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh,int eval){
 
     //read data
-    volume_ptr<uint32_t> gt_ptr = read_volumes<uint32_t>("", dimX, dimY, dimZ);
-    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
-    volume_ptr<uint32_t> seg = read_volumes<uint32_t>("", dimX, dimY, dimZ);
+    volume_ptr<uint32_t> gt_ptr(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ], boost::fortran_storage_order()));
+    affinity_graph_ptr<float> aff(new affinity_graph<float> (boost::extents[dimX][dimY][dimZ][dcons], boost::fortran_storage_order()));
+    volume_ptr<uint32_t> seg(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ], boost::fortran_storage_order()));
     std::vector<std::size_t> counts = * new std::vector<std::size_t>();
     region_graph_ptr<uint32_t,float> rg( new region_graph<uint32_t,float> );
     for(int i=0;i<dimX*dimY*dimZ;i++){
@@ -134,8 +135,8 @@ std::map<std::string,std::vector<double>> oneThresh(int dimX, int dimY, int dimZ
     std::cout << "evaluating..." << std::endl;
 
     // read data
-    affinity_graph_ptr<float> aff = read_affinity_graphe<float>("", dimX, dimY, dimZ, dcons);
-    volume_ptr<uint32_t> seg = read_volumes<uint32_t>("", dimX, dimY, dimZ);
+    affinity_graph_ptr<float> aff(new affinity_graph<float> (boost::extents[dimX][dimY][dimZ][dcons], boost::fortran_storage_order()));
+    volume_ptr<uint32_t> seg(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ], boost::fortran_storage_order()));
     std::vector<std::size_t> counts = * new std::vector<std::size_t>();
     region_graph_ptr<uint32_t,float> rg( new region_graph<uint32_t,float> );
     for(int i=0;i<dimX*dimY*dimZ;i++)
