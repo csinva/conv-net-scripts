@@ -43,7 +43,7 @@ void connected_components_cpp(const int nVert,
         seg[i] = dsets.find_set(i);
 }
 
-void marker_watershed_cpp(const int nVert, const int* marker,
+std::map<std::pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marker,
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
                int* seg){
 
@@ -105,7 +105,25 @@ void marker_watershed_cpp(const int nVert, const int* marker,
     for (int i=0; i<nVert; i++)
         seg[i] = seg[dsets.find_set(i)];
 
-    std::vector<std::tuple<float,int,int> >region_graph;// = std::vector<std::tuple<float,int,int> >;
+    std::map<std::pair<int,int>, float> rg;
 
+    // calculate the region graph (remember seg1 < seg2)
+    cout << "calculating rgn graph\n";
+    for(int i=0;i<nEdge;i++){
+        set1=dsets.find_set(node1[i]);
+        set2=dsets.find_set(node2[i]);
+        auto pair = std::make_pair(set1,set2);
+        float w_new = edgeWeight[i];
+        float w_old = 0;
+        auto iter = rg.find(pair);
+        if(iter == rg.end())
+            rg[pair] = w_new;
+        else{
+            w_old = iter->second;
+            if(w_new < w_old)
+                rg[pair] = w_new;
+        }
+    }
+    return rg;
 }
 

@@ -2,12 +2,15 @@ import numpy as np
 cimport numpy as np
 from scipy.misc import comb
 import scipy.sparse
+from libcpp.map cimport map
+from libcpp.vector cimport vector
+from libcpp.map cimport pair
 
 cdef extern from "twatershed.h":
     void connected_components_cpp(const int nVert,
                                   const int nEdge, const int*node1, const int*node2, const int*edgeWeight,
                                   int*seg);
-    void marker_watershed_cpp(const int nVert, const int*marker,
+    map[pair[int,int], float] marker_watershed_cpp(const int nVert, const int*marker,
                               const int nEdge, const int*node1, const int*node2, const float*edgeWeight,
                               int*seg);
 
@@ -39,9 +42,8 @@ def marker_watershed(np.ndarray[int, ndim=1] marker,
     node2 = np.ascontiguousarray(node2)
     edgeWeight = np.ascontiguousarray(edgeWeight)
     cdef np.ndarray[int, ndim=1] seg = np.zeros(nVert, dtype=np.int32)
-    marker_watershed_cpp(nVert, &marker[0],
-                         nEdge, &node1[0], &node2[0], &edgeWeight[0],
-                         &seg[0]);
+    rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0],&seg[0])
+    print "rgn_graph pyx",rgn_graph
     (seg, segSizes) = prune_and_renum(seg, sizeThreshold)
     return (seg, segSizes)
 

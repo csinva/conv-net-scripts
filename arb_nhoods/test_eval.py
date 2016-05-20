@@ -3,8 +3,6 @@ import h5py
 import datetime
 
 np.set_printoptions(precision=4)
-import twatershed as tw
-
 import numpy as np
 import sys
 import time
@@ -17,6 +15,9 @@ import matplotlib.pyplot as plt
 import array
 import matplotlib
 
+
+sys.path.append('arb_nhoods')
+import twatershed as tw
 sys.path.append('../')
 from visualization.visualize_funcs import *
 
@@ -51,63 +52,24 @@ if gt_data_dimension != data_dimension:
     gt = gt[padding:(-1 * padding), padding:(-1 * padding), padding:(-1 * padding)]
     print("New GT data shape :", gt.shape)
 
-print("shapes: ", gt.shape, aff.shape)
 nhood = tw.mknhood3d(1)
-print("nhood: ", nhood)
 node1, node2, edge_affs = tw.affgraph_to_edgelist(aff, nhood)
-print("edgelist: ")
-for i in range(min(len(node1), 10)):
-    print(node1[i], node2[i], edge_affs[i])
-
-seg, seg_sizes = tw.marker_watershed(gt.flatten(), node1, node2, edge_affs)
+node1 = np.array(node1,dtype='int32')
+node2 = np.array(node2,dtype='int32')
+THRESH = .9999 # higher is more connected
+print node1[0:40]
+print node2[0:40]
+edge_affs_thresh = np.array(edge_affs <= THRESH, dtype='int32')
+print "edge_affs: ",edge_affs_thresh
+print "percent below thresh",sum(edge_affs <=THRESH)/float(len(edge_affs))
+# seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_thresh)
+seg_cc = gt
+print "seg_cc:",seg_cc
+seg, seg_sizes = tw.marker_watershed(seg_cc.flatten(), node1, node2, edge_affs)
+print "output_seg_len", len(seg_sizes)
 seg = seg.reshape(gt.shape)
-print seg.shape, seg[0:10]
-print seg_sizes[0:10]
+
+
 aff = aff.transpose(1, 2, 3, 0)
+display_arbitrary_seg(gt, aff, seg_cc.reshape(gt.shape))
 display_arbitrary_seg(gt, aff, seg)
-raw = gt
-label = aff
-
-plt.plot(range(10))
-plt.show()
-'''
-cmap = matplotlib.colors.ListedColormap(np.vstack(((0, 0, 0), np.random.rand(255, 3))))
-fig = plt.figure(figsize=(20, 10))
-fig.set_facecolor('white')
-ax1, ax2, ax3 = fig.add_subplot(1, 3, 1), fig.add_subplot(1, 3, 2), fig.add_subplot(1, 3, 3)
-
-fig.subplots_adjust(left=0.2, bottom=0.25)
-
-# Image is grayscale
-ax1.imshow(raw[1, :, :], cmap=cm.Greys_r)
-ax1.set_title('Raw Image')
-
-ax2.imshow(label[1, :, :, :])
-ax2.set_title('Groundtruth')
-
-ax3.imshow(seg[1, :, :], cmap=cmap)
-ax3.set_title('Seg')
-
-plt.show()
-'''
-
-'''
-marker_watershed(np.ndarray[int, ndim=1] marker,
-                     np.ndarray[int, ndim=1] node1,
-                     np.ndarray[int, ndim=1] node2,
-                     np.ndarray[float, ndim=1] edgeWeight,
-                     int sizeThreshold=1):
-                     '''
-
-'''
-def affgraph_to_edgelist(aff, nhood):
-    node1, node2 = nodelist_like(aff.shape[1:], nhood)
-    return (node1.ravel(), node2.ravel(), aff.ravel())
-'''
-# segs, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
-# segs = zwatershed(aff, threshes)
-# rand = zwatershed_and_metrics_h5(gt, aff, threshes, save_threshes, out)
-# zwatershed_h5(aff, threshes, out)
-
-# print rand
-# print sum(segs[0][0][0:100][0])
