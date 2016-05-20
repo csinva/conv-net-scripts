@@ -1,26 +1,10 @@
-%load_ext autoreload
-%autoreload 2
-import numpy as np
-import sys
-import time
-import os
-import h5py
-%matplotlib inline
-import os.path as op
-import matplotlib.cm as cm
-from matplotlib.widgets import Slider, Button, RadioButtons
-import matplotlib.pyplot as plt
-import array
-from visualization.visualize_funcs import *
-sys.path.append('src_cython')
-path_to_folder = '/Users/chandansingh/drive/janelia/conv_net_scripts/'
-path_to_data = path_to_folder + 'data/'
-
 import numpy as np
 import h5py
 import datetime
 
 np.set_printoptions(precision=4)
+import twatershed as tw
+
 import numpy as np
 import sys
 import time
@@ -33,9 +17,6 @@ import matplotlib.pyplot as plt
 import array
 import matplotlib
 
-
-sys.path.append('arb_nhoods')
-import twatershed as tw
 sys.path.append('../')
 from visualization.visualize_funcs import *
 
@@ -70,20 +51,63 @@ if gt_data_dimension != data_dimension:
     gt = gt[padding:(-1 * padding), padding:(-1 * padding), padding:(-1 * padding)]
     print("New GT data shape :", gt.shape)
 
-nhood = tw.mknhood3d(1)
-node1, node2, edge_affs = tw.affgraph_to_edgelist(aff, nhood)
-'''
 print("shapes: ", gt.shape, aff.shape)
+nhood = tw.mknhood3d(1)
 print("nhood: ", nhood)
+node1, node2, edge_affs = tw.affgraph_to_edgelist(aff, nhood)
 print("edgelist: ")
 for i in range(min(len(node1), 10)):
     print(node1[i], node2[i], edge_affs[i])
-'''
+
 seg, seg_sizes = tw.marker_watershed(gt.flatten(), node1, node2, edge_affs)
 seg = seg.reshape(gt.shape)
-# print seg.shape, seg[0:10]
-# print seg_sizes[0:10]
+print seg.shape, seg[0:10]
+print seg_sizes[0:10]
 aff = aff.transpose(1, 2, 3, 0)
 display_arbitrary_seg(gt, aff, seg)
 raw = gt
 label = aff
+
+plt.plot(range(10))
+plt.show()
+'''
+cmap = matplotlib.colors.ListedColormap(np.vstack(((0, 0, 0), np.random.rand(255, 3))))
+fig = plt.figure(figsize=(20, 10))
+fig.set_facecolor('white')
+ax1, ax2, ax3 = fig.add_subplot(1, 3, 1), fig.add_subplot(1, 3, 2), fig.add_subplot(1, 3, 3)
+
+fig.subplots_adjust(left=0.2, bottom=0.25)
+
+# Image is grayscale
+ax1.imshow(raw[1, :, :], cmap=cm.Greys_r)
+ax1.set_title('Raw Image')
+
+ax2.imshow(label[1, :, :, :])
+ax2.set_title('Groundtruth')
+
+ax3.imshow(seg[1, :, :], cmap=cmap)
+ax3.set_title('Seg')
+
+plt.show()
+'''
+
+'''
+marker_watershed(np.ndarray[int, ndim=1] marker,
+                     np.ndarray[int, ndim=1] node1,
+                     np.ndarray[int, ndim=1] node2,
+                     np.ndarray[float, ndim=1] edgeWeight,
+                     int sizeThreshold=1):
+                     '''
+
+'''
+def affgraph_to_edgelist(aff, nhood):
+    node1, node2 = nodelist_like(aff.shape[1:], nhood)
+    return (node1.ravel(), node2.ravel(), aff.ravel())
+'''
+# segs, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
+# segs = zwatershed(aff, threshes)
+# rand = zwatershed_and_metrics_h5(gt, aff, threshes, save_threshes, out)
+# zwatershed_h5(aff, threshes, out)
+
+# print rand
+# print sum(segs[0][0][0:100][0])
