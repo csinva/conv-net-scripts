@@ -32,7 +32,7 @@ hdf5_pred_file = path_to_data + 'tstvol-1_2.h5'  # /tier2/turaga/singhc/train/ou
 out = path_to_data + 'out/'  # '/groups/turaga/home/singhc/evaluation/out/'
 save_threshes = threshes
 rand = 0
-p_small = 200
+p_small = 150
 
 hdf5_gt = h5py.File(hdf5_gt_file, 'r')
 hdf5_aff = h5py.File(hdf5_pred_file, 'r')
@@ -64,9 +64,9 @@ print "edge_affs: ",edge_affs_thresh
 print "percent below thresh",sum(edge_affs <=THRESH)/float(len(edge_affs))
 # seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_thresh)
 seg_cc = gt
-print "seg_cc:",seg_cc
+# print "seg_cc:",seg_cc
 seg, seg_sizes = tw.marker_watershed(seg_cc.flatten(), node1, node2, edge_affs)
-print "output_seg_len", len(seg_sizes)
+# print "output_seg_len", len(seg_sizes)
 seg = seg.reshape(gt.shape)
 
 

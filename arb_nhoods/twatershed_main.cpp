@@ -134,7 +134,7 @@ map<pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marke
 
 map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const int* marker,
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
-               int* seg, float thresh, map<pair<int,int>, float> rg){
+               int* seg, int * seg_sizes, float thresh, map<pair<int,int>, float> rg){
 
     cout << "merge segments\n";
 
@@ -158,21 +158,61 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
         if (seg[i] > 0)
             dsets.union_set(components[seg[i]],i);
 
+    // merge segments based on rg
+    map<pair<int,int>, float> rg_return;
+    vector<pair<int,int>> to_delete;
+    for(auto it = rg.begin(); it != rg.end(); it++){
+        auto key = it->first;
+        auto aff = it->second;
+        int seg1 = get<0>(key);
+        int seg2 = get<1>(key);
+        int set1 = dsets.find_set(seg1);
+        int set2 = dsets.find_set(seg2);
+        if(set1!=set2){
+            int size1 = seg_sizes[seg1];
+            int size2 = seg_sizes[seg2];
+            int size_min = min(size1,size2);
+            double LOW_THRESH=  .0001;
+            float size_to_merge = 0;
+            if(aff > LOW_THRESH)
+                size_to_merge = thresh*aff*aff;
+            if(size_min < size_to_merge){
+                // merge
+                cout << "merging!\n";
+                to_delete.push_back(key);
+                dsets.union_set(seg1,seg2);
+                seg_sizes[seg1]+=size2;
+                seg_sizes[seg2]+=size1;
+            }
+            else{
+                rg_return[key]=aff;
+            }
+        }
+    }
+
+    //rg.erase[make_pair(3,3)];
+    /*
+    for(auto const& key: to_delete) {
+        auto it=rg.find(key);
+        //mymap.erase (it);
+        rg.erase[key];
+    }
+    */
+
+    // iterator->first = key
+    // iterator->second = value
+    // Repeat if you also want to iterate through the second map.
+
     // write out the final coloring
     for (int i=0; i<nVert; i++)
         seg[i] = seg[dsets.find_set(i)];
 
-    // merge segments based on rg
-    for(auto it = rg.begin(); it != rg.end(); it++){
-
-
-    }
-    // iterator->first = key
-    // iterator->second = value
-    // Repeat if you also want to iterate through the second map.
-    return rg;
+    return rg_return;
 
 }
+
+
+
 
     /* Sort all the edges in decreasing order of weight */
     /*
