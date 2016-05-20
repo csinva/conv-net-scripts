@@ -4,6 +4,7 @@ from Cython.Distutils import build_ext
 
 import numpy
 
-ext_modules = [Extension("twatershed", ["twatershed.pyx", "twatershed_main.cpp"], language='c++',)]
+ext_modules = [Extension("twatershed", ["twatershed.pyx", "twatershed_main.cpp"], language='c++',extra_link_args=["-std=c++11"],
+                         extra_compile_args=["-std=c++11", "-w"])]
 
 setup(cmdclass = {'build_ext': build_ext}, include_dirs=[numpy.get_include()], ext_modules = ext_modules)

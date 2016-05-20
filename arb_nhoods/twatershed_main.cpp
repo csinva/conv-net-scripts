@@ -5,6 +5,7 @@
 #include <vector>
 #include <queue>
 #include <map>
+
 using namespace std;
 
 template <class T>
@@ -41,7 +42,6 @@ void connected_components_cpp(const int nVert,
     for (int i = 0; i < nVert; ++i)
         seg[i] = dsets.find_set(i);
 }
-
 
 void marker_watershed_cpp(const int nVert, const int* marker,
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
@@ -105,4 +105,7 @@ void marker_watershed_cpp(const int nVert, const int* marker,
     for (int i=0; i<nVert; i++)
         seg[i] = seg[dsets.find_set(i)];
 
+    std::vector<std::tuple<float,int,int> >region_graph;// = std::vector<std::tuple<float,int,int> >;
+
 }
+
