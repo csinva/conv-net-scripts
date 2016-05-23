@@ -29,7 +29,7 @@ def connected_components(int nVert,
     connected_components_cpp(nVert,
                              nEdge, &node1[0], &node2[0], &edgeWeight[0],
                              &seg[0])
-    (seg, segSizes) = prune_and_renum(seg, sizeThreshold)
+    (seg, segSizes) = prune_and_renum_without_rgn_graph(seg, sizeThreshold)
     return (seg, segSizes)
 
 def marker_watershed(np.ndarray[int, ndim=1] marker,
@@ -49,7 +49,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker,
     print "max seg:", max(seg.ravel())
     print "rgn graph len",len(rgn_graph.keys())
     # print "max rg:",max(np.flatten(seg))
-    (seg, segSizes, rgn_graph) = prune_and_renum(seg, rgn_graph, sizeThreshold)
+    (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
     cdef np.ndarray[int, ndim=1] seg_sizes = np.array(segSizes, dtype=np.int32)
     # print "rg pruned:", rgn_graph
     print "rgn graph pruned len",len(rgn_graph.keys())
@@ -60,7 +60,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker,
     print "rgn graph 2 len",len(rgn_graph_2.keys())
     return (seg, segSizes)
 
-def prune_and_renum(np.ndarray[int, ndim=1] seg, rg, int sizeThreshold=1):
+def prune_and_renum_without_rgn_graph(np.ndarray[int, ndim=1] seg, int sizeThreshold=1):
     # renumber the components in descending order by size
     segId, segSizes = np.unique(seg, return_counts=True)
     descOrder = np.argsort(segSizes)[::-1]
@@ -68,15 +68,36 @@ def prune_and_renum(np.ndarray[int, ndim=1] seg, rg, int sizeThreshold=1):
     segId = segId[descOrder]
     segSizes = segSizes[descOrder]
     renum[segId] = np.arange(1, len(segId) + 1)
+    # print "rg:",rg
+    if sizeThreshold > 0:
+        renum[segId[segSizes <= sizeThreshold]] = 0
+        segSizes = segSizes[segSizes > sizeThreshold]
 
+    seg = renum[seg]
+    return (seg, segSizes)
+
+def prune_and_renum_with_rgn_graph(np.ndarray[int, ndim=1] seg, rg, int sizeThreshold=1):
+    # renumber the components in descending order by size
+    segId, segSizes = np.unique(seg, return_counts=True)
+    descOrder = np.argsort(segSizes)[::-1]
+    renum = np.zeros(segId.max() + 1, dtype=np.int32)
+    segId = segId[descOrder]
+    segSizes = segSizes[descOrder]
+    renum[segId] = np.arange(1, len(segId) + 1)
+    # print "rg:",rg
     if sizeThreshold > 0:
         renum[segId[segSizes <= sizeThreshold]] = 0
         segSizes = segSizes[segSizes > sizeThreshold]
 
     seg = renum[seg]
     rg_new = {}
-    for key in rg:
-        rg_new[(renum[key[0]], renum[key[1]])] = rg[key]
+
+    # print "rg: ",rg
+    try:
+        for key in rg:
+            rg_new[(renum[key[0]], renum[key[1]])] = rg[key]
+    except:
+        pass
 
     return (seg, segSizes, rg_new)
 

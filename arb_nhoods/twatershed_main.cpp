@@ -178,7 +178,7 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
                 size_to_merge = thresh*aff*aff;
             if(size_min < size_to_merge){
                 // merge
-                cout << "merging!\n";
+                //cout << "merging!\n";
                 to_delete.push_back(key);
                 dsets.union_set(seg1,seg2);
                 seg_sizes[seg1]+=size2;
@@ -190,19 +190,6 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
         }
     }
 
-    //rg.erase[make_pair(3,3)];
-    /*
-    for(auto const& key: to_delete) {
-        auto it=rg.find(key);
-        //mymap.erase (it);
-        rg.erase[key];
-    }
-    */
-
-    // iterator->first = key
-    // iterator->second = value
-    // Repeat if you also want to iterate through the second map.
-
     // write out the final coloring
     for (int i=0; i<nVert; i++)
         seg[i] = seg[dsets.find_set(i)];
@@ -210,71 +197,4 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
     return rg_return;
 
 }
-
-
-
-
-    /* Sort all the edges in decreasing order of weight */
-    /*
-    vector<int> pqueue( nEdge );
-    int j = 0;
-    for (int i = 0; i < nEdge; ++i)
-        if ((edgeWeight[i]!=0) &&
-            (node1[i]>=0) && (node1[i]<nVert) &&
-            (node2[i]>=0) && (node2[i]<nVert) &&
-            (marker[node1[i]]>=0) && (marker[node2[i]]>=0))
-                pqueue[ j++ ] = i;
-    unsigned long nValidEdge = j;
-    pqueue.resize(nValidEdge);
-    sort( pqueue.begin(), pqueue.end(), AffinityGraphCompare<float>( edgeWeight ) );
-    */
-
-    /* Start MST */
-    /*
-    int set1, set2, label_of_set1, label_of_set2;
-    for (unsigned int i = 0; i < pqueue.size(); ++i ) {
-
-        set1=dsets.find_set(node1[i]);
-        set2=dsets.find_set(node2[i]);
-        label_of_set1 = seg[set1];
-        label_of_set2 = seg[set2];
-
-        if ((set1!=set2) &&
-            ( ((label_of_set1==0) && (marker[set1]==0)) ||
-             ((label_of_set2==0) && (marker[set1]==0))) ){
-
-            dsets.link(set1, set2);
-            // either label_of_set1 is 0 or label_of_set2 is 0.
-            seg[dsets.find_set(set1)] = max(label_of_set1,label_of_set2);
-
-        }
-    }
-    */
-
-
-
-
-
-    // calculate the region graph (remember seg1 < seg2)
-    /*
-    map<pair<int,int>, float> rg;
-    for(int i=0;i<nEdge;i++){
-        set1=dsets.find_set(node1[i]);
-        set2=dsets.find_set(node2[i]);
-        auto pair = make_pair(set1,set2);
-        if(set2<set1)
-            pair = make_pair(set2,set1);
-        float w_new = edgeWeight[i];
-        float w_old = 0;
-        auto iter = rg.find(pair);
-        if(iter == rg.end())
-            rg[pair] = w_new;
-        else{
-            w_old = iter->second;
-            if(w_new < w_old)
-                rg[pair] = w_new;
-        }
-    }
-    */
-
 

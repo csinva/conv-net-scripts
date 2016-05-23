@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 import array
 import matplotlib
 
-
 sys.path.append('arb_nhoods')
 import twatershed as tw
+
 sys.path.append('../')
 from visualization.visualize_funcs import *
 
@@ -54,21 +54,20 @@ if gt_data_dimension != data_dimension:
 
 nhood = tw.mknhood3d(1)
 node1, node2, edge_affs = tw.affgraph_to_edgelist(aff, nhood)
-node1 = np.array(node1,dtype='int32')
-node2 = np.array(node2,dtype='int32')
-THRESH = .9999 # higher is more connected
+node1 = np.array(node1, dtype='int32')
+node2 = np.array(node2, dtype='int32')
+THRESH = .9999  # higher is more connected
 # print node1[0:40]
 # print node2[0:40]
 edge_affs_thresh = np.array(edge_affs <= THRESH, dtype='int32')
-print "edge_affs: ",edge_affs_thresh
-print "percent below thresh",sum(edge_affs <=THRESH)/float(len(edge_affs))
-# seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_thresh)
-seg_cc = gt
-# print "seg_cc:",seg_cc
+print "edge_affs: ", edge_affs_thresh
+print "percent below thresh", sum(edge_affs <= THRESH) / float(len(edge_affs))
+seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_thresh)
+# seg_cc = gt
+print "seg_cc:",seg_cc
 seg, seg_sizes = tw.marker_watershed(seg_cc.flatten(), node1, node2, edge_affs)
 # print "output_seg_len", len(seg_sizes)
 seg = seg.reshape(gt.shape)
-
 
 aff = aff.transpose(1, 2, 3, 0)
 display_arbitrary_seg(gt, aff, seg_cc.reshape(gt.shape))
