@@ -24,7 +24,8 @@ from visualization.visualize_funcs import *
 path_to_folder = '/Users/chandansingh/drive/janelia/conv_net_scripts/'
 path_to_data = path_to_folder + 'data/'
 
-threshes = [500, 1000, 2000]  # for i in range(1,6)]+[i*20000 for i in range(2,16)] # 100...1,000...100,000
+threshes = [500, 1000, 2000, 10000, 20000, 1e6,
+            1e9]  # for i in range(1,6)]+[i*20000 for i in range(2,16)] # 100...1,000...100,000
 iters = [10000]
 strs = ["2"]
 hdf5_gt_file = path_to_data + 'groundtruth_seg_thick.h5'  # /groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
@@ -62,10 +63,10 @@ THRESH = .9999  # higher is more connected
 edge_affs_thresh = np.array(edge_affs <= THRESH, dtype='int32')
 print "edge_affs: ", edge_affs_thresh
 print "percent below thresh", sum(edge_affs <= THRESH) / float(len(edge_affs))
-seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_thresh)
+# seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_thresh)
+seg_cc = gt
 print "num segs seg_cc", max(seg_cc.flatten())
 print "num segs gt", max(gt.flatten())
-# seg_cc = gt
 seg, seg_sizes = tw.marker_watershed(seg_cc.flatten(), node1, node2, edge_affs, threshes)
 # print "output_seg_len", len(seg_sizes)
 print "num segs seg_cc", max(seg.flatten())

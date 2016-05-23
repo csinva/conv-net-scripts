@@ -96,23 +96,16 @@ map<pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marke
             dsets.link(set1, set2);
             // either label_of_set1 is 0 or label_of_set2 is 0.
             seg[dsets.find_set(set1)] = max(label_of_set1,label_of_set2);
-            
         }
-
     }
 
     // write out the final coloring
     for (int i=0; i<nVert; i++){
         int before = seg[i];
         seg[i] = seg[dsets.find_set(i)];
-        /*
-        if(before != seg[i]){
-            cout << " coloring changed! " << "\n";
-        }
-        */
     }
 
-    // calculate the region graph (remember seg1 < seg2)
+    // calculate the region graph
     map<pair<int,int>, float> rg;
     cout << "calculating rgn graph init\n";
     for (unsigned int i = 0; i < pqueue.size(); ++i ) {
@@ -143,7 +136,7 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
                const int nEdge, const int* node1, const int* node2, const float* edgeWeight,
                int* seg, int * seg_sizes, float thresh, map<pair<int,int>, float> rg){
 
-    cout << "merge segments\n";
+    // cout << "merge segments\n";
 
     /* Make disjoint sets */
     vector<int> rank(nVert);
@@ -167,7 +160,6 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
 
     // merge segments based on rg
     map<pair<int,int>, float> rg_return;
-    vector<pair<int,int>> to_delete;
     for(auto it = rg.begin(); it != rg.end(); it++){
         auto key = it->first;
         auto aff = it->second;
@@ -186,8 +178,7 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
             if(size_min < size_to_merge){
                 // merge
                 //cout << "merging!\n";
-                to_delete.push_back(key);
-                dsets.union_set(seg1,seg2);
+                dsets.union_set(set1,set2);
                 seg_sizes[seg1]+=size2;
                 seg_sizes[seg2]+=size1;
             }
