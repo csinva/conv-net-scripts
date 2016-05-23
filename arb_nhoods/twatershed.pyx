@@ -14,7 +14,8 @@ cdef extern from "twatershed.h":
                                                     const int*node1, const int*node2, const float*edgeWeight, int*seg);
     map[pair[int, int], float] marker_watershed_with_thresh(const int nVert, const int*marker, const int nEdge,
                                                             const int*node1, const int*node2, const float*edgeWeight,
-                                                            int*seg,int*seg_sizes, float thresh, map[pair[int, int], float] rg);
+                                                            int*seg, int*seg_sizes, float thresh,
+                                                            map[pair[int, int], float] rg);
 
 def connected_components(int nVert,
                          np.ndarray[int, ndim=1] node1,
@@ -44,21 +45,28 @@ def marker_watershed(np.ndarray[int, ndim=1] marker,
     node2 = np.ascontiguousarray(node2)
     edgeWeight = np.ascontiguousarray(edgeWeight)
     cdef np.ndarray[int, ndim=1] seg = np.zeros(nVert, dtype=np.int32)
+    print "nVert",nVert
+    print "sum_seg_before",sum(marker.ravel())
     rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0])
     # print "rgn_graph pyx", rgn_graph
+    print "sum_seg_after",sum(seg.ravel())
     print "max seg:", max(seg.ravel())
-    print "rgn graph len",len(rgn_graph.keys())
+    print "rgn graph 1 len", len(rgn_graph.keys())
     # print "max rg:",max(np.flatten(seg))
     (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
+    print "sum_seg_after",sum(seg.ravel())
     cdef np.ndarray[int, ndim=1] seg_sizes = np.array(segSizes, dtype=np.int32)
     # print "rg pruned:", rgn_graph
-    print "rgn graph pruned len",len(rgn_graph.keys())
+    print "rgn graph pruned len", len(rgn_graph.keys())
     print "\nmarker watershed 2"
     thresh = 1000
-    rgn_graph_2 = marker_watershed_with_thresh(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0], &seg_sizes[0],
+    marker = seg
+    rgn_graph_2 = marker_watershed_with_thresh(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0],
+                                               &seg_sizes[0],
                                                thresh, rgn_graph)
-    print "rgn graph 2 len",len(rgn_graph_2.keys())
-    return (seg, segSizes)
+    (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
+    print "rgn graph 2 len", len(rgn_graph_2.keys())
+    return seg, segSizes
 
 def prune_and_renum_without_rgn_graph(np.ndarray[int, ndim=1] seg, int sizeThreshold=1):
     # renumber the components in descending order by size
@@ -74,7 +82,7 @@ def prune_and_renum_without_rgn_graph(np.ndarray[int, ndim=1] seg, int sizeThres
         segSizes = segSizes[segSizes > sizeThreshold]
 
     seg = renum[seg]
-    return (seg, segSizes)
+    return seg, segSizes
 
 def prune_and_renum_with_rgn_graph(np.ndarray[int, ndim=1] seg, rg, int sizeThreshold=1):
     # renumber the components in descending order by size

@@ -102,8 +102,15 @@ map<pair<int,int>, float> marker_watershed_cpp(const int nVert, const int* marke
     }
 
     // write out the final coloring
-    for (int i=0; i<nVert; i++)
+    for (int i=0; i<nVert; i++){
+        int before = seg[i];
         seg[i] = seg[dsets.find_set(i)];
+        /*
+        if(before != seg[i]){
+            cout << " coloring changed! " << "\n";
+        }
+        */
+    }
 
     // calculate the region graph (remember seg1 < seg2)
     map<pair<int,int>, float> rg;

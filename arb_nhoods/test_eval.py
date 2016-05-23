@@ -63,10 +63,13 @@ edge_affs_thresh = np.array(edge_affs <= THRESH, dtype='int32')
 print "edge_affs: ", edge_affs_thresh
 print "percent below thresh", sum(edge_affs <= THRESH) / float(len(edge_affs))
 seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_thresh)
+print "num segs seg_cc", max(seg_cc.flatten())
+print "num segs gt", max(gt.flatten())
 # seg_cc = gt
-print "seg_cc:",seg_cc
 seg, seg_sizes = tw.marker_watershed(seg_cc.flatten(), node1, node2, edge_affs)
 # print "output_seg_len", len(seg_sizes)
+print "num segs seg_cc", max(seg.flatten())
+print "num segs gt", max(gt.flatten())
 seg = seg.reshape(gt.shape)
 
 aff = aff.transpose(1, 2, 3, 0)
