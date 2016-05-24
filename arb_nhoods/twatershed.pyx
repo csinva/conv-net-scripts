@@ -46,7 +46,9 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
     cdef np.ndarray[int, ndim=1] seg = np.zeros(nVert, dtype=np.int32)
 
     rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0])
+    segs = []
     (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
+    segs.append(np.array(seg,copy=True))
     print "rg len", len(rgn_graph), "num segs", len(segSizes), '=', max(seg)
     '''
     count = 0
@@ -70,6 +72,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
                                                  &seg[0], &seg_sizes[0], thresh, rgn_graph)
         (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
         print "rg len", len(rgn_graph), "num segs", len(segSizes), '=', max(seg)
+        segs.append(np.array(seg,copy=True))
         '''
         count = 0
         for key in rgn_graph:
@@ -80,7 +83,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
         # print "rg",rgn_graph
         # print "segSizes", segSizes
 
-    return seg, segSizes
+    return segs, segSizes
 
 def prune_and_renum_with_rgn_graph(np.ndarray[int, ndim=1] seg, rg, int sizeThreshold=1):
     # renumber the components in descending order by size

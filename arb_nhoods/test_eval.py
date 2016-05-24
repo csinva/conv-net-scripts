@@ -64,7 +64,8 @@ seg_cc, _ = tw.connected_components(int(np.size(gt)), node1, node2, edge_affs_th
 # seg_cc = gt
 # seg_cc = np.zeros(gt.shape,dtype='int32')
 print "num segs gt,seg", max(gt.flatten()),max(seg_cc.flatten())
-seg, seg_sizes = tw.marker_watershed(seg_cc.flatten(), node1, node2, edge_affs, threshes)
+segs, seg_sizes = tw.marker_watershed(seg_cc.flatten(), node1, node2, edge_affs, threshes)
+seg = segs[0]
 print "num segs gt,seg", max(gt.flatten()),max(seg.flatten())
 seg = seg.reshape(gt.shape)
 
