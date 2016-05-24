@@ -47,22 +47,36 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
 
     rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0])
     (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
+    print "rg len", len(rgn_graph), "num segs", len(segSizes), '=', max(seg)
+    count = 0
+    for key in rgn_graph:
+        if count < 100:
+            print key
+        if key[0]==0 or key[1]==0:
+            print key
+        count +=1
 
+    print "\nwatershed loop"
     cdef np.ndarray[int, ndim=1] seg_sizes = np.array(segSizes, dtype=np.int32)
     cdef int thresh = 0
-
-    print "watershed loop"
     for thold in threshes:
         print "thold", thold
         seg_sizes = np.array(segSizes, dtype=np.int32)
         thresh = thold
         marker = seg
         rgn_graph = marker_watershed_with_thresh(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0],
-                                                 &seg[0],
-                                                 &seg_sizes[0],
-                                                 thresh, rgn_graph)
+                                                 &seg[0], &seg_sizes[0], thresh, rgn_graph)
         (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
         print "rg len", len(rgn_graph), "num segs", len(segSizes), '=', max(seg)
+        count = 0
+        for key in rgn_graph:
+            if count < 20:
+                print key
+            count +=1
+
+        # print "rg",rgn_graph
+        print "segSizes", segSizes
+
     return seg, segSizes
 
 def prune_and_renum_without_rgn_graph(np.ndarray[int, ndim=1] seg, int sizeThreshold=1):
@@ -98,9 +112,12 @@ def prune_and_renum_with_rgn_graph(np.ndarray[int, ndim=1] seg, rg, int sizeThre
     rg_new = {}
 
     # print "rg: ",rg
+    print "\nrenum:",renum
     try:
         for key in rg:
             rg_new[(renum[key[0]], renum[key[1]])] = rg[key]
+            print "normal keys",key[0],key[1]
+            print "renum keys",renum[key[0]],renum[key[1]]
     except:
         pass
 

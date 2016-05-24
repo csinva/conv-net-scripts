@@ -168,19 +168,24 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
         int set1 = dsets.find_set(seg1);
         int set2 = dsets.find_set(seg2);
         if(set1!=set2){
-            int size1 = seg_sizes[seg1];
-            int size2 = seg_sizes[seg2];
+            int size1 = seg_sizes[set1];
+            int size2 = seg_sizes[set2];
+            cout << "\nseg1 " << seg1 << " seg2 " << seg2 << endl;
+            cout << "set1 " << set1 << " set2 " << set2 << endl;
+            cout << "sizes " << size1 << " " << size2 << endl;
             int size_min = min(size1,size2);
             double LOW_THRESH=  .0001;
-            float size_to_merge = 0;
+            float size_to_merge = 1e10;
             if(aff > LOW_THRESH)
                 size_to_merge = thresh*aff*aff;
             if(size_min < size_to_merge){
                 // merge
-                //cout << "merging!\n";
+                cout << "merging " << set1 << " " << set2 << "\n";
                 dsets.union_set(set1,set2);
-                seg_sizes[seg1]+=size2;
-                seg_sizes[seg2]+=size1;
+                cout << "merged into set " << dsets.find_set(seg1) << endl;
+                seg_sizes[dsets.find_set(seg1)] = size1+size2;
+                //seg_sizes[seg1]+=size2;
+                //seg_sizes[seg2]+=size1;
             }
             else{
                 rg_return[key]=aff;
