@@ -163,10 +163,21 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
     for(auto it = rg.begin(); it != rg.end(); it++){
         auto key = it->first;
         auto aff = it->second;
+        //set1=seg[dsets.find_set(node1[e])];
         int seg1 = get<0>(key);
         int seg2 = get<1>(key);
         int set1 = dsets.find_set(seg1);
         int set2 = dsets.find_set(seg2);
+        rg_return[key]=aff;
+        if(set1==set2){
+            //cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
+            //cout << "seg[0]="<<seg[0]<<endl;
+        }
+        if(seg1==seg2){
+            cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
+            //cout << "seg[0]="<<seg[0]<<endl;
+        }
+        /*
         if(set1!=set2){
             int size1 = seg_sizes[set1];
             int size2 = seg_sizes[set2];
@@ -191,6 +202,7 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
                 rg_return[key]=aff;
             }
         }
+        */
     }
 
     // write out the final coloring

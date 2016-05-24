@@ -48,6 +48,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
     rgn_graph = marker_watershed_cpp(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0], &seg[0])
     (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
     print "rg len", len(rgn_graph), "num segs", len(segSizes), '=', max(seg)
+    '''
     count = 0
     for key in rgn_graph:
         if count < 100:
@@ -55,6 +56,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
         if key[0]==0 or key[1]==0:
             print key
         count +=1
+    '''
 
     print "\nwatershed loop"
     cdef np.ndarray[int, ndim=1] seg_sizes = np.array(segSizes, dtype=np.int32)
@@ -68,16 +70,50 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
                                                  &seg[0], &seg_sizes[0], thresh, rgn_graph)
         (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)
         print "rg len", len(rgn_graph), "num segs", len(segSizes), '=', max(seg)
+        '''
         count = 0
         for key in rgn_graph:
             if count < 20:
                 print key
             count +=1
-
+        '''
         # print "rg",rgn_graph
         print "segSizes", segSizes
 
     return seg, segSizes
+
+def prune_and_renum_with_rgn_graph(np.ndarray[int, ndim=1] seg, rg, int sizeThreshold=1):
+    # renumber the components in descending order by size
+    segId, segSizes = np.unique(seg, return_counts=True)
+    descOrder = np.argsort(segSizes)[::-1]
+    renum = np.zeros(segId.max() + 1, dtype=np.int32)
+    segId = segId[descOrder]
+    segSizes = segSizes[descOrder]
+
+    renum[segId] = np.arange(1, len(segId) + 1)
+    # print "rg:",rg
+    print "\nrenum:", renum
+    print "segSizes", segSizes
+    if sizeThreshold > 0:
+        renum[segId[segSizes <= sizeThreshold]] = 0
+        segSizes = segSizes[segSizes > sizeThreshold]
+    print "segSizes_after", segSizes
+    seg = renum[seg]
+    rg_new = {}
+
+    # print "rg: ",rg
+
+    try:
+        for key in rg:
+            if renum[key[0]] == 0 or renum[key[1]] == 0:
+                print "0 key", key, renum[key]
+            if renum[key[0]] == renum[key[1]]:
+                print "repeat key", key, renum[key]
+            rg_new[(renum[key[0]], renum[key[1]])] = rg[key]
+    except:
+        pass
+
+    return (seg, segSizes, rg_new)
 
 def prune_and_renum_without_rgn_graph(np.ndarray[int, ndim=1] seg, int sizeThreshold=1):
     # renumber the components in descending order by size
@@ -94,34 +130,6 @@ def prune_and_renum_without_rgn_graph(np.ndarray[int, ndim=1] seg, int sizeThres
 
     seg = renum[seg]
     return seg, segSizes
-
-def prune_and_renum_with_rgn_graph(np.ndarray[int, ndim=1] seg, rg, int sizeThreshold=1):
-    # renumber the components in descending order by size
-    segId, segSizes = np.unique(seg, return_counts=True)
-    descOrder = np.argsort(segSizes)[::-1]
-    renum = np.zeros(segId.max() + 1, dtype=np.int32)
-    segId = segId[descOrder]
-    segSizes = segSizes[descOrder]
-    renum[segId] = np.arange(1, len(segId) + 1)
-    # print "rg:",rg
-    if sizeThreshold > 0:
-        renum[segId[segSizes <= sizeThreshold]] = 0
-        segSizes = segSizes[segSizes > sizeThreshold]
-
-    seg = renum[seg]
-    rg_new = {}
-
-    # print "rg: ",rg
-    print "\nrenum:",renum
-    try:
-        for key in rg:
-            rg_new[(renum[key[0]], renum[key[1]])] = rg[key]
-            print "normal keys",key[0],key[1]
-            print "renum keys",renum[key[0]],renum[key[1]]
-    except:
-        pass
-
-    return (seg, segSizes, rg_new)
 
 def bmap_to_affgraph(bmap, nhood, return_min_idx=False):
     # constructs an affinity graph from a boundary map
