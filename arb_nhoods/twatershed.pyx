@@ -78,7 +78,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
             count +=1
         '''
         # print "rg",rgn_graph
-        print "segSizes", segSizes
+        # print "segSizes", segSizes
 
     return seg, segSizes
 
@@ -92,12 +92,12 @@ def prune_and_renum_with_rgn_graph(np.ndarray[int, ndim=1] seg, rg, int sizeThre
 
     renum[segId] = np.arange(1, len(segId) + 1)
     # print "rg:",rg
-    print "\nrenum:", renum
-    print "segSizes", segSizes
+    #print "\nrenum:", renum
+    #print "segSizes", segSizes
     if sizeThreshold > 0:
         renum[segId[segSizes <= sizeThreshold]] = 0
         segSizes = segSizes[segSizes > sizeThreshold]
-    print "segSizes_after", segSizes
+    #print "segSizes_after", segSizes
     seg = renum[seg]
     rg_new = {}
 

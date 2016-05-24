@@ -166,24 +166,21 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
         //set1=seg[dsets.find_set(node1[e])];
         int seg1 = get<0>(key);
         int seg2 = get<1>(key);
-        int set1 = dsets.find_set(seg1);
-        int set2 = dsets.find_set(seg2);
-        rg_return[key]=aff;
+        int set1 = dsets.find_set(components[seg1]);//dsets.find_set(seg1);
+        int set2 = dsets.find_set(components[seg2]);//dsets.find_set(seg2);
+        //rg_return[key]=aff;
         if(set1==set2){
-            //cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
-            //cout << "seg[0]="<<seg[0]<<endl;
-        }
-        if(seg1==seg2){
             cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
-            //cout << "seg[0]="<<seg[0]<<endl;
         }
-        /*
+        //if(seg1==seg2)
+            //cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
+
         if(set1!=set2){
             int size1 = seg_sizes[set1];
             int size2 = seg_sizes[set2];
-            cout << "\nseg1 " << seg1 << " seg2 " << seg2 << endl;
-            cout << "set1 " << set1 << " set2 " << set2 << endl;
-            cout << "sizes " << size1 << " " << size2 << endl;
+            //cout << "\nseg1 " << seg1 << " seg2 " << seg2 << endl;
+            //cout << "set1 " << set1 << " set2 " << set2 << endl;
+            //cout << "sizes " << size1 << " " << size2 << endl;
             int size_min = min(size1,size2);
             double LOW_THRESH=  .0001;
             float size_to_merge = 1e10;
@@ -193,8 +190,8 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
                 // merge
                 cout << "merging " << set1 << " " << set2 << "\n";
                 dsets.union_set(set1,set2);
-                cout << "merged into set " << dsets.find_set(seg1) << endl;
-                seg_sizes[dsets.find_set(seg1)] = size1+size2;
+                cout << "merged into set " << dsets.find_set(components[seg1]) << endl;
+                seg_sizes[dsets.find_set(components[seg1])] = size1+size2;
                 //seg_sizes[seg1]+=size2;
                 //seg_sizes[seg2]+=size1;
             }
@@ -202,7 +199,8 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
                 rg_return[key]=aff;
             }
         }
-        */
+
+
     }
 
     // write out the final coloring
