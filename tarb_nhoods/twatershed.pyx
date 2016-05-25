@@ -68,6 +68,7 @@ def marker_watershed(np.ndarray[int, ndim=1] marker, np.ndarray[int, ndim=1] nod
         seg_sizes = np.array(segSizes, dtype=np.int32)
         thresh = thold
         marker = seg
+        # print "MIN SEG SIZE",min(seg_sizes)
         rgn_graph = marker_watershed_with_thresh(nVert, &marker[0], nEdge, &node1[0], &node2[0], &edgeWeight[0],
                                                  &seg[0], &seg_sizes[0], thresh, rgn_graph)
         (seg, segSizes, rgn_graph) = prune_and_renum_with_rgn_graph(seg, rgn_graph, sizeThreshold)

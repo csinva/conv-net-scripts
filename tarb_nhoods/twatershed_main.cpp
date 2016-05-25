@@ -158,8 +158,11 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
         if (seg[i] > 0)
             dsets.union_set(components[seg[i]],i);
 
+
     // merge segments based on rg
     map<pair<int,int>, float> rg_return;
+
+    bool merged = false;
     for(auto it = rg.begin(); it != rg.end(); it++){
         auto key = it->first;
         auto aff = it->second;
@@ -169,36 +172,53 @@ map<pair<int,int>, float> marker_watershed_with_thresh(const int nVert, const in
         int set1 = dsets.find_set(components[seg1]);//dsets.find_set(seg1);
         int set2 = dsets.find_set(components[seg2]);//dsets.find_set(seg2);
         //rg_return[key]=aff;
-        if(set1==set2){
-            //cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
+        if(set1==set2 && !merged){
+            cout << "\n\nERROR DIFFERENT SEGS WITHOUT MERGING\n\n" << endl;
         }
         //if(seg1==seg2)
-            //cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
+         //cout << "\tsegs " << seg1 << "," << seg2 << " sets " << set1 << "=" <<set2 << "!" << endl;
 
         if(set1!=set2){
-            int size1 = seg_sizes[set1];
-            int size2 = seg_sizes[set2];
+            int size1 = seg_sizes[components[seg1]];
+            int size2 = seg_sizes[components[seg2]];
             //cout << "\nseg1 " << seg1 << " seg2 " << seg2 << endl;
             //cout << "set1 " << set1 << " set2 " << set2 << endl;
             //cout << "sizes " << size1 << " " << size2 << endl;
             int size_min = min(size1,size2);
-            double LOW_THRESH=  .0001;
-            float size_to_merge = 1e10;
-            if(aff > LOW_THRESH)
-                size_to_merge = thresh*aff*aff;
-            if(size_min < size_to_merge){
+            //double THRESH=  .9999;
+            //float max_size_to_merge = 1e10;
+            //if(aff < THRESH)
+            float max_size_to_merge = thresh*aff*aff;
+
+
+            rg_return[key]=aff;
+
+            if(size_min < max_size_to_merge){
+                cout << "sizes " << size_min << " < " << max_size_to_merge << endl;
                 // merge
-                //cout << "merging " << set1 << " " << set2 << "\n";
+                merged = true;
+                cout << "merging " << set1 << " " << set2 << "\n";
                 dsets.union_set(set1,set2);
                 //cout << "merged into set " << dsets.find_set(components[seg1]) << endl;
                 //seg_sizes[dsets.find_set(components[seg1])] = size1+size2;
-                //seg_sizes[seg1]+=size2;
-                //seg_sizes[seg2]+=size1;
+                // update sizes
+                int new_set = dsets.find_set(seg1);
+                for(int i=0;i<components.size();i++){
+                    if(dsets.find_set(i)==new_set){
+                        seg_sizes[i]=size1+size2;
+                    }
+                   //sizes[dsets.find_set(i)] =
+                }
+                /*
+                seg_sizes[seg1]+=size2;
+                seg_sizes[seg2]+=size1;
+                */
             }
             else{
                 rg_return[key]=aff;
             }
         }
+
 
 
     }
