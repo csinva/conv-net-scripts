@@ -22,7 +22,7 @@ get_region_graph( //const affinity_graph_ptr<F>& aff_ptr,
         ID n1 = node1[i];
         ID n2 = node2[i];
         F w = edgeWeight[i];
-        auto mm = std::minmax(seg[n1],seg[n2]);
+        auto mm = std::minmax(seg[n1],seg[n2]); //need to make sure this is in right order
         F& curr = edges[mm.first][mm.second];
         curr = std::max(curr, w);
     }

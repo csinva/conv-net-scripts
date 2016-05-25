@@ -26,7 +26,7 @@ def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[uint32_t, ndim=1
 def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1,
              np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes,
              int eval, int h5, seg_save_path="NULL/"):
-    gt = np.array(gt, order='F')
+    # gt = np.array(gt, order='F')
     n_edge = node1.size
     print node1[0:10], node2[0:10], edgeWeight[0:10]
     map = calc_rgn_graph(gt, node1, node2, n_edge, edgeWeight)

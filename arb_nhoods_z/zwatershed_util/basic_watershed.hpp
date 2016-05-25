@@ -26,7 +26,7 @@ watershed(int xdim, int ydim, int zdim, const ID* node1, const ID* node2, const 
 
 
     std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result
-        ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim], boost::fortran_storage_order())),
+        ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),//, boost::fortran_storage_order())),
           std::vector<std::size_t>(1) );
 
     /*
