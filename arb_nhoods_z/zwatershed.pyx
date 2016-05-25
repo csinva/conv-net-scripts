@@ -18,8 +18,7 @@ def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[uint32_t, ndim=1
                    np.ndarray[uint32_t, ndim=1] node2, int n_edge, np.ndarray[float, ndim=1] edgeWeight):
     cdef np.ndarray[uint32_t, ndim=1] counts = np.empty(1, dtype='uint32')
     dims = seg.shape
-    dims[3] = 0
-    map = calc_region_graph(dims[0], dims[1], dims[2], dims[3], &node1[0], &node2[0], &edgeWeight[0], n_edge)
+    map = calc_region_graph(dims[0], dims[1], dims[2], &node1[0], &node2[0], &edgeWeight[0], n_edge)
     graph = np.array(map['rg'], dtype='float32')
     return {'rg': graph.reshape(len(graph) / 3, 3), 'seg': np.array(map['seg'], dtype='uint32'),
             'counts': np.array(map['counts'], dtype='uint32')}
@@ -44,7 +43,7 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
         if np.shape(rgn_graph)[0] > 0:
-            map = oneThresh_with_stats(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &rgn_graph[0, 0],
+            map = oneThresh_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
                                        rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i], eval)
         print map
     '''
@@ -156,7 +155,7 @@ def watershed_all_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_
 
     # get segs, stats
     for i in range(len(threshes)):
-        map = oneThresh(dims[0], dims[1], dims[2], dims[3], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
+        map = oneThresh(dims[0], dims[1], dims[2], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
                         rgn_graph.shape[0], &seg_in[0], &counts_out[0], len(map['counts']), threshes[i], eval)
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
         graph = np.array(map['rg'], dtype='float32')
@@ -182,13 +181,12 @@ def makedirs(seg_save_path):
 
 # c++ methods
 cdef extern from "zwatershed.h":
-    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, const uint32_t*node1,
+    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, const uint32_t*node1,
                                                const uint32_t*node2, const float*edgeWeight, int n_edge)
-    map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, int dcons, np.uint32_t*gt,
+    map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, np.uint32_t*gt,
                                                      np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
-                                                     uint32_t*counts,
-                                                     int counts_len, int thresh, int evaluate)
-    map[string, vector[double]] oneThresh(int dx, int dy, int dz, int dcons, np.float32_t*affs,
+                                                     uint32_t*counts,int counts_len, int thresh, int evaluate)
+    map[string, vector[double]] oneThresh(int dx, int dy, int dz, np.float32_t*affs,
                                           np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
                                           uint32_t*counts,
                                           int counts_len, int thresh,
