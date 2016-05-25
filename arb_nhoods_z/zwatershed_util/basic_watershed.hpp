@@ -48,12 +48,21 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
             }
         }
     }
+    for ( const auto &pair : weights ) {
+        auto pair2 = make_pair(pair.first.second,pair.first.first);
+        weights[pair2] = weights[pair.first];
+    }
 
-    //keep only one outgoing edge pointing to a vertex with the minimal index
-    // THERE MIGHT BE AN ERROR HERE - sometimes more than 1 edge per vertex
+    // 2 - keep only outgoing edges with min edge (can be multiple)
     map<pair<int,int>, float> weights_filtered; //smaller always on left
     map<int,pair<float,int>> maxes;
     for ( const auto &pair : weights ) {
+        // if bidirectional, keep
+        // opposite_pair =
+        //if(weights.find(pair)==weights.end()){
+        //    weights[pair] = weight;
+        //}
+        // if not bidirectional, only keep one
         ID v0 = get<0>(pair.first);
         ID v1 = get<1>(pair.first);
         F aff = pair.second;
@@ -71,6 +80,9 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         }
     }
 
+    // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
+
+
     // 4. Modify G′ to split the non-minimal plateaus:
     std::queue<int> vqueue;
     map<int,bool> visited;
@@ -78,7 +90,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         ID v = static_cast<ID>(i);
         // check whether the vertex is a plateau corner
         // check whether it has at least one out-going edge
-        // check whether it has at least one biderectional edge
+        // check whether it has at least one bidirectional edge
         // CHANGE THIS CHANGE THIS !!!!!!!!!!!!!!!!!!!!!
         if(true){
             visited[v] = true;
@@ -86,25 +98,23 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         }
 
     }
-
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
-        // For all v such that (u,v) ∈ E′ and (v,u) ∈ E′ remove (u,v) from E′. If v is visited remove (v, u) from E′ as well, otherwise mark v as visited and
-add it to the end of Q.
-    }
-
-    //initialize seg
-    for(int i=0;i<size;i++){
-        //seg_raw[i] = 1;
+        // For all v such that (u,v) ∈ E′ and (v,u) ∈ E′ remove (u,v) from E′.
+        //If v is visited remove (v, u) from E′ as well, otherwise mark v as visited and
+        //add it to the end of Q.
     }
 
 
     // 5. Replace all unidirectional edges with bidirectional edges. For each (u, v) ∈ E′ add (v,u) to E′ if not already there.
 
     // 6. Return connected components of the modified G′ - prune and renum
+    // return counts
+    for(int i=0;i<size;i++){//initialize seg
+        //seg_raw[i] = 1;
+    }
 
-    // 7. Return counts
     /*
     1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background.
     */
