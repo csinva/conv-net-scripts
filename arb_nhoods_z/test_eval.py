@@ -43,15 +43,10 @@ if gt_data_dimension != data_dimension:
 
 
 
-
-
-
-
-
 nhood = mknhood3d(1)
 node1, node2, edge_affs = affgraph_to_edgelist(aff, nhood)
 print "calling watershed..."
-zwatershed_and_metrics_edge(gt, node1, node2, edge_affs, threshes, save_threshes)
+zwatershed_and_metrics_edge(gt, node1.astype('uint32'), node2.astype('uint32'), edge_affs, threshes, save_threshes)
 '''
 segs, rand = zwatershed_and_metrics_edge(gt, node1, node2, edge_affs, threshes, save_threshes)
 # segs, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)

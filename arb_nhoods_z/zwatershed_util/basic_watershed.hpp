@@ -6,12 +6,14 @@
 
 template< typename ID, typename F, typename L, typename H >
 inline std::tuple< volume_ptr<ID>, std::vector<std::size_t> >
-watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
+watershed( const ID* node1, const ID* node2, const F* edgeWeight//const affinity_graph_ptr<F>& aff_ptr
+            , const L& lowv, const H& highv )
 {
     using affinity_t = F;
     using id_t       = ID;
     using traits     = watershed_traits<id_t>;
 
+    /*
     affinity_t low  = static_cast<affinity_t>(lowv);
     affinity_t high = static_cast<affinity_t>(highv);
 
@@ -20,12 +22,17 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     std::ptrdiff_t zdim = aff_ptr->shape()[2];
 
     std::ptrdiff_t size = xdim * ydim * zdim;
+    */
+    int xdim = 1;
+    int ydim = 1;
+    int zdim = 1;
 
     std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result
         ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim],
                                            boost::fortran_storage_order())),
           std::vector<std::size_t>(1) );
 
+    /*
     auto& counts = std::get<1>(result);
     counts[0] = 0;
 
@@ -189,6 +196,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     {
         seg_raw[idx] &= traits::mask;
     }
+    */
 
     return result;
 }

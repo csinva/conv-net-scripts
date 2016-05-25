@@ -14,8 +14,8 @@ def zwatershed_and_metrics_edge(gt, node1, node2, edgeWeight, threshes, save_thr
     threshes.sort()
     return eval_all(gt, node1, node2, edgeWeight, threshes, save_threshes, eval=1, h5=0)
 
-def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[int, ndim=1] node1,
-             np.ndarray[int, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight):
+def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[uint32_t, ndim=1] node1,
+             np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight):
     cdef np.ndarray[uint32_t, ndim=1] counts = np.empty(1, dtype='uint32')
     dims = seg.shape
     dims[3] = 0
@@ -24,9 +24,11 @@ def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[int, ndim=1] nod
     return {'rg': graph.reshape(len(graph) / 3, 3), 'seg': np.array(map['seg'], dtype='uint32'),
             'counts': np.array(map['counts'], dtype='uint32')}
 
-def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[int, ndim=1] node1,
-             np.ndarray[int, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes, int eval,
+def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1,
+             np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes, int eval,
              int h5, seg_save_path="NULL/"):
+    map = calc_rgn_graph(gt,node1,node2,edgeWeight)
+    print map
     '''
     if h5:
         makedirs(seg_save_path)
@@ -134,8 +136,8 @@ def makedirs(seg_save_path):
 
 # c++ methods
 cdef extern from "zwatershed.h":
-    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, const int*node1,
-                                               const int*node2, const float*edgeWeight)
+    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, const uint32_t*node1,
+                                               const uint32_t*node2, const float*edgeWeight)
     map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, int dcons, np.uint32_t*gt,
                                                      np.float32_t*affs,
                                                      np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,

@@ -38,8 +38,8 @@ double LOW=  .0001;
 double HIGH= .9999;
 bool RECREATE_RG = true;
 
-std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, const int*node1,
-                                               const int*node2, const float*edgeWeight)
+std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, int dcons, const uint32_t*node1,
+                                               const uint32_t*node2, const float*edgeWeight)
 {
     std::cout << "calculating rgn graph..." << std::endl;
 
@@ -53,7 +53,7 @@ std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int
     //for(int i=0;i<dimX*dimY*dimZ*dcons;i++)
     //    aff->data()[i] = affs[i];
     //std::tie(seg_ref , counts_ref) = watershed<uint32_t>(node1, node2, edgeWeight, LOW, HIGH);
-    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(aff, LOW, HIGH);
+    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(node1, node2, edgeWeight, LOW, HIGH);
 
 
     // calculate region graph
