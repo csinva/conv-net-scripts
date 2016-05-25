@@ -41,12 +41,13 @@ if gt_data_dimension != data_dimension:
     padding = (gt_data_dimension - data_dimension) / 2
     gt = gt[padding:(-1 * padding), padding:(-1 * padding), padding:(-1 * padding)]
 
-
-
 nhood = mknhood3d(1)
+print "calculating edgelist..."
 node1, node2, edge_affs = affgraph_to_edgelist(aff, nhood)
+print "len node1",len(node1)
+print "n1,n2,edge",min(node1), max(node1), min(node2), max(node2), min(edge_affs), max(edge_affs)
 print "calling watershed..."
-zwatershed_and_metrics_edge(gt, node1.astype('uint32'), node2.astype('uint32'), edge_affs, threshes, save_threshes)
+zwatershed_and_metrics_edge(gt, np.array(node1,dtype='uint32'), np.array(node2,dtype='uint32'), np.array(edge_affs), threshes, save_threshes)
 '''
 segs, rand = zwatershed_and_metrics_edge(gt, node1, node2, edge_affs, threshes, save_threshes)
 # segs, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)

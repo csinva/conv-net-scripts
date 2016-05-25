@@ -6,7 +6,7 @@
 
 template< typename ID, typename F, typename L, typename H >
 inline std::tuple< volume_ptr<ID>, std::vector<std::size_t> >
-watershed( const ID* node1, const ID* node2, const F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
+watershed(int xdim, int ydim, int zdim, const ID* node1, const ID* node2, const F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
             , const L& lowv, const H& highv )
 {
     using affinity_t = F;
@@ -23,13 +23,10 @@ watershed( const ID* node1, const ID* node2, const F* edgeWeight, int n_edge//co
 
     std::ptrdiff_t size = xdim * ydim * zdim;
     */
-    int xdim = 1;
-    int ydim = 1;
-    int zdim = 1;
+
 
     std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result
-        ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim],
-                                           boost::fortran_storage_order())),
+        ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim], boost::fortran_storage_order())),
           std::vector<std::size_t>(1) );
 
     /*

@@ -29,6 +29,7 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1
              int eval, int h5, seg_save_path="NULL/"):
     gt = np.array(gt, order='F')
     n_edge = node1.size
+    print node1[0:10], node2[0:10], edgeWeight[0:10]
     map = calc_rgn_graph(gt, node1, node2, n_edge, edgeWeight)
     print map
 
@@ -217,7 +218,10 @@ def nodelist_like(shape, nhood):
 
 def affgraph_to_edgelist(aff, nhood):
     node1, node2 = nodelist_like(aff.shape[1:], nhood)
-    return (node1.ravel(), node2.ravel(), aff.ravel())
+    node1, node2, aff = node1.ravel(), node2.ravel(), aff.ravel()
+    # discard any negatives
+    negs = np.logical_and((node1>0),(node2>0))
+    return node1[negs],node2[negs],aff[negs]
 
 def mknhood3d(radius=1):
     # Makes nhood structures for some most used dense graphs.
