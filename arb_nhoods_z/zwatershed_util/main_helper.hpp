@@ -41,10 +41,9 @@ compare_volumes_arb(
     std::map<uint32_t, std::map<uint32_t, std::size_t>> p_ij;
 
     std::map<uint32_t, std::size_t> s_i, t_j;
-
-    for ( std::ptrdiff_t z = 0; z < dimX; ++z )
+    for ( std::ptrdiff_t x = 0; x < dimZ; ++x )
         for ( std::ptrdiff_t y = 0; y < dimY; ++y )
-            for ( std::ptrdiff_t x = 0; x < dimZ; ++x )
+            for ( std::ptrdiff_t z = 0; z < dimX; ++z )
             {
                 uint32_t wsv = ws[x][y][z];
                 uint32_t gtv = gt[x][y][z];

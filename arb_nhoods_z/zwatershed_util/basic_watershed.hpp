@@ -6,41 +6,36 @@
 
 template< typename ID, typename F, typename L, typename H >
 inline std::tuple< volume_ptr<ID>, std::vector<std::size_t> >
-watershed(int xdim, int ydim, int zdim, const ID* node1, const ID* node2, const F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
+watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, const F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
             , const L& lowv, const H& highv )
 {
     using affinity_t = F;
     using id_t       = ID;
     using traits     = watershed_traits<id_t>;
-
-    /*
     affinity_t low  = static_cast<affinity_t>(lowv);
     affinity_t high = static_cast<affinity_t>(highv);
-
-    std::ptrdiff_t xdim = aff_ptr->shape()[0];
-    std::ptrdiff_t ydim = aff_ptr->shape()[1];
-    std::ptrdiff_t zdim = aff_ptr->shape()[2];
-
+    std::ptrdiff_t xdim = x_dim;//aff_ptr->shape()[0];
+    std::ptrdiff_t ydim = y_dim;//aff_ptr->shape()[1];
+    std::ptrdiff_t zdim = z_dim;//aff_ptr->shape()[2];
     std::ptrdiff_t size = xdim * ydim * zdim;
-    */
 
-
-    std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result
-        ( volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),//, boost::fortran_storage_order())),
-          std::vector<std::size_t>(1) );
-
-    /*
+    std::tuple< volume_ptr<id_t>, std::vector<std::size_t> > result(
+          volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),//, boost::fortran_storage_order())),
+          std::vector<std::size_t>(1)
+    );
     auto& counts = std::get<1>(result);
     counts[0] = 0;
 
-    affinity_graph<F>& aff = *aff_ptr;
     volume<id_t>&      seg = *std::get<0>(result);
-
     id_t* seg_raw = seg.data();
+    /*
 
-    for ( std::ptrdiff_t z = 0; z < zdim; ++z )
+
+    //affinity_graph<F>& aff = *aff_ptr;
+
+    for ( std::ptrdiff_t x = 0; x < xdim; ++x )
         for ( std::ptrdiff_t y = 0; y < ydim; ++y )
-            for ( std::ptrdiff_t x = 0; x < xdim; ++x )
+            for ( std::ptrdiff_t z = 0; z < zdim; ++z )
             {
                 id_t& id = seg[x][y][z] = 0;
 
