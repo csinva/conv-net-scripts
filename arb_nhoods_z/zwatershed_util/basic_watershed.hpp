@@ -6,7 +6,7 @@
 
 template< typename ID, typename F, typename L, typename H >
 inline std::tuple< volume_ptr<ID>, std::vector<std::size_t> >
-watershed( const ID* node1, const ID* node2, const F* edgeWeight//const affinity_graph_ptr<F>& aff_ptr
+watershed( const ID* node1, const ID* node2, const F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
             , const L& lowv, const H& highv )
 {
     using affinity_t = F;
