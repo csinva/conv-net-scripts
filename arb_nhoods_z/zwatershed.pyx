@@ -27,8 +27,57 @@ def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[uint32_t, ndim=1
 def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1,
              np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes, int eval,
              int h5, seg_save_path="NULL/"):
+
+
+    gt = np.array(gt, order='F')
     map = calc_rgn_graph(gt,node1,node2,edgeWeight)
     print map
+
+
+    cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
+    cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
+    cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
+    counts_len = len(map['counts'])
+    dims = gt.shape
+    dims[3] = 3
+
+    # get segs, stats
+    segs, splits, merges = [], [], []
+    for i in range(len(threshes)):
+        if np.shape(rgn_graph)[0] > 0:
+            map = oneThresh_with_stats(dims[0], dims[1], dims[2], dims[3], &gt[0, 0, 0], &rgn_graph[0, 0],
+                                       rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i], eval)
+        print map
+    '''
+        seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
+        graph = np.array(map['rg'], dtype='float32')
+        counts_out = np.array(map['counts'], dtype='uint32')
+        counts_len = len(counts_out)
+        seg_in = np.array(map['seg'], dtype='uint32')
+        rgn_graph = graph.reshape(len(graph) / 3, 3)
+        if threshes[i] in save_threshes:
+            if h5:
+                f = h5py.File(seg_save_path + 'seg_' + str(threshes[i]) + '.h5', 'w')
+                f["main"] = seg
+                f.close()
+            else:
+                segs.append(seg)
+        splits = splits + [map['stats'][0]]
+        merges = merges + [map['stats'][1]]
+    max_f_score = 2 / (1 / splits[0] + 1 / merges[0])
+    for j in range(len(splits)):
+        f_score = 2 / (1 / splits[j] + 1 / merges[j])
+        if f_score > max_f_score:
+            max_f_score = f_score
+    returnMap = {'V_Rand': max_f_score, 'V_Rand_split': splits, 'V_Rand_merge': merges}
+    if h5:
+        return returnMap
+    else:
+        return segs, returnMap
+    '''
+
+
+
     '''
     if h5:
         makedirs(seg_save_path)
@@ -139,7 +188,6 @@ cdef extern from "zwatershed.h":
     map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, int dcons, const uint32_t*node1,
                                                const uint32_t*node2, const float*edgeWeight)
     map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, int dcons, np.uint32_t*gt,
-                                                     np.float32_t*affs,
                                                      np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
                                                      uint32_t*counts,
                                                      int counts_len, int thresh, int evaluate)

@@ -9,7 +9,7 @@
 template< typename ID, typename F >
 inline region_graph_ptr<ID,F>
 get_region_graph( //const affinity_graph_ptr<F>& aff_ptr,
-                const int*node1, const int*node2, const float*edgeWeight,
+                const ID*node1, const ID*node2, const F*edgeWeight,
                   const volume_ptr<ID> seg_ptr, std::size_t max_segid)
 {
 

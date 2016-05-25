@@ -43,25 +43,18 @@ std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int
 {
     std::cout << "calculating rgn graph..." << std::endl;
 
-
     // read data
     volume_ptr<uint32_t> seg_ref;
     std::vector<std::size_t> counts_ref;
-    affinity_graph_ptr<float> aff(new affinity_graph<float>
-                              (boost::extents[dimX][dimY][dimZ][dcons],
-                               boost::fortran_storage_order()));
-    //for(int i=0;i<dimX*dimY*dimZ*dcons;i++)
-    //    aff->data()[i] = affs[i];
-    //std::tie(seg_ref , counts_ref) = watershed<uint32_t>(node1, node2, edgeWeight, LOW, HIGH);
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(node1, node2, edgeWeight, LOW, HIGH);
 
 
     // calculate region graph
-    //auto rg = get_region_graph(node1, node2, edgeWeight, seg_ref , counts_ref.size()-1);
+    auto rg = get_region_graph(node1, node2, edgeWeight, seg_ref , counts_ref.size()-1);
 
     // save and return
     std::map<std::string,std::list<float>> returnMap;
-    /*
+
     std::list<float> rg_data = * (new std::list<float>());
     for ( const auto& e: *rg ){
         rg_data.push_back(std::get<1>(e));
@@ -79,17 +72,16 @@ std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int
     returnMap["rg"]=rg_data;
     returnMap["seg"]=seg_data;
     returnMap["counts"]=counts_data;
-    */
+
     return returnMap;
  }
 
 
-std::map<std::string,std::vector<double>> oneThresh_with_stats(int dimX,int dimY, int dimZ, int dcons, uint32_t * gt, float * affs, float * rgn_graph,
+std::map<std::string,std::vector<double>> oneThresh_with_stats(int dimX,int dimY, int dimZ, int dcons, uint32_t * gt, float * rgn_graph,
 int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh,int eval){
 
     //read data
     volume_ptr<uint32_t> gt_ptr(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ], boost::fortran_storage_order()));
-    affinity_graph_ptr<float> aff(new affinity_graph<float> (boost::extents[dimX][dimY][dimZ][dcons], boost::fortran_storage_order()));
     volume_ptr<uint32_t> seg(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ], boost::fortran_storage_order()));
     std::vector<std::size_t> counts = * new std::vector<std::size_t>();
     region_graph_ptr<uint32_t,float> rg( new region_graph<uint32_t,float> );
@@ -99,8 +91,6 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
     }
     for(int i=0;i<counts_len;i++)
         counts.push_back(counts_in[i]);
-    for(int i=0;i<dimX*dimY*dimZ*dcons;i++)
-        aff->data()[i] = affs[i];
     for(int i=0;i<rgn_graph_len;i++)
         (*rg).emplace_back(rgn_graph[i*3+2],rgn_graph[i*3],rgn_graph[i*3+1]);
 
