@@ -25,7 +25,7 @@ hdf5_pred_file = path_to_data + 'tstvol-1_2.h5'  # /tier2/turaga/singhc/train/ou
 out = path_to_data + 'out/'  # '/groups/turaga/home/singhc/evaluation/out/'
 save_threshes = threshes
 rand = 0
-p_small = 180
+p_small = 200
 
 hdf5_gt = h5py.File(hdf5_gt_file, 'r')
 hdf5_aff = h5py.File(hdf5_pred_file, 'r')

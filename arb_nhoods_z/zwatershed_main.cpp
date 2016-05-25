@@ -39,17 +39,19 @@ double HIGH= .9999;
 bool RECREATE_RG = true;
 
 std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, const uint32_t*node1,
-                                               const uint32_t*node2, const float*edgeWeight, int n_edge)
-{
-    std::cout << "\ncalculating rgn graph..." << std::endl;
-
+                                               const uint32_t*node2, const float*edgeWeight, int n_edge){
     // read data
+    std::cout << "\ncalculating basic watershed..." << std::endl;
     volume_ptr<uint32_t> seg_ref;
     std::vector<std::size_t> counts_ref;
     std::tie(seg_ref , counts_ref) = watershed<uint32_t>(dimX,dimY,dimZ,node1, node2, edgeWeight, n_edge, LOW, HIGH);
-
+    auto seg = *seg_ref;
+    //for(int i=0;i<100;i++){
+        //std::cout << "seg[ "<< i << "]="<< seg_ref->data()[i];
+    //}
 
     // calculate region graph
+    std::cout << "\ncalculating rgn graph..." << std::endl;
     auto rg = get_region_graph(node1, node2, edgeWeight, n_edge, seg_ref , counts_ref.size()-1);
 
     // save and return
