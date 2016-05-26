@@ -138,30 +138,22 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         weights[make_pair(v2,v1)] = pair.second;
     }
     // 6. Return connected components of the modified G′ - prune and renum
-    // return counts
-    for(int i=0;i<size;i++){//initialize seg
-        //seg_raw[i] = 1;
-    }
 
-
-    // Make disjoint sets
-    vector<int> rank(size);
-    vector<int> parent(size);
-    boost::disjoint_sets<int*, int*> dsets(&rank[0],&parent[0]);
-    for (int i=0; i<size; ++i)
+    int nEdge = weights.size(); // Make disjoint sets
+    vector<ID> rank(size);
+    vector<ID> parent(size);
+    boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
+    for (ID i=0; i<size; ++i)
         dsets.make_set(i);
 
-    /*
-    // union
-    for (int i = 0; i < nEdge; ++i )
-         // check bounds to make sure the nodes are valid
-        if ((edgeWeight[i]!=0) && (node1[i]>=0) && (node1[i]<nVert) && (node2[i]>=0) && (node2[i]<nVert))
-            dsets.union_set(node1[i],node2[i]);
-
-    // find
-    for (int i = 0; i < nVert; ++i)
-        seg[i] = dsets.find_set(i);
-    */
+    for ( const auto &pair : weights ) { // union
+        ID v1 = pair.first.first;
+        ID v2 = pair.first.second;
+        dsets.union_set(v1,v2);
+    }
+    for(ID i=0;i<size;i++){             // find
+        seg_raw[i]=dsets.find_set(i);
+    }
 
     /*
     1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background.
