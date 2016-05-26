@@ -3,6 +3,7 @@
 #include "types.hpp"
 #include <queue>
 #include <iostream>
+#include <boost/pending/disjoint_sets.hpp>
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
 inline tuple< volume_ptr<ID>, vector<size_t> >
@@ -54,10 +55,8 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         if(mins.find(v)==mins.end()){
             mins[v] = aff;
         }
-        else{
-            if(aff < mins[v]){
-                mins[v] = aff;
-            }
+        else if(aff < mins[v]){
+            mins[v] = aff;
         }
     }
     map<pair<int,int>, float> weights_filtered; //filter only if matching mins
@@ -76,54 +75,93 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     for ( const auto &pair : weights_filtered ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
-        if(min_indexes.find(v1)==min_indexes.end()){
-            min_indexes[v1] = v2;
-            weights[make_pair(v1,v2)] = pair.second;
-        }
-        else{
-            if(v2 < min_indexes[v1]){
+        if(weights_filtered.find(make_pair(v2,v1))==weights_filtered.end()){ // if not bidirectional
+            if(min_indexes.find(v1)==min_indexes.end()){
+                min_indexes[v1] = v2;
+                weights[make_pair(v1,v2)] = pair.second;
+            }
+            else if(v2 < min_indexes[v1]){
                 weights.erase(make_pair(v1,min_indexes[v1]));
                 weights[make_pair(v1,v2)] = pair.second;
                 min_indexes[v1]=v2;
             }
         }
-
+        else{ // if bidirectional
+            weights[make_pair(v1,v2)] = pair.second;
+        }
     }
 
     // 4. Modify G′ to split the non-minimal plateaus:
-    std::queue<int> vqueue;
-    map<int,bool> visited;
-    for(int i=0;i<n_edge;i++){
-        ID v = static_cast<ID>(i);
-        // check whether the vertex is a plateau corner:
-            // check whether it has at least one out-going edge
-            // check whether it has at least one bidirectional edge
-        // CHANGE THIS CHANGE THIS !!!!!!!!!!!!!!!!!!!!!
-        //if(weights.find(v)!=v.end()){
-
-        //}
-        if(true){
-            visited[v] = true;
+    queue<ID> vqueue;
+    map<ID,bool> visited;
+    map<ID,bool> bidirectional;
+    map<ID,bool> outgoing;
+    for ( const auto &pair : weights ) { // check which vertices have outoing, bidirectional edges
+        ID v1 = pair.first.first;
+        ID v2 = pair.first.second;
+        if(weights.find(make_pair(v2,v1))==weights.end()) // not bidirectional
+            outgoing[v1] = true;
+        else                                              // bidirectional
+            bidirectional[v1] = true;
+    }
+    for(const auto &v_pair: bidirectional){ // check whether it has at least one bidirectional edge
+        ID v = v_pair.first;
+        if(outgoing[v]){ // check whether it has at least one out-going edge
+            visited[v] = true; //found a plateau corner
             vqueue.push(v);
         }
-
     }
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
-        // For all v such that (u,v) ∈ E′ and (v,u) ∈ E′ remove (u,v) from E′.
-        //If v is visited remove (v, u) from E′ as well, otherwise mark v as visited and
-        //add it to the end of Q.
+        for(const auto&v_pair:bidirectional){
+            ID v = v_pair.first;
+            if(weights.find(make_pair(u,v))!=weights.end()){     //u,v in E
+                if(weights.find(make_pair(v,u))!=weights.end()){ //v,u in E
+                    weights.erase(make_pair(u,v));               //remove u,v from E
+                    if(visited[v])                               //If v is visited
+                        weights.erase(make_pair(v,u));            //remove v,u from E
+                    else{                                         //otherwise
+                        visited[v] = true;                        //mark v as visited
+                        vqueue.push(v);                           //and add it to the end of Q
+                    }
+                }
+            }
+        }
     }
 
 
     // 5. Replace all unidirectional edges with bidirectional edges. For each (u, v) ∈ E′ add (v,u) to E′ if not already there.
-
+    for ( const auto &pair : weights ) {
+        ID v1 = pair.first.first;
+        ID v2 = pair.first.second;
+        weights[make_pair(v2,v1)] = pair.second;
+    }
     // 6. Return connected components of the modified G′ - prune and renum
     // return counts
     for(int i=0;i<size;i++){//initialize seg
         //seg_raw[i] = 1;
     }
+
+
+    // Make disjoint sets
+    vector<int> rank(size);
+    vector<int> parent(size);
+    boost::disjoint_sets<int*, int*> dsets(&rank[0],&parent[0]);
+    for (int i=0; i<size; ++i)
+        dsets.make_set(i);
+
+    /*
+    // union
+    for (int i = 0; i < nEdge; ++i )
+         // check bounds to make sure the nodes are valid
+        if ((edgeWeight[i]!=0) && (node1[i]>=0) && (node1[i]<nVert) && (node2[i]>=0) && (node2[i]<nVert))
+            dsets.union_set(node1[i],node2[i]);
+
+    // find
+    for (int i = 0; i < nVert; ++i)
+        seg[i] = dsets.find_set(i);
+    */
 
     /*
     1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background.
