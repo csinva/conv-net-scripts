@@ -29,7 +29,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     volume<id_t>& seg = *get<0>(result);
     id_t* seg_raw = seg.data();
 
-    // filter by Tmax, Tmin, get rid of repeat edges
+    // 1 - filter by Tmax, Tmin, get rid of repeat edges
     map<pair<int,int>, float> weights; //smaller always on left
     for(int i=0;i<n_edge;i++){
         F weight = edgeWeight[i];
@@ -48,40 +48,54 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
             }
         }
     }
-    for ( const auto &pair : weights ) {
+    for ( const auto &pair : weights ) { // make all edges bidirectional
         auto pair2 = make_pair(pair.first.second,pair.first.first);
         weights[pair2] = weights[pair.first];
     }
 
     // 2 - keep only outgoing edges with min edge (can be multiple)
-    map<pair<int,int>, float> weights_filtered; //smaller always on left
-    map<int,pair<float,int>> maxes;
+    map<ID,F> mins; //find mins for each vertex
     for ( const auto &pair : weights ) {
-        // if bidirectional, keep
-        // opposite_pair =
-        //if(weights.find(pair)==weights.end()){
-        //    weights[pair] = weight;
-        //}
-        // if not bidirectional, only keep one
-        ID v0 = get<0>(pair.first);
-        ID v1 = get<1>(pair.first);
+        ID v = pair.first.first;
         F aff = pair.second;
-        if(maxes.find(v0)==maxes.end()){
-            maxes[v0] = make_pair(aff,v1);
+        if(mins.find(v)==mins.end()){
+            mins[v] = aff;
         }
         else{
-            auto old_pair = maxes[v0];
-            if(aff < old_pair.first){ //2a, 2b Only keep minimal outgoing edge
-                maxes[v0] = make_pair(aff,v1);
+            if(aff < mins[v]){
+                mins[v] = aff;
             }
-            else if(aff==old_pair.first&&v1<old_pair.second){ //point to vertex with the minimal index
-                maxes[v0] = make_pair(aff,v1);
-            }
+        }
+    }
+    map<pair<int,int>, float> weights_filtered; //filter only if matching mins
+    for ( const auto &pair : weights ) {
+        ID v1 = pair.first.first;
+        ID v2 = pair.first.second;
+        F aff = pair.second;
+        if(aff==mins[v1]){
+            weights_filtered[make_pair(v1,v2)] = aff;
         }
     }
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
+    weights.clear();
+    map<ID,ID> min_indexes;
+    for ( const auto &pair : weights_filtered ) {
+        ID v1 = pair.first.first;
+        ID v2 = pair.first.second;
+        if(min_indexes.find(v1)==min_indexes.end()){
+            min_indexes[v1] = v2;
+            weights[make_pair(v1,v2)] = pair.second;
+        }
+        else{
+            if(v2 < min_indexes[v1]){
+                weights.erase(make_pair(v1,min_indexes[v1]));
+                weights[make_pair(v1,v2)] = pair.second;
+                min_indexes[v1]=v2;
+            }
+        }
 
+    }
 
     // 4. Modify G′ to split the non-minimal plateaus:
     std::queue<int> vqueue;
