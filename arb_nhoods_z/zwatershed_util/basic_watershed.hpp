@@ -75,23 +75,16 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     ptrdiff_t size = xdim * ydim * zdim;
     cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
-          volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),//, boost::fortran_storage_order())),
+          volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),
           vector<size_t>(1)
     );
-    auto& counts = get<1>(result);
-    counts[0] = 0;
 
     volume<id_t>& seg = *get<0>(result);
     id_t* seg_raw = seg.data();
     for(ID i=0;i<size;i++)
         seg_raw[i]=0;
 
-    // don't get rid of weights on the high end
-    //low  = 0;
-    //high = 1;
-
-
-    // 1 - filter by Tmax, Tmin, get rid of repeat edges
+    // 1 - filter by Tmax, Tmin
     map<pair<int,int>, float> weights;
     for(int i=0;i<n_edge;i++){
         F weight = edgeWeight[i];
@@ -111,7 +104,6 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     for (const auto &pair:weights){
         //cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
-
 
     // 2 - keep only outgoing edges with min edge (can be multiple)
     map<ID,F> mins; //find mins for each vertex
@@ -133,7 +125,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        F epsilon = 1e-20; // this is subject to change
+        F epsilon = 1e-100; // this is subject to change
         if(aff<=mins[v1]+epsilon) //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
     }
@@ -235,9 +227,9 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         //cout << "weights end " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
 
-    // 5. Replace all unidirectional edges with bidirectional edges
+    // 5. Replace all unidirectional edges with bidirectional edges - probably not necessary
     for ( const auto &pair : weights )
-        weights[make_pair(pair.first.first,pair.first.second)] = pair.second;
+        weights[make_pair(pair.first.second,pair.first.first)] = pair.second;
 
     // 6. Return connected components of the modified G
     cout << "nEdge: " << weights.size() << endl;
@@ -256,8 +248,9 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         if(!seg_raw[i])
             seg_raw[i]=dsets.find_set(i);
     }
-
-    // renumber
+    map<ID,ID> counts_map;
+    map<ID,ID> renum;
+    // renumber and get counts
     for(ID i=0;i<size;i++){
         if(seg_raw[i]==MAX){
             seg_raw[i]=0;
@@ -265,6 +258,16 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         else{
             seg_raw[i]++;
         }
+        counts_map[seg_raw[i]]++;
+    }
+    int count = 0;
+    auto& counts = get<1>(result);
+    for (const auto &pair:counts_map){
+        renum[pair.first] = count++;
+        counts.push_back(counts_map[pair.first]);
+    }
+    for(ID i=0;i<size;i++){
+        seg_raw[i]=renum[seg_raw[i]];
     }
     return result;
 }

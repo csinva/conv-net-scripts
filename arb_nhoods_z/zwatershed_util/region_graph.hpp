@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <iostream>
 #include <map>
-
+using namespace std;
 template< typename ID, typename F >
 inline region_graph_ptr<ID,F>
 get_region_graph( //const affinity_graph_ptr<F>& aff_ptr,
@@ -14,6 +14,7 @@ get_region_graph( //const affinity_graph_ptr<F>& aff_ptr,
 {
 
     region_graph_ptr<ID,F> rg_ptr( new region_graph<ID,F> );
+    cout << "num segs in rgn graph: " << max_segid << endl;
     /*
     region_graph<ID,F>& rg = *rg_ptr;
     ID* seg = seg_ptr->data();
