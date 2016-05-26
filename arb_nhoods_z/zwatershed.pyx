@@ -89,8 +89,8 @@ def makedirs(seg_save_path):
 
 # c++ methods
 cdef extern from "zwatershed.h":
-    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, const uint32_t*node1,
-                                               const uint32_t*node2, const float*edgeWeight, int n_edge)
+    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, uint32_t*node1,
+                                               uint32_t*node2, float*edgeWeight, int n_edge)
     map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, np.uint32_t*gt,
                                                      np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
                                                      uint32_t*counts,int counts_len, int thresh, int evaluate)

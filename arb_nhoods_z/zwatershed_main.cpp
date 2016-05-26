@@ -38,8 +38,8 @@ double LOW=  .0001;
 double HIGH= .9999;
 bool RECREATE_RG = true;
 
-std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, const uint32_t*node1,
-                                               const uint32_t*node2, const float*edgeWeight, int n_edge){
+std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int dimZ, uint32_t*node1,
+                                               uint32_t*node2, float*edgeWeight, int n_edge){
     // read data
     std::cout << "\ncalculating basic watershed..." << std::endl;
     volume_ptr<uint32_t> seg_ref;

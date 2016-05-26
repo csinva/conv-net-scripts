@@ -7,10 +7,11 @@
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
 inline tuple< volume_ptr<ID>, vector<size_t> >
-watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, const F* edgeWeight1, int n_edge//const affinity_graph_ptr<F>& aff_ptr
+watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
             , const L& lowv, const H& highv )
 {
     // Set up fake example //////////////////////////////////////
+
     x_dim = 5;
     y_dim = 4;
     z_dim = 1;
@@ -18,9 +19,9 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
     ID n1[n_edge];
     ID n2[n_edge];
     F ew[n_edge];
-    ID* node1 = n1;
-    ID* node2 = n2;
-    F* edgeWeight = ew;
+    node1 = n1;
+    node2 = n2;
+    edgeWeight = ew;
     for(int i=0;i<31;i++)
         edgeWeight[i] = .6;
     // horizontal edges - accross then down (reading order),
@@ -56,10 +57,12 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
     node1[28]=13;node2[28]=18;edgeWeight[28]=.7;
     node1[29]=14;node2[29]=19;edgeWeight[29]=.4;
     node1[30]=15;node2[30]=20;edgeWeight[30]=.4;
+    for(int i=0;i<31;i++){
+        node1[i]-=1;
+        node2[i]-=1;
+    }
 
     // End fake example ////////////////////////////////////////
-    // REMEMBER TO SET THE NAMES BACK
-
     using affinity_t = F;
     using id_t       = ID;
     using traits     = watershed_traits<id_t>;
@@ -84,7 +87,8 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
     map<pair<int,int>, float> weights;
     for(int i=0;i<n_edge;i++){
         F weight = edgeWeight[i];
-        if(weight<high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
+
+        if(weight<=high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
             if(weight<low)
                 weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
             weights[make_pair(node1[i],node2[i])] = weight;
@@ -106,7 +110,6 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
             mins[v] = aff;
         else if(aff < mins[v])
             mins[v] = aff;
-
     }
     /*
     for (const auto &pair:mins){
@@ -118,15 +121,17 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        F epsilon = .000001;
+        F epsilon = .0001; // this is subject to change
         if(aff<=mins[v1]+epsilon) //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
     }
 
+    /*
     cout << "\nweights filtered len: "<<weights.size()<<endl;
     for (const auto &pair:weights_filtered){
         cout << "weight filtered " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
+    */
 
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
@@ -137,12 +142,12 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
         ID v2 = pair.first.second;
         if(!weights_filtered.count(make_pair(v2,v1))){ // if strictly outgoing
             if(!min_indexes.count(v1)){
-                cout <<  v1 << "," << min_indexes[v1] << "," << v2 << endl;
+                //cout <<  v1 << "," << min_indexes[v1] << "," << v2 << endl;
                 min_indexes[v1] = v2;
                 weights[make_pair(v1,v2)] = pair.second;
             }
             else if(v2 < min_indexes[v1]){
-                cout << "erasing " << v1 << "," << min_indexes[v1] << endl;
+                //cout << "erasing " << v1 << "," << min_indexes[v1] << endl;
                 weights.erase(make_pair(v1,min_indexes[v1]));
                 weights[make_pair(v1,v2)] = pair.second;
                 min_indexes[v1]=v2;
@@ -155,7 +160,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
     for (const auto &pair:min_indexes){
         cout << "min_index " << pair.first << " = " << pair.second << endl;
     }
-    */
+
     cout << "\nweights len: "<<weights.size()<<endl;
     for (const auto &pair:weights){
         cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
@@ -166,6 +171,8 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
         if(!weights.count(pair.first))
             cout << "diff weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
+    */
+
     // 4. Modify G′ to split the non-minimal plateaus:
     queue<ID> vqueue;
     map<ID,bool> visited;
@@ -184,24 +191,24 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
         if(outgoing[v]){                    // check whether it has at least one out-going edge
             visited[v] = true;              //found a plateau corner
             vqueue.push(v);
-            cout << "plateau corner " << v << endl;
+            //cout << "plateau corner " << v << endl;
         }
     }
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
-        cout << "u: " << u << endl;
+        //cout << "u: " << u << endl;
         for(const auto&v_pair:bidirectional){
             ID v = v_pair.first;
-            cout << "\tv: " << v << endl;
+            //cout << "\tv: " << v << endl;
             if(weights.count(make_pair(u,v))){                    //u,v in E
-                cout << "\t\tfound u,v!" << endl;
+                //cout << "\t\tfound u,v!" << endl;
                 if(weights.count(make_pair(v,u))){                //v,u in E
-                    cout << "\t\t\tfound v,u!" << endl;
+                    //cout << "\t\t\tfound v,u!" << endl;
                     weights.erase(make_pair(u,v));                //remove u,v from E
-                    cout << "\t\t\t\terase end " << u << "," << v << endl;
+                    //cout << "\t\t\t\terase end " << u << "," << v << endl;
                     if(visited[v]){                                //If v is visited
-                        cout << "\t\t\t\terase end " << v << "," << u << endl;
+                        //cout << "\t\t\t\terase end " << v << "," << u << endl;
                         weights.erase(make_pair(v,u));            //remove v,u from E
                     }
                     else{                                         //otherwise
@@ -213,7 +220,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
         }
     }
     for (const auto &pair:weights){
-        cout << "weights end " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
+        //cout << "weights end " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
 
     // 5. Replace all unidirectional edges with bidirectional edges
@@ -230,8 +237,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, c
         dsets.make_set(i);
 
     for ( const auto &pair : weights ) // union
-        //dsets.union_set(pair.first.first,pair.first.second);
-        dsets.union_set(pair.first.first-1,pair.first.second-1);
+        dsets.union_set(pair.first.first,pair.first.second);
 
     for(ID i=0;i<size;i++){             // find
         seg_raw[i]=dsets.find_set(i);
