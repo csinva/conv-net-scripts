@@ -37,15 +37,8 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
             if(weight<low){
                 weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
             }
-            auto pair = make_pair(node1[i],node2[i]); //if there are repeat edges, only keep the lowest
-            if(node2[i]<node1[i])
-                pair = make_pair(node2[i],node1[i]);
-            if(weights.find(pair)==weights.end()){
-                weights[pair] = weight;
-            }
-            else if(weight < weights[pair]){
-                weights[pair] = weight;
-            }
+            auto pair = make_pair(node1[i],node2[i]);
+            weights[pair]=weight;
         }
     }
     for ( const auto &pair : weights ) { // make all edges bidirectional
@@ -102,10 +95,13 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     map<int,bool> visited;
     for(int i=0;i<n_edge;i++){
         ID v = static_cast<ID>(i);
-        // check whether the vertex is a plateau corner
-        // check whether it has at least one out-going edge
-        // check whether it has at least one bidirectional edge
+        // check whether the vertex is a plateau corner:
+            // check whether it has at least one out-going edge
+            // check whether it has at least one bidirectional edge
         // CHANGE THIS CHANGE THIS !!!!!!!!!!!!!!!!!!!!!
+        //if(weights.find(v)!=v.end()){
+
+        //}
         if(true){
             visited[v] = true;
             vqueue.push(v);
