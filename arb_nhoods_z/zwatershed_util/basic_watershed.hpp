@@ -66,6 +66,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     using affinity_t = F;
     using id_t       = ID;
     using traits     = watershed_traits<id_t>;
+    ID MAX = 4294967295;
     affinity_t low  = static_cast<affinity_t>(lowv);
     affinity_t high = static_cast<affinity_t>(highv);
     ptrdiff_t xdim = x_dim;
@@ -101,14 +102,14 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
         }
         else{
-            seg_raw[node1[i]]=1;
-            seg_raw[node2[i]]=1;
+            seg_raw[node1[i]]=MAX;
+            seg_raw[node2[i]]=MAX;
         }
     }
 
 
     for (const auto &pair:weights){
-        cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
+        //cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
 
 
@@ -132,7 +133,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        F epsilon = .0001; // this is subject to change
+        F epsilon = 1e-20; // this is subject to change
         if(aff<=mins[v1]+epsilon) //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
     }
@@ -254,10 +255,16 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     for(ID i=0;i<size;i++){             // find
         if(!seg_raw[i])
             seg_raw[i]=dsets.find_set(i);
-        //cout << i+1 << " " << seg_raw[i] << endl;
     }
-    /*
-    1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background. - doesn't matter here because everything has edges
-    */
+
+    // renumber
+    for(ID i=0;i<size;i++){
+        if(seg_raw[i]==MAX){
+            seg_raw[i]=0;
+        }
+        else{
+            seg_raw[i]++;
+        }
+    }
     return result;
 }
