@@ -19,7 +19,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     ptrdiff_t ydim = y_dim;//aff_ptr->shape()[1];
     ptrdiff_t zdim = z_dim;//aff_ptr->shape()[2];
     ptrdiff_t size = xdim * ydim * zdim;
-
+    cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
           volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),//, boost::fortran_storage_order())),
           vector<size_t>(1)
@@ -31,7 +31,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     id_t* seg_raw = seg.data();
 
     // 1 - filter by Tmax, Tmin, get rid of repeat edges
-    map<pair<int,int>, float> weights; //smaller always on left
+    map<pair<int,int>, float> weights;
     for(int i=0;i<n_edge;i++){
         F weight = edgeWeight[i];
         if(weight<high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
@@ -52,21 +52,20 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     for ( const auto &pair : weights ) {
         ID v = pair.first.first;
         F aff = pair.second;
-        if(mins.find(v)==mins.end()){
+        if(mins.find(v)==mins.end())
             mins[v] = aff;
-        }
-        else if(aff < mins[v]){
+        else if(aff < mins[v])
             mins[v] = aff;
-        }
+
     }
     map<pair<int,int>, float> weights_filtered; //filter only if matching mins
     for ( const auto &pair : weights ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        if(aff==mins[v1]){
+        F epsilon = .000001;
+        if(aff<=mins[v1]+epsilon) //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
-        }
     }
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
@@ -137,9 +136,9 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         ID v2 = pair.first.second;
         weights[make_pair(v2,v1)] = pair.second;
     }
-    // 6. Return connected components of the modified G′ - prune and renum
-
+    // 6. Return connected components of the modified G
     int nEdge = weights.size(); // Make disjoint sets
+    cout << "nEdge: " << nEdge << endl;
     vector<ID> rank(size);
     vector<ID> parent(size);
     boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
@@ -156,13 +155,13 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     }
 
     /*
-    1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background.
+    1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background. - doesn't matter here because everything has edges
     */
 
 
     /*
     //affinity_graph<F>& aff = *aff_ptr;
-    //PREPROCESSING - this stores the minimal outgoing edge for
+    // seg[x][y][z] stores the hex for the edges that are bad
     for ( std::ptrdiff_t x = 0; x < xdim; ++x )
         for ( std::ptrdiff_t y = 0; y < ydim; ++y )
             for ( std::ptrdiff_t z = 0; z < zdim; ++z )
@@ -178,7 +177,7 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
 
                 F m = std::max({negx,negy,negz,posx,posy,posz}); // max aff of all outgoing edges
 
-                if ( m > low ) // if anything greater than high, id |= marker, if equal
+                if ( m > low )
                 {
                     if ( negx == m || negx >= high ) { id |= 0x01; }
                     if ( negy == m || negy >= high ) { id |= 0x02; }

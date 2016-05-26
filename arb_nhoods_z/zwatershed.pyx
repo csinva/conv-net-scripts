@@ -42,7 +42,7 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1
 
     # get segs, stats
     segs, splits, merges = [], [], []
-    seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
+    seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2])) # .transpose(2, 1, 0)
     segs.append(seg)
     for i in range(len(threshes)):
         if np.shape(rgn_graph)[0] > 0:
