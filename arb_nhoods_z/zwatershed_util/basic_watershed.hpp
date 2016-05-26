@@ -7,17 +7,67 @@
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
 inline tuple< volume_ptr<ID>, vector<size_t> >
-watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, const F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
+watershed(int x_dim, int y_dim, int z_dim, const ID* node11, const ID* node21, const F* edgeWeight1, int n_edge//const affinity_graph_ptr<F>& aff_ptr
             , const L& lowv, const H& highv )
 {
+    // Set up fake example //////////////////////////////////////
+    x_dim = 5;
+    y_dim = 4;
+    z_dim = 1;
+    n_edge = 31;
+    ID n1[n_edge];
+    ID n2[n_edge];
+    F ew[n_edge];
+    ID* node1 = n1;
+    ID* node2 = n2;
+    F* edgeWeight = ew;
+    for(int i=0;i<31;i++)
+        edgeWeight[i] = .6;
+    // horizontal edges - accross then down (reading order),
+    node1[0]=1;node2[0]=2;edgeWeight[0]=.5;
+    node1[1]=2;node2[0]=3;edgeWeight[0]=.3;
+    node1[2]=3;node2[0]=4;edgeWeight[0]=.4;
+    node1[3]=4;node2[0]=5;edgeWeight[0]=.8;
+    node1[4]=6;node2[0]=7;edgeWeight[0]=.6;
+    node1[5]=7;node2[0]=8;edgeWeight[0]=.6;
+    node1[6]=8;node2[0]=9;edgeWeight[0]=.6;
+    node1[7]=9;node2[0]=10;edgeWeight[0]=.5;
+    node1[8]=11;node2[0]=12;edgeWeight[0]=.6;
+    node1[9]=12;node2[0]=13;edgeWeight[0]=.6;
+    node1[10]=13;node2[0]=14;edgeWeight[0]=.9;
+    node1[11]=14;node2[0]=15;edgeWeight[0]=.4;
+    node1[12]=16;node2[0]=17;edgeWeight[0]=.6;
+    node1[13]=17;node2[0]=18;edgeWeight[0]=.6;
+    node1[14]=18;node2[0]=19;edgeWeight[0]=.6;
+    node1[15]=19;node2[0]=20;edgeWeight[0]=.4;
+    // vertical edges (reading order)
+    node1[16]=1;node2[0]=6;edgeWeight[0]=.6;
+    node1[17]=2;node2[0]=7;edgeWeight[0]=.7;
+    node1[18]=3;node2[0]=8;edgeWeight[0]=.8;
+    node1[19]=4;node2[0]=9;edgeWeight[0]=.5;
+    node1[20]=5;node2[0]=10;edgeWeight[0]=.1;
+    node1[21]=6;node2[0]=11;edgeWeight[0]=.9;
+    node1[22]=7;node2[0]=12;edgeWeight[0]=.6;
+    node1[23]=8;node2[0]=13;edgeWeight[0]=.6;
+    node1[24]=9;node2[0]=14;edgeWeight[0]=.9;
+    node1[25]=10;node2[0]=15;edgeWeight[0]=.4;
+    node1[26]=11;node2[0]=16;edgeWeight[0]=.6;
+    node1[27]=12;node2[0]=17;edgeWeight[0]=.7;
+    node1[28]=13;node2[0]=18;edgeWeight[0]=.7;
+    node1[29]=14;node2[0]=19;edgeWeight[0]=.4;
+    node1[30]=15;node2[0]=20;edgeWeight[0]=.4;
+
+    // End fake example ////////////////////////////////////////
+    // REMEMBER TO SET THE NAMES BACK
+
     using affinity_t = F;
     using id_t       = ID;
     using traits     = watershed_traits<id_t>;
     affinity_t low  = static_cast<affinity_t>(lowv);
     affinity_t high = static_cast<affinity_t>(highv);
-    ptrdiff_t xdim = x_dim;//aff_ptr->shape()[0];
-    ptrdiff_t ydim = y_dim;//aff_ptr->shape()[1];
-    ptrdiff_t zdim = z_dim;//aff_ptr->shape()[2];
+    ptrdiff_t xdim = x_dim;
+    ptrdiff_t ydim = y_dim;
+    ptrdiff_t zdim = z_dim;
     ptrdiff_t size = xdim * ydim * zdim;
     cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
@@ -35,16 +85,14 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     for(int i=0;i<n_edge;i++){
         F weight = edgeWeight[i];
         if(weight<high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
-            if(weight<low){
+            if(weight<low)
                 weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
-            }
-            auto pair = make_pair(node1[i],node2[i]);
-            weights[pair]=weight;
+            weights[make_pair(node1[i],node2[i])] = weight;
+            weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
         }
     }
-    for ( const auto &pair : weights ) { // make all edges bidirectional
-        auto pair2 = make_pair(pair.first.second,pair.first.first);
-        weights[pair2] = weights[pair.first];
+    for (const auto &pair:weights){
+        cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
 
     // 2 - keep only outgoing edges with min edge (can be multiple)
@@ -52,11 +100,14 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     for ( const auto &pair : weights ) {
         ID v = pair.first.first;
         F aff = pair.second;
-        if(mins.find(v)==mins.end())
+        if(!mins.count(v))
             mins[v] = aff;
         else if(aff < mins[v])
             mins[v] = aff;
 
+    }
+    for (const auto &pair:mins){
+        cout << "min " << pair.first << " = " << pair.second << endl;
     }
     map<pair<int,int>, float> weights_filtered; //filter only if matching mins
     for ( const auto &pair : weights ) {
@@ -74,8 +125,8 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     for ( const auto &pair : weights_filtered ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
-        if(weights_filtered.find(make_pair(v2,v1))==weights_filtered.end()){ // if not bidirectional
-            if(min_indexes.find(v1)==min_indexes.end()){
+        if(!weights.count(make_pair(v2,v1))){ // if strictly outgoing
+            if(!min_indexes.count(v1)){
                 min_indexes[v1] = v2;
                 weights[make_pair(v1,v2)] = pair.second;
             }
@@ -85,9 +136,8 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
                 min_indexes[v1]=v2;
             }
         }
-        else{ // if bidirectional
+        else // if bidirectional
             weights[make_pair(v1,v2)] = pair.second;
-        }
     }
 
     // 4. Modify G′ to split the non-minimal plateaus:
@@ -95,18 +145,18 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
     map<ID,bool> visited;
     map<ID,bool> bidirectional;
     map<ID,bool> outgoing;
-    for ( const auto &pair : weights ) { // check which vertices have outoing, bidirectional edges
+    for ( const auto &pair : weights ) { // check which vertices have outgoing, bidirectional edges
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
-        if(weights.find(make_pair(v2,v1))==weights.end()) // not bidirectional
+        if(!weights.count(make_pair(v2,v1)))            // not bidirectional
             outgoing[v1] = true;
         else                                              // bidirectional
             bidirectional[v1] = true;
     }
     for(const auto &v_pair: bidirectional){ // check whether it has at least one bidirectional edge
         ID v = v_pair.first;
-        if(outgoing[v]){ // check whether it has at least one out-going edge
-            visited[v] = true; //found a plateau corner
+        if(outgoing[v]){                    // check whether it has at least one out-going edge
+            visited[v] = true;              //found a plateau corner
             vqueue.push(v);
         }
     }
@@ -115,10 +165,10 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         vqueue.pop();
         for(const auto&v_pair:bidirectional){
             ID v = v_pair.first;
-            if(weights.find(make_pair(u,v))!=weights.end()){     //u,v in E
-                if(weights.find(make_pair(v,u))!=weights.end()){ //v,u in E
-                    weights.erase(make_pair(u,v));               //remove u,v from E
-                    if(visited[v])                               //If v is visited
+            if(weights.count(make_pair(u,v))){                    //u,v in E
+                if(weights.count(make_pair(v,u))){                //v,u in E
+                    weights.erase(make_pair(u,v));                //remove u,v from E
+                    if(visited[v])                                //If v is visited
                         weights.erase(make_pair(v,u));            //remove v,u from E
                     else{                                         //otherwise
                         visited[v] = true;                        //mark v as visited
@@ -129,195 +179,27 @@ watershed(int x_dim, int y_dim, int z_dim, const ID* node1, const ID* node2, con
         }
     }
 
+    // 5. Replace all unidirectional edges with bidirectional edges
+    for ( const auto &pair : weights )
+        weights[make_pair(pair.first.first,pair.first.second)] = pair.second;
 
-    // 5. Replace all unidirectional edges with bidirectional edges. For each (u, v) ∈ E′ add (v,u) to E′ if not already there.
-    for ( const auto &pair : weights ) {
-        ID v1 = pair.first.first;
-        ID v2 = pair.first.second;
-        weights[make_pair(v2,v1)] = pair.second;
-    }
     // 6. Return connected components of the modified G
-    int nEdge = weights.size(); // Make disjoint sets
-    cout << "nEdge: " << nEdge << endl;
+    cout << "nEdge: " << weights.size() << endl;
+    cout << "size: " << size << endl;
     vector<ID> rank(size);
     vector<ID> parent(size);
     boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
     for (ID i=0; i<size; ++i)
         dsets.make_set(i);
 
-    for ( const auto &pair : weights ) { // union
-        ID v1 = pair.first.first;
-        ID v2 = pair.first.second;
-        dsets.union_set(v1,v2);
-    }
-    for(ID i=0;i<size;i++){             // find
+    for ( const auto &pair : weights ) // union
+        dsets.union_set(pair.first.first,pair.first.second);
+
+    for(ID i=0;i<size;i++)             // find
         seg_raw[i]=dsets.find_set(i);
-    }
 
     /*
     1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background. - doesn't matter here because everything has edges
     */
-
-
-    /*
-    //affinity_graph<F>& aff = *aff_ptr;
-    // seg[x][y][z] stores the hex for the edges that are bad
-    for ( std::ptrdiff_t x = 0; x < xdim; ++x )
-        for ( std::ptrdiff_t y = 0; y < ydim; ++y )
-            for ( std::ptrdiff_t z = 0; z < zdim; ++z )
-            {
-                id_t& id = seg[x][y][z] = 0;
-
-                F negx = (x>0) ? aff[x][y][z][0] : low;
-                F negy = (y>0) ? aff[x][y][z][1] : low;
-                F negz = (z>0) ? aff[x][y][z][2] : low;
-                F posx = (x<(xdim-1)) ? aff[x+1][y][z][0] : low;
-                F posy = (y<(ydim-1)) ? aff[x][y+1][z][1] : low;
-                F posz = (z<(zdim-1)) ? aff[x][y][z+1][2] : low;
-
-                F m = std::max({negx,negy,negz,posx,posy,posz}); // max aff of all outgoing edges
-
-                if ( m > low )
-                {
-                    if ( negx == m || negx >= high ) { id |= 0x01; }
-                    if ( negy == m || negy >= high ) { id |= 0x02; }
-                    if ( negz == m || negz >= high ) { id |= 0x04; }
-                    if ( posx == m || posx >= high ) { id |= 0x08; }
-                    if ( posy == m || posy >= high ) { id |= 0x10; }
-                    if ( posz == m || posz >= high ) { id |= 0x20; }
-                }
-            }
-
-
-    const std::ptrdiff_t dir[6] = { -1, -xdim, -xdim*ydim, 1, xdim, xdim*ydim }; //offsets for 3x
-    const id_t dirmask[6]  = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20 };
-    const id_t idirmask[6] = { 0x08, 0x10, 0x20, 0x01, 0x02, 0x04 }; //opposite dir
-
-    // get plato corners
-
-    std::vector<std::ptrdiff_t> bfs;
-
-    for ( std::ptrdiff_t idx = 0; idx < size; ++idx )
-    {
-        for ( std::ptrdiff_t d = 0; d < 6; ++d )
-        {
-            if ( seg_raw[idx] & dirmask[d] )
-            {
-                if ( !(seg_raw[idx+dir[d]] & idirmask[d]) )
-                {
-                    seg_raw[idx] |= 0x40;
-                    bfs.push_back(idx);
-                    d = 6; // break;
-                }
-            }
-        }
-    }
-
-    // divide the plateaus
-
-    std::size_t bfs_index = 0;
-
-    while ( bfs_index < bfs.size() )
-    {
-        std::ptrdiff_t idx = bfs[bfs_index];
-
-        id_t to_set = 0;
-
-        for ( std::ptrdiff_t d = 0; d < 6; ++d )
-        {
-            if ( seg_raw[idx] & dirmask[d] )
-            {
-                if ( seg_raw[idx+dir[d]] & idirmask[d] )
-                {
-                    if ( !( seg_raw[idx+dir[d]] & 0x40 ) )
-                    {
-                        bfs.push_back(idx+dir[d]);
-                        seg_raw[idx+dir[d]] |= 0x40;
-                    }
-                }
-                else
-                {
-                    to_set = dirmask[d];
-                }
-            }
-        }
-        seg_raw[idx] = to_set;
-        ++bfs_index;
-    }
-
-    bfs.clear();
-
-    // main watershed logic
-
-    id_t next_id = 1;
-
-    for ( std::ptrdiff_t idx = 0; idx < size; ++idx )
-    {
-        if ( seg_raw[idx] == 0 )
-        {
-            seg_raw[idx] |= traits::high_bit;
-            ++counts[0];
-        }
-
-        if ( !( seg_raw[idx] & traits::high_bit ) && seg_raw[idx] )
-        {
-            bfs.push_back(idx);
-            bfs_index = 0;
-            seg_raw[idx] |= 0x40;
-
-            while ( bfs_index < bfs.size() )
-            {
-                std::ptrdiff_t me = bfs[bfs_index];
-
-                for ( std::ptrdiff_t d = 0; d < 6; ++d )
-                {
-                    if ( seg_raw[me] & dirmask[d] )
-                    {
-                        std::ptrdiff_t him = me + dir[d];
-                        if ( seg_raw[him] & traits::high_bit )
-                        {
-                            counts[ seg_raw[him] & ~traits::high_bit ]
-                                += bfs.size();
-
-                            for ( auto& it: bfs )
-                            {
-                                seg_raw[it] = seg_raw[him];
-                            }
-
-                            bfs.clear();
-                            d = 6; // break
-                        }
-                        else if ( !( seg_raw[him] & 0x40 ) )
-                        {
-                            seg_raw[him] |= 0x40;
-                            bfs.push_back( him );
-
-                        }
-                    }
-                }
-                ++bfs_index;
-            }
-
-            if ( bfs.size() )
-            {
-                counts.push_back( bfs.size() );
-                for ( auto& it: bfs )
-                {
-                    seg_raw[it] = traits::high_bit | next_id;
-                }
-                ++next_id;
-                bfs.clear();
-            }
-        }
-    }
-
-    std::cout << "found: " << (next_id-1) << " components\n";
-
-    for ( std::ptrdiff_t idx = 0; idx < size; ++idx )
-    {
-        seg_raw[idx] &= traits::mask;
-    }
-    */
-
     return result;
 }

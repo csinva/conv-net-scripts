@@ -40,10 +40,12 @@ print "len node1", len(node1)
 print "n1,n2,edge", min(node1), max(node1), min(node2), max(node2), min(edge_affs), max(edge_affs)
 print "\noriginal watershed..."
 seg_one, segs_old, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
+print rand
+print "nsegs",len(np.unique(seg_one))
 
 print "\nnew watershed..."
 segs_new = zwatershed_and_metrics_edge(gt, np.array(node1, dtype='uint32'), np.array(node2, dtype='uint32'),
                                        np.array(edge_affs), threshes, save_threshes)
+print "nsegs",len(np.unique(segs_new[0]))
 
-print rand
 print "time: ", time.clock() - start
