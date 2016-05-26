@@ -11,7 +11,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             , const L& lowv, const H& highv )
 {
     // Set up fake example //////////////////////////////////////
-
+    /*
     x_dim = 5;
     y_dim = 4;
     z_dim = 1;
@@ -61,7 +61,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         node1[i]-=1;
         node2[i]-=1;
     }
-
+    */
     // End fake example ////////////////////////////////////////
     using affinity_t = F;
     using id_t       = ID;
@@ -82,24 +82,35 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
 
     volume<id_t>& seg = *get<0>(result);
     id_t* seg_raw = seg.data();
+    for(ID i=0;i<size;i++)
+        seg_raw[i]=0;
+
+    // don't get rid of weights on the high end
+    //low  = 0;
+    //high = 1;
+
 
     // 1 - filter by Tmax, Tmin, get rid of repeat edges
     map<pair<int,int>, float> weights;
     for(int i=0;i<n_edge;i++){
         F weight = edgeWeight[i];
-
         if(weight<=high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
             if(weight<low)
                 weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
             weights[make_pair(node1[i],node2[i])] = weight;
             weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
         }
+        else{
+            seg_raw[node1[i]]=1;
+            seg_raw[node2[i]]=1;
+        }
     }
-    /*
+
+
     for (const auto &pair:weights){
         cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
-    */
+
 
     // 2 - keep only outgoing edges with min edge (can be multiple)
     map<ID,F> mins; //find mins for each vertex
@@ -233,15 +244,17 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     vector<ID> rank(size);
     vector<ID> parent(size);
     boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
-    for (ID i=0; i<size; ++i)
-        dsets.make_set(i);
-
+    for (ID i=0; i<size; ++i){
+        if(!seg_raw[i])
+            dsets.make_set(i);
+    }
     for ( const auto &pair : weights ) // union
         dsets.union_set(pair.first.first,pair.first.second);
 
     for(ID i=0;i<size;i++){             // find
-        seg_raw[i]=dsets.find_set(i);
-        cout << i+1 << " " << seg_raw[i] << endl;
+        if(!seg_raw[i])
+            seg_raw[i]=dsets.find_set(i);
+        //cout << i+1 << " " << seg_raw[i] << endl;
     }
     /*
     1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background. - doesn't matter here because everything has edges

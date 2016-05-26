@@ -25,7 +25,7 @@ hdf5_pred_file = path_to_data + 'tstvol-1_2.h5'  # /tier2/turaga/singhc/train/ou
 out = path_to_data + 'out/'  # '/groups/turaga/home/singhc/evaluation/out/'
 save_threshes = threshes
 rand = 0
-p1, p2, p3 = 200, 180, 190
+p1, p2, p3 = 200, 200, 200  # 215, 214, 214 # 200, 200, 200
 
 hdf5_gt = h5py.File(hdf5_gt_file, 'r')
 hdf5_aff = h5py.File(hdf5_pred_file, 'r')
@@ -41,11 +41,11 @@ print "n1,n2,edge", min(node1), max(node1), min(node2), max(node2), min(edge_aff
 print "\noriginal watershed..."
 seg_one, segs_old, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
 print rand
-print "nsegs",len(np.unique(seg_one))
+print "nsegs", len(np.unique(seg_one))
 
 print "\nnew watershed..."
 segs_new = zwatershed_and_metrics_edge(gt, np.array(node1, dtype='uint32'), np.array(node2, dtype='uint32'),
                                        np.array(edge_affs), threshes, save_threshes)
-print "nsegs",len(np.unique(segs_new[0]))
+print "nsegs", len(np.unique(segs_new[0]))
 
 print "time: ", time.clock() - start
