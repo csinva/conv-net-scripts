@@ -33,7 +33,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     volume<id_t>&      seg = *std::get<0>(result);
 
     id_t* seg_raw = seg.data();
-
+    int num_deleted = 0;
     for ( std::ptrdiff_t z = 0; z < zdim; ++z )
         for ( std::ptrdiff_t y = 0; y < ydim; ++y )
             for ( std::ptrdiff_t x = 0; x < xdim; ++x )
@@ -51,21 +51,24 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
 
                 if ( m > low )
                 {
-                    if ( negx == m || negx >= high ) { id |= 0x01; }
-                    if ( negy == m || negy >= high ) { id |= 0x02; }
-                    if ( negz == m || negz >= high ) { id |= 0x04; }
-                    if ( posx == m || posx >= high ) { id |= 0x08; }
-                    if ( posy == m || posy >= high ) { id |= 0x10; }
-                    if ( posz == m || posz >= high ) { id |= 0x20; }
+                    if ( negx == m || negx >= high ) { id |= 0x01;num_deleted++; }
+                    if ( negy == m || negy >= high ) { id |= 0x02;num_deleted++; }
+                    if ( negz == m || negz >= high ) { id |= 0x04;num_deleted++; }
+                    if ( posx == m || posx >= high ) { id |= 0x08;num_deleted++; }
+                    if ( posy == m || posy >= high ) { id |= 0x10;num_deleted++; }
+                    if ( posz == m || posz >= high ) { id |= 0x20;num_deleted++; }
                 }
             }
-
+    std::cout << "num_deleted " << num_deleted << std::endl;
 
     const std::ptrdiff_t dir[6] = { -1, -xdim, -xdim*ydim, 1, xdim, xdim*ydim };
     const id_t dirmask[6]  = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20 };
     const id_t idirmask[6] = { 0x08, 0x10, 0x20, 0x01, 0x02, 0x04 };
 
     // get plato corners
+    int num_corners = 0;
+    int num_bi = 0;
+    int num_out = 0;
 
     std::vector<std::ptrdiff_t> bfs;
 
@@ -73,17 +76,19 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     {
         for ( std::ptrdiff_t d = 0; d < 6; ++d )
         {
-            if ( seg_raw[idx] & dirmask[d] )
+            if ( seg_raw[idx] & dirmask[d] ) // not connected in d dir
             {
-                if ( !(seg_raw[idx+dir[d]] & idirmask[d]) )
+                if ( !(seg_raw[idx+dir[d]] & idirmask[d]) ) // connected
                 {
                     seg_raw[idx] |= 0x40;
                     bfs.push_back(idx);
                     d = 6; // break;
+                    num_corners++;
                 }
             }
         }
     }
+    std::cout << "num corners: " << bfs.size() << std::endl;
 
     // divide the plateaus
 

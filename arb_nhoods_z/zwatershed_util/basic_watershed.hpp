@@ -72,6 +72,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     ptrdiff_t ydim = y_dim;
     ptrdiff_t zdim = z_dim;
     ptrdiff_t size = xdim * ydim * zdim;
+    ID MAX = 4294967295;
     cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
           volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),//, boost::fortran_storage_order())),
@@ -89,7 +90,8 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     //low  = 0;
     //high = 1;
 
-
+ ///////////////////////////////////////////////////////////// 1 & 2
+    /*
     // 1 - filter by Tmax, Tmin, get rid of repeat edges
     map<pair<int,int>, float> weights;
     for(int i=0;i<n_edge;i++){
@@ -106,12 +108,6 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         }
     }
 
-
-    for (const auto &pair:weights){
-        cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
-    }
-
-
     // 2 - keep only outgoing edges with min edge (can be multiple)
     map<ID,F> mins; //find mins for each vertex
     for ( const auto &pair : weights ) {
@@ -122,28 +118,70 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         else if(aff < mins[v])
             mins[v] = aff;
     }
-    /*
-    for (const auto &pair:mins){
-        cout << "min " << pair.first << " = " << pair.second << endl;
-    }
-    */
     map<pair<int,int>, float> weights_filtered; //filter only if matching mins
     for ( const auto &pair : weights ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        F epsilon = .0001; // this is subject to change
+        F epsilon = 1e-20; // this is subject to change
         if(aff<=mins[v1]+epsilon) //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
     }
-
-    /*
-    cout << "\nweights filtered len: "<<weights.size()<<endl;
-    for (const auto &pair:weights_filtered){
-        cout << "weight filtered " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
-    }
     */
+    ///////////////////////////////////////////////////////////// 1 & 2
 
+    // find maxes
+    int num_deleted = 0;
+    map<ID,F> maxes; //find maxes for each vertex
+    for(int i=0;i<n_edge;i++){
+        F aff = edgeWeight[i];
+        ID v1 = node1[i];
+        ID v2 = node2[i];
+        if(!maxes.count(v1))
+            maxes[v1] = aff;
+        else if(aff > maxes[v1])
+            maxes[v1] = aff;
+        if(!maxes.count(v2))
+            maxes[v2] = aff;
+        else if(aff > maxes[v2])
+            maxes[v2] = aff;
+    }
+
+    // 1 - filter by Tmax, Tmin
+    map<pair<ID,ID>, F> weights;
+    map<ID,bool> found;
+    for(int i=0;i<n_edge;i++){
+        ID v1 = node1[i];
+        ID v2 = node2[i];
+        F weight = edgeWeight[i];
+        if(weight!=maxes[v1] && weight<high){
+            weights[make_pair(node1[i],node2[i])] = weight;
+            found[v1]=true;
+            found[v2]=true;
+        }
+        else{
+            num_deleted++;
+        }
+        if(weight!=maxes[v2] && weight<high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
+            weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
+            found[v1]=true;
+            found[v2]=true;
+        }
+        else{
+            num_deleted++;
+        }
+    }
+    for(int i=0;i<size;i++){
+        if(!found[i]){
+            seg_raw[i]=MAX;
+        }
+    }
+    cout << "num_deleted " << num_deleted << endl;
+    cout << "weights len after filtering " << weights.size() << endl;
+    // this is equal to nEdge*2 - num_deleted from src_cython (off by 6)
+    map<pair<ID,ID>, F> weights_filtered(weights);
+
+/////////////////////////////////////////////////////////////////////
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
     weights.clear();
@@ -167,35 +205,25 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         else // if bidirectional
             weights[make_pair(v1,v2)] = pair.second;
     }
-    /*
-    for (const auto &pair:min_indexes){
-        cout << "min_index " << pair.first << " = " << pair.second << endl;
-    }
-
-    cout << "\nweights len: "<<weights.size()<<endl;
-    for (const auto &pair:weights){
-        cout << "weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
-    }
-
-    cout << "\ndiff weights" <<endl;
-    for (const auto &pair:weights_filtered){
-        if(!weights.count(pair.first))
-            cout << "diff weight " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
-    }
-    */
 
     // 4. Modify G′ to split the non-minimal plateaus:
     queue<ID> vqueue;
     map<ID,bool> visited;
     map<ID,bool> bidirectional;
     map<ID,bool> outgoing;
+    int num_out=0;
+    int num_bi=0;
     for ( const auto &pair : weights ) { // check which vertices have outgoing, bidirectional edges
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
-        if(!weights.count(make_pair(v2,v1)))            // not bidirectional
+        if(!weights.count(make_pair(v2,v1))){            // not bidirectional
             outgoing[v1] = true;
-        else                                              // bidirectional
+            num_out++;
+        }
+        else{                                              // bidirectional
             bidirectional[v1] = true;
+            num_bi++;
+        }
     }
     for(const auto &v_pair: bidirectional){ // check whether it has at least one bidirectional edge
         ID v = v_pair.first;
@@ -205,6 +233,9 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             //cout << "plateau corner " << v << endl;
         }
     }
+    cout << "num out: " << num_out << endl;
+    cout << "num bi: " << num_bi << endl;
+    cout << "num corners: " << vqueue.size() << endl;
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
@@ -229,9 +260,6 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
                 }
             }
         }
-    }
-    for (const auto &pair:weights){
-        //cout << "weights end " << pair.first.first << "," << pair.first.second << " = " << pair.second << endl;
     }
 
     // 5. Replace all unidirectional edges with bidirectional edges
