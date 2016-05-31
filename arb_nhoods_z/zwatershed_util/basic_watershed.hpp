@@ -159,23 +159,19 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             found[v1]=true;
             found[v2]=true;
         }
-        else{
+        else
             num_deleted++;
-        }
         if(weight!=maxes[v2] && weight<high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
             weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
             found[v1]=true;
             found[v2]=true;
         }
-        else{
+        else
             num_deleted++;
-        }
     }
-    for(int i=0;i<size;i++){
-        if(!found[i]){
+    for(int i=0;i<size;i++)
+        if(!found[i])
             seg_raw[i]=MAX;
-        }
-    }
     cout << "num_deleted " << num_deleted << endl;
     cout << "weights len after filtering " << weights.size() << endl;
     // this is equal to nEdge*2 - num_deleted from src_cython (off by 6)
@@ -184,12 +180,14 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
 /////////////////////////////////////////////////////////////////////
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
+    /*
     weights.clear();
     map<ID,ID> min_indexes;
     for ( const auto &pair : weights_filtered ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         if(!weights_filtered.count(make_pair(v2,v1))){ // if strictly outgoing
+            //cout << "strictly outgoing!" << endl;
             if(!min_indexes.count(v1)){
                 //cout <<  v1 << "," << min_indexes[v1] << "," << v2 << endl;
                 min_indexes[v1] = v2;
@@ -197,17 +195,26 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             }
             else if(v2 < min_indexes[v1]){
                 //cout << "erasing " << v1 << "," << min_indexes[v1] << endl;
+                cout << "\terasing!" << endl;
                 weights.erase(make_pair(v1,min_indexes[v1]));
                 weights[make_pair(v1,v2)] = pair.second;
                 min_indexes[v1]=v2;
+            }
+            else if(v2 > min_indexes[v1]){
+                //cout << "\tnot copying!" << endl;
             }
         }
         else // if bidirectional
             weights[make_pair(v1,v2)] = pair.second;
     }
+    */
+
+    cout << "weights len " << weights.size() << endl;
+
 
     // 4. Modify G′ to split the non-minimal plateaus:
     queue<ID> vqueue;
+    vector<ID> corners;
     map<ID,bool> visited;
     map<ID,bool> bidirectional;
     map<ID,bool> outgoing;
@@ -218,6 +225,9 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID v2 = pair.first.second;
         if(!weights.count(make_pair(v2,v1))){            // not bidirectional
             outgoing[v1] = true;
+            vqueue.push(v1);
+            corners.push_back(v1);
+            visited[v1]=true;
             num_out++;
         }
         else{                                              // bidirectional
@@ -225,6 +235,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             num_bi++;
         }
     }
+    /*
     for(const auto &v_pair: bidirectional){ // check whether it has at least one bidirectional edge
         ID v = v_pair.first;
         if(outgoing[v]){                    // check whether it has at least one out-going edge
@@ -233,12 +244,29 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             //cout << "plateau corner " << v << endl;
         }
     }
+    */
+    for(const auto &v_pair: outgoing){ // check whether it has at least one bidirectional edge
+        ID v = v_pair.first;
+        //if(outgoing[v]){                    // check whether it has at least one out-going edge
+            //visited[v] = true;              //found a plateau corner
+            //vqueue.push(v);
+            //cout << "plateau corner " << v << endl;
+        //}
+    }
     cout << "num out: " << num_out << endl;
     cout << "num bi: " << num_bi << endl;
     cout << "num corners: " << vqueue.size() << endl;
+    cout << "corners" << endl;
+    for(int i=0;i<corners.size();i++){
+        //cout << "\t" << i << ": " << corners[i] << endl;
+    }
+
+    int num_pops = 0;
+    int num_pushes = 0;
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
+        num_pops++;
         //cout << "u: " << u << endl;
         for(const auto&v_pair:bidirectional){
             ID v = v_pair.first;
@@ -256,11 +284,15 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
                     else{                                         //otherwise
                         visited[v] = true;                        //mark v as visited
                         vqueue.push(v);                           //and add it to the end of Q
+                        num_pushes++;
                     }
                 }
             }
         }
     }
+    std::cout << "num_pops: " <<num_pops << std::endl;
+    std::cout << "num_pushes: " << num_pushes << std::endl;
+
 
     // 5. Replace all unidirectional edges with bidirectional edges
     for ( const auto &pair : weights )

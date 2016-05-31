@@ -90,14 +90,33 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     }
     std::cout << "num corners: " << bfs.size() << std::endl;
 
+    int num_corners_all = 0;
+    for ( std::ptrdiff_t idx = 0; idx < size; ++idx )
+    {
+        for ( std::ptrdiff_t d = 0; d < 6; ++d )
+        {
+            if ( seg_raw[idx] & dirmask[d] ) // not connected in d dir
+            {
+                if ( !(seg_raw[idx+dir[d]] & idirmask[d]) ) // connected
+                {
+                    num_corners_all++;
+                }
+            }
+        }
+    }
+    std::cout << "num corners all: " << num_corners_all << std::endl;
+    for(int i=0;i<bfs.size();i++){
+        //std::cout << "\t" << i << ": " << bfs[i] << std::endl;
+    }
     // divide the plateaus
 
     std::size_t bfs_index = 0;
-
+    int num_pops = 0;
+    int num_pushes = 0;
     while ( bfs_index < bfs.size() )
     {
         std::ptrdiff_t idx = bfs[bfs_index];
-
+        num_pops++;
         id_t to_set = 0;
 
         for ( std::ptrdiff_t d = 0; d < 6; ++d )
@@ -109,6 +128,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
                     if ( !( seg_raw[idx+dir[d]] & 0x40 ) )
                     {
                         bfs.push_back(idx+dir[d]);
+                        num_pushes++;
                         seg_raw[idx+dir[d]] |= 0x40;
                     }
                 }
@@ -121,6 +141,8 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
         seg_raw[idx] = to_set;
         ++bfs_index;
     }
+    std::cout << "num_pops: " <<num_pops << std::endl;
+    std::cout << "num_pushes: " << num_pushes << std::endl;
 
     bfs.clear();
 
