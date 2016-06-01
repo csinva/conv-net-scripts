@@ -83,7 +83,7 @@ std::map<std::string,std::vector<double>> oneThresh_with_stats(int dimX,int dimY
 int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh,int eval){
 
     //read data
-    volume_ptr<uint32_t> gt_ptr(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ]));
+    volume_ptr<uint32_t> gt_ptr(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ], boost::fortran_storage_order()));
     volume_ptr<uint32_t> seg(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ]));
     std::vector<std::size_t> counts = * new std::vector<std::size_t>();
     region_graph_ptr<uint32_t,float> rg( new region_graph<uint32_t,float> );
