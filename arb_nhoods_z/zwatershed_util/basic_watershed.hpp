@@ -78,8 +78,6 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
           volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),//, boost::fortran_storage_order())),
           vector<size_t>(1)
     );
-    auto& counts = get<1>(result);
-    counts[0] = 0;
 
     volume<id_t>& seg = *get<0>(result);
     id_t* seg_raw = seg.data();
@@ -215,12 +213,27 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         }
     }
 
+    // find and renum
+    map<ID,ID> renum;
+    map<ID,ID> counts_map;
     for(ID i=0;i<size;i++){             // find
         //if(!seg_raw[i]==MAX)
         seg_raw[i]=dsets.find_set(i);
+        counts_map[seg_raw[i]]++;
     }
-    /*
-    1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background. - doesn't matter here because everything has edges
-    */
+
+    auto& counts = get<1>(result);
+    int count = 0;
+    for (const auto &pair:counts_map){
+        renum[pair.first] = count++;
+        counts.push_back(counts_map[pair.first]);
+    }
+    for(ID i=0;i<size;i++){
+        seg_raw[i]=renum[seg_raw[i]];
+    }
+
+
+
+
     return result;
 }
