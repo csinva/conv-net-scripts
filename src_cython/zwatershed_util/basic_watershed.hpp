@@ -155,48 +155,41 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
 
     bfs.clear();
 
-    // main watershed logic
+    // main watershed logic - connected components
 
     id_t next_id = 1;
 
     for ( std::ptrdiff_t idx = 0; idx < size; ++idx )
     {
-        if ( seg_raw[idx] == 0 )
-        {
+        // background pixels
+        if ( seg_raw[idx] == 0 ){
             seg_raw[idx] |= traits::high_bit;
             ++counts[0];
         }
 
-        if ( !( seg_raw[idx] & traits::high_bit ) && seg_raw[idx] )
-        {
+        if ( !( seg_raw[idx] & traits::high_bit ) && seg_raw[idx] ){ //not background and picked by bfs
             bfs.push_back(idx);
             bfs_index = 0;
             seg_raw[idx] |= 0x40;
 
-            while ( bfs_index < bfs.size() )
-            {
-                std::ptrdiff_t me = bfs[bfs_index];
+            while ( bfs_index < bfs.size() ){
+                std::ptrdiff_t me = bfs[bfs_index]; // me starts at idx
 
-                for ( std::ptrdiff_t d = 0; d < 6; ++d )
-                {
-                    if ( seg_raw[me] & dirmask[d] )
-                    {
-                        std::ptrdiff_t him = me + dir[d];
-                        if ( seg_raw[him] & traits::high_bit )
-                        {
+                for ( std::ptrdiff_t d = 0; d < 6; ++d ){
+                    if ( seg_raw[me] & dirmask[d] ){
+                        std::ptrdiff_t him = me + dir[d]; // him starts at idx + dir[d]
+                        if ( seg_raw[him] & traits::high_bit ){
                             counts[ seg_raw[him] & ~traits::high_bit ]
                                 += bfs.size();
 
-                            for ( auto& it: bfs )
-                            {
+                            for ( auto& it: bfs ){
                                 seg_raw[it] = seg_raw[him];
                             }
 
                             bfs.clear();
                             d = 6; // break
                         }
-                        else if ( !( seg_raw[him] & 0x40 ) )
-                        {
+                        else if ( !( seg_raw[him] & 0x40 ) ){
                             seg_raw[him] |= 0x40;
                             bfs.push_back( him );
 
@@ -218,7 +211,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
             }
         }
     }
-
+    std::cout << "num_background " << counts[0] << "\n";
     std::cout << "found: " << (next_id-1) << " components\n";
 
     for ( std::ptrdiff_t idx = 0; idx < size; ++idx )

@@ -86,48 +86,6 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     for(ID i=0;i<size;i++)
         seg_raw[i]=0;
 
-    // don't get rid of weights on the high end
-    //low  = 0;
-    //high = 1;
-
- ///////////////////////////////////////////////////////////// 1 & 2
-    /*
-    // 1 - filter by Tmax, Tmin, get rid of repeat edges
-    map<pair<int,int>, float> weights;
-    for(int i=0;i<n_edge;i++){
-        F weight = edgeWeight[i];
-        if(weight<=high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
-            if(weight<low)
-                weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
-            weights[make_pair(node1[i],node2[i])] = weight;
-            weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
-        }
-        else{
-            seg_raw[node1[i]]=1;
-            seg_raw[node2[i]]=1;
-        }
-    }
-
-    // 2 - keep only outgoing edges with min edge (can be multiple)
-    map<ID,F> mins; //find mins for each vertex
-    for ( const auto &pair : weights ) {
-        ID v = pair.first.first;
-        F aff = pair.second;
-        if(!mins.count(v))
-            mins[v] = aff;
-        else if(aff < mins[v])
-            mins[v] = aff;
-    }
-    map<pair<int,int>, float> weights_filtered; //filter only if matching mins
-    for ( const auto &pair : weights ) {
-        ID v1 = pair.first.first;
-        ID v2 = pair.first.second;
-        F aff = pair.second;
-        F epsilon = 1e-20; // this is subject to change
-        if(aff<=mins[v1]+epsilon) //float comparison
-            weights_filtered[make_pair(v1,v2)] = aff;
-    }
-    */
     ///////////////////////////////////////////////////////////// 1 & 2
 
     // find maxes
@@ -169,48 +127,16 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         else
             num_deleted++;
     }
+    int num_background=0;
     for(int i=0;i<size;i++)
-        if(!found[i])
-            seg_raw[i]=MAX;
+        if(!found[i]){
+            //seg_raw[i]=MAX;
+            num_background++;
+        }
+    cout << "num_background " << num_background << endl;
     cout << "num_deleted " << num_deleted << endl;
     cout << "weights len after filtering " << weights.size() << endl;
     // this is equal to nEdge*2 - num_deleted from src_cython (off by 6)
-    map<pair<ID,ID>, F> weights_filtered(weights);
-
-/////////////////////////////////////////////////////////////////////
-
-    // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
-    /*
-    weights.clear();
-    map<ID,ID> min_indexes;
-    for ( const auto &pair : weights_filtered ) {
-        ID v1 = pair.first.first;
-        ID v2 = pair.first.second;
-        if(!weights_filtered.count(make_pair(v2,v1))){ // if strictly outgoing
-            //cout << "strictly outgoing!" << endl;
-            if(!min_indexes.count(v1)){
-                //cout <<  v1 << "," << min_indexes[v1] << "," << v2 << endl;
-                min_indexes[v1] = v2;
-                weights[make_pair(v1,v2)] = pair.second;
-            }
-            else if(v2 < min_indexes[v1]){
-                //cout << "erasing " << v1 << "," << min_indexes[v1] << endl;
-                cout << "\terasing!" << endl;
-                weights.erase(make_pair(v1,min_indexes[v1]));
-                weights[make_pair(v1,v2)] = pair.second;
-                min_indexes[v1]=v2;
-            }
-            else if(v2 > min_indexes[v1]){
-                //cout << "\tnot copying!" << endl;
-            }
-        }
-        else // if bidirectional
-            weights[make_pair(v1,v2)] = pair.second;
-    }
-    */
-
-    cout << "weights len " << weights.size() << endl;
-
 
     // 4. Modify G′ to split the non-minimal plateaus:
     queue<ID> vqueue;
@@ -235,31 +161,12 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             num_bi++;
         }
     }
-    /*
-    for(const auto &v_pair: bidirectional){ // check whether it has at least one bidirectional edge
-        ID v = v_pair.first;
-        if(outgoing[v]){                    // check whether it has at least one out-going edge
-            visited[v] = true;              //found a plateau corner
-            vqueue.push(v);
-            //cout << "plateau corner " << v << endl;
-        }
-    }
-    */
-    for(const auto &v_pair: outgoing){ // check whether it has at least one bidirectional edge
-        ID v = v_pair.first;
-        //if(outgoing[v]){                    // check whether it has at least one out-going edge
-            //visited[v] = true;              //found a plateau corner
-            //vqueue.push(v);
-            //cout << "plateau corner " << v << endl;
-        //}
-    }
+
     cout << "num out: " << num_out << "=" << visited.size() << endl;
     cout << "num bi: " << num_bi << endl;
     cout << "num corners: " << vqueue.size() << endl;
     cout << "corners" << endl;
-    //for(int i=0;i<corners.size();i++){
-        //cout << "\t" << i << ": " << corners[i] << endl;
-    //}
+
 
     int num_pops = 0;
     int num_pushes = 0;
@@ -273,40 +180,8 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             ID v = v_pair.second;
             if(weights.count(make_pair(v,u))){
                 num_tested++;
-
-        /*
-        for(const auto&v_pair:weights){                         // THIS IS A SLOW LOOP
-            ID v1 = v_pair.first.first;
-            ID v2 = v_pair.first.second;
-            if(u==v2){
-                if(weights.count(make_pair(v2,v1))){
-                    num_tested++;
-        */
-
-                /*
-        //for(int v=0;v<size;v++){
-            //if(weights.count(make_pair(u,v))){                    //u,v in E
-                //cout << "\t\tfound u,v!" << endl;
-                //if(weights.count(make_pair(v,u))){                //v,u in E
-                    //cout << "\t\t\tfound v,u!" << endl;
-                    weights.erase(make_pair(u,v));                //remove u,v from E
-                    //cout << "\t\t\t\terase end " << u << "," << v << endl;
-                    if(visited[v]){                                //If v is visited
-                        //cout << "\t\t\t\terase end " << v << "," << u << endl;
-                        //cout << num_visited++ << endl;
-                        weights.erase(make_pair(v,u));            //remove v,u from E
-                    }
-                    else{                                         //otherwise
-                        visited[v] = true;                        //mark v as visited
-                        vqueue.push(v);                           //and add it to the end of Q
-                        num_pushes++;
-                    }
-                 }
-                */
-
             }
         }
-        //}
     }
     std::cout << "num_tested: " <<num_tested << std::endl;
     std::cout << "num_visited: " <<num_visited << std::endl;
@@ -316,25 +191,29 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
 
     // 5. Replace all unidirectional edges with bidirectional edges
     for ( const auto &pair : weights )
-        weights[make_pair(pair.first.first,pair.first.second)] = pair.second;
+        weights[make_pair(pair.first.second,pair.first.first)] = pair.second;
 
     // 6. Return connected components of the modified G
     cout << "nEdge: " << weights.size() << endl;
-    cout << "size: " << size << endl;
     vector<ID> rank(size);
     vector<ID> parent(size);
     boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
     for (ID i=0; i<size; ++i){
-        if(!seg_raw[i])
-            dsets.make_set(i);
+        //if(!seg_raw[i]==MAX)
+         dsets.make_set(i);
     }
     for ( const auto &pair : weights ) // union
         dsets.union_set(pair.first.first,pair.first.second);
 
+    for(int i=0;i<size-1;i++){
+        if(!found[i]){
+            dsets.union_set(i,i+1);
+        }
+    }
+
     for(ID i=0;i<size;i++){             // find
-        if(!seg_raw[i])
-            seg_raw[i]=dsets.find_set(i);
-        //cout << i+1 << " " << seg_raw[i] << endl;
+        //if(!seg_raw[i]==MAX)
+        seg_raw[i]=dsets.find_set(i);
     }
     /*
     1(c) Remove singleton vertices (vertices with no incident edges in E). Mark them as background. - doesn't matter here because everything has edges

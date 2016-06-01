@@ -41,6 +41,7 @@ print "n1,n2,edge", min(node1), max(node1), min(node2), max(node2), min(edge_aff
 print "\noriginal watershed..."
 seg_one, segs_old, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
 print rand
+print "num background", sum(seg_one.flatten()==0)
 print "nsegs", len(np.unique(seg_one))
 
 print "\nnew watershed..."
