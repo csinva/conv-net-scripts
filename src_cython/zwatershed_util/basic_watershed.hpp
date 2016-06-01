@@ -84,6 +84,27 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
             }
         }
     }
+    int num_out = 0;
+    int num_bi = 0;
+    for ( std::ptrdiff_t idx = 0; idx < size; ++idx )
+    {
+        for ( std::ptrdiff_t d = 0; d < 6; ++d )
+        {
+            if ( seg_raw[idx] & dirmask[d] )
+            {
+                if ( !(seg_raw[idx+dir[d]] & idirmask[d]) )
+                {
+                    num_out++;
+                }
+                else{
+                    num_bi++;
+                }
+            }
+        }
+    }
+    std::cout << "num out " << num_out << std::endl;
+    std::cout << "num bi " << num_bi << std::endl;
+    std::cout << "num corners " << bfs.size() << std::endl;
 
     // divide the plateaus
 

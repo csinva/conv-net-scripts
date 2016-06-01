@@ -41,6 +41,7 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] a
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
     counts_len = len(map['counts'])
     dims = affs.shape
+    seg_one = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
 
     # get segs, stats
     segs, splits, merges = [], [], []
@@ -72,7 +73,7 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] a
     if h5:
         return returnMap
     else:
-        return segs, returnMap
+        return seg_one, segs, returnMap
 
 def watershed_all_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int eval, int h5,
                           seg_save_path="NULL/"):
