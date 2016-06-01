@@ -26,31 +26,52 @@ def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[uint32_t, ndim=1
 def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1,
              np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes,
              int eval, int h5, seg_save_path="NULL/"):
+
+
+    if h5:
+        makedirs(seg_save_path)
+
+    # get initial seg,rg
     gt = np.array(gt, order='F')
     n_edge = node1.size
-    print node1[0:10], node2[0:10], edgeWeight[0:10]
     map = calc_rgn_graph(gt, node1, node2, n_edge, edgeWeight)
-
     cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
     counts_len = len(map['counts'])
     dims = gt.shape
-    dims[3] = 3
-
+    seg_one = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
 
     # get segs, stats
     segs, splits, merges = [], [], []
-    seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2])) # .transpose(2, 1, 0)
-    segs.append(seg)
     for i in range(len(threshes)):
-        if np.shape(rgn_graph)[0] > 0:
-            map = oneThresh_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
+        map = oneThresh_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
                                        rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i], eval)
-            seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2])) #.transpose(2, 1, 0)
-            print 'stats:',map['stats']
-            segs.append(seg)
-    return segs
+        seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
+        graph = np.array(map['rg'], dtype='float32')
+        counts_out = np.array(map['counts'], dtype='uint32')
+        counts_len = len(counts_out)
+        seg_in = np.array(map['seg'], dtype='uint32')
+        rgn_graph = graph.reshape(len(graph)/3,3)
+        if threshes[i] in save_threshes:
+            if h5:
+                f = h5py.File(seg_save_path + 'seg_' + str(threshes[i]) + '.h5', 'w')
+                f["main"] = seg
+                f.close()
+            else:
+                segs.append(seg)
+        splits = splits + [map['stats'][0]]
+        merges = merges + [map['stats'][1]]
+    max_f_score = 2 / (1 / splits[0] + 1 / merges[0])
+    for j in range(len(splits)):
+        f_score = 2 / (1 / splits[j] + 1 / merges[j])
+        if f_score > max_f_score:
+            max_f_score = f_score
+    returnMap = {'V_Rand': max_f_score, 'V_Rand_split': splits, 'V_Rand_merge': merges}
+    if h5:
+        return returnMap
+    else:
+        return seg_one, segs, returnMap
 
 
 def makedirs(seg_save_path):
