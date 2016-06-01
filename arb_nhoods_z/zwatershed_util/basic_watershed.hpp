@@ -168,12 +168,11 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     cout << "num bi: " << num_bi << endl;
     cout << "num corners: " << vqueue.size() << endl;
     cout << "corners" << endl;
-
-
     int num_pops = 0;
     int num_pushes = 0;
     unsigned int num_visited = 0;
     int num_tested = 0;
+    /*
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
@@ -185,6 +184,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             }
         }
     }
+    */
     std::cout << "num_tested: " <<num_tested << std::endl;
     std::cout << "num_visited: " <<num_visited << std::endl;
     std::cout << "num_pops: " << num_pops << std::endl;
