@@ -77,7 +77,7 @@ std::map<std::string,std::list<float>> calc_region_graph(int dimX, int dimY, int
 
 
 std::map<std::string,std::vector<double>> oneThresh_with_stats(int dimX,int dimY, int dimZ, uint32_t * gt, float * rgn_graph,
-int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh,int eval){
+int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh){
 
     //read data
     volume_ptr<uint32_t> gt_ptr(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ], boost::fortran_storage_order()));
@@ -105,11 +105,11 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
     std::vector<double> counts_data; // = * (new std::list<float>());
     for(int i=0;i<dimX*dimY*dimZ;i++)
         seg_vector.push_back(((double)(seg->data()[i])));
-	if(eval==1){
-		auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
-		r.push_back(x.first);
-		r.push_back(x.second);
-	}
+    auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
+    r.push_back(x.first);
+    r.push_back(x.second);
+    returnMap["stats"] = r;
+
     for ( const auto& e: *rg ){
         rg_data.push_back(std::get<1>(e));
         rg_data.push_back(std::get<2>(e));
@@ -118,47 +118,7 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
     for (const auto& x:counts)
         counts_data.push_back(x);
     returnMap["seg"] = seg_vector;
-    returnMap["stats"] = r;
     returnMap["rg"]=rg_data;
     returnMap["counts"] = counts_data;
     return returnMap;
 }
-
-std::map<std::string,std::vector<double>> oneThresh(int dimX, int dimY, int dimZ, float* affs, float * rgn_graph,
-                                        int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh,int eval){
-    std::cout << "evaluating..." << std::endl;
-
-    // read data
-    volume_ptr<uint32_t> seg(new volume<uint32_t> (boost::extents[dimX][dimY][dimZ]));
-    std::vector<std::size_t> counts = * new std::vector<std::size_t>();
-    region_graph_ptr<uint32_t,float> rg( new region_graph<uint32_t,float> );
-    for(int i=0;i<dimX*dimY*dimZ;i++)
-        seg->data()[i] = seg_in[i];
-    for(int i=0;i<counts_len;i++)
-        counts.push_back(counts_in[i]);
-    for(int i=0;i<rgn_graph_len;i++)
-        (*rg).emplace_back(rgn_graph[i*3+2],rgn_graph[i*3],rgn_graph[i*3+1]);
-
-    // merge
-    std::cout << "thresh: " << thresh << "\n";
-	merge_segments_with_function(seg, rg, counts, square(thresh), 10,RECREATE_RG);
-
-	// save and return
-	std::map<std::string,std::vector<double>> returnMap;
-    std::vector<double> seg_vector;
-    std::vector<double> rg_data; // = * (new std::list<float>());
-    std::vector<double> counts_data; // = * (new std::list<float>());
-    for(int i=0;i<dimX*dimY*dimZ;i++)
-        seg_vector.push_back(((double)(seg->data()[i])));
-    for ( const auto& e: *rg ){
-        rg_data.push_back(std::get<1>(e));
-        rg_data.push_back(std::get<2>(e));
-        rg_data.push_back(std::get<0>(e));
-    }
-    for (const auto& x:counts)
-        counts_data.push_back(x);
-    returnMap["seg"] = seg_vector;
-    returnMap["rg"]=rg_data;
-    returnMap["counts"] = counts_data;
-    return returnMap;
- }

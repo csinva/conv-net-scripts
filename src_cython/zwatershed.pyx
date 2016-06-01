@@ -9,25 +9,25 @@ import os
 cimport numpy as np
 import h5py
 
-# interface methods
+#-------------- interface methods --------------------------------------------------------------
 def zwatershed_and_metrics(gt, affs, threshes, save_threshes):
     threshes.sort()
-    return eval_all(gt, affs, threshes, save_threshes, eval=1, h5=0)
+    return zwshed_with_stats(gt, affs, threshes, save_threshes, h5=0)
 
 def zwatershed_and_metrics_h5(gt, affs, threshes, save_threshes, seg_save_path):
     threshes.sort()
-    return eval_all(gt, affs, threshes, save_threshes, eval=1, h5=1, seg_save_path=seg_save_path)
+    return zwshed_with_stats(gt, affs, threshes, save_threshes, h5=1, seg_save_path=seg_save_path)
 
 def zwatershed(affs, threshes):
     threshes.sort()
-    return watershed_all_no_eval(affs, threshes, threshes, eval=0, h5=0)
+    return zwshed_no_stats(affs, threshes, threshes, h5=0)
 
 def zwatershed_h5(affs, threshes, seg_save_path):
     threshes.sort()
-    watershed_all_no_eval(affs, threshes, threshes, eval=0, h5=1, seg_save_path=seg_save_path)
+    zwshed_no_stats(affs, threshes, threshes, h5=1, seg_save_path=seg_save_path)
 
-# helper methods
-def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int eval,
+#-------------- helper methods --------------------------------------------------------------
+def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes,
              int h5, seg_save_path="NULL/"):
     if h5:
         makedirs(seg_save_path)
@@ -35,7 +35,7 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] a
     # get initial seg,rg
     affs = np.asfortranarray(np.transpose(affs, (1, 2, 3, 0)))
     gt = np.array(gt, order='F')
-    map = calc_rgn_graph(gt, affs)
+    map = zwshed_initial(gt, affs)
     cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
@@ -46,9 +46,8 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] a
     # get segs, stats
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
-        map = oneThresh_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &affs[0, 0, 0, 0],
-                                   &rgn_graph[0, 0],
-                                   rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i], eval)
+        map = merge_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
+                                   rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
         graph = np.array(map['rg'], dtype='float32')
         counts_out = np.array(map['counts'], dtype='uint32')
@@ -75,7 +74,7 @@ def eval_all(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] a
     else:
         return seg_one, segs, returnMap
 
-def watershed_all_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int eval, int h5,
+def zwshed_no_stats(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int h5,
                           seg_save_path="NULL/"):
     if h5:
         makedirs(seg_save_path)
@@ -84,7 +83,7 @@ def watershed_all_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_
     affs = np.asfortranarray(np.transpose(affs, (1, 2, 3, 0)))
     dims = affs.shape
     seg_empty = np.empty((dims[0], dims[1], dims[2]), dtype='uint32')
-    map = calc_rgn_graph(seg_empty, affs)
+    map = zwshed_initial(seg_empty, affs)
     cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
@@ -92,8 +91,8 @@ def watershed_all_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_
 
     # get segs, stats
     for i in range(len(threshes)):
-        map = oneThresh(dims[0], dims[1], dims[2], &affs[0, 0, 0, 0], &rgn_graph[0, 0],
-                        rgn_graph.shape[0], &seg_in[0], &counts_out[0], len(map['counts']), threshes[i], eval)
+        map = merge_no_stats(dims[0], dims[1], dims[2], &rgn_graph[0, 0],
+                        rgn_graph.shape[0], &seg_in[0], &counts_out[0], len(map['counts']), threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
         graph = np.array(map['rg'], dtype='float32')
         counts_out = np.array(map['counts'], dtype='uint32')
@@ -110,10 +109,10 @@ def watershed_all_no_eval(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_
     if not h5:
         return segs
 
-def calc_rgn_graph(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, ndim=4] affs):
+def zwshed_initial(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[np.float32_t, ndim=4] affs):
     cdef np.ndarray[uint32_t, ndim=1] counts = np.empty(1, dtype='uint32')
     dims = affs.shape
-    map = calc_region_graph(dims[0], dims[1], dims[2], &affs[0, 0, 0, 0])
+    map = zwshed_initial_c(dims[0], dims[1], dims[2], &affs[0, 0, 0, 0])
     graph = np.array(map['rg'], dtype='float32')
     return {'rg': graph.reshape(len(graph) / 3, 3), 'seg': np.array(map['seg'], dtype='uint32'),
             'counts': np.array(map['counts'], dtype='uint32')}
@@ -124,16 +123,14 @@ def makedirs(seg_save_path):
     if not os.path.exists(seg_save_path):
         os.makedirs(seg_save_path)
 
-# c++ methods
+#-------------- c++ methods --------------------------------------------------------------
 cdef extern from "zwatershed.h":
-    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, np.float32_t*affs)
-    map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, np.uint32_t*gt,
-                                                     np.float32_t*affs,
+    map[string, list[float]] zwshed_initial_c(int dimX, int dimY, int dimZ, np.float32_t*affs)
+    map[string, vector[double]] merge_with_stats(int dx, int dy, int dz, np.uint32_t*gt,
                                                      np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
                                                      uint32_t*counts,
-                                                     int counts_len, int thresh, int evaluate)
-    map[string, vector[double]] oneThresh(int dx, int dy, int dz, np.float32_t*affs,
+                                                     int counts_len, int thresh)
+    map[string, vector[double]] merge_no_stats(int dx, int dy, int dz,
                                           np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
                                           uint32_t*counts,
-                                          int counts_len, int thresh,
-                                          int evaluate)
+                                          int counts_len, int thresh)
