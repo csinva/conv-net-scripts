@@ -113,6 +113,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
     std::size_t bfs_index = 0;
     int num_pops = 0;
     int num_pushes = 0;
+    int num_visited = 0;
     while ( bfs_index < bfs.size() )
     {
         std::ptrdiff_t idx = bfs[bfs_index];
@@ -125,11 +126,15 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
             {
                 if ( seg_raw[idx+dir[d]] & idirmask[d] )
                 {
-                    if ( !( seg_raw[idx+dir[d]] & 0x40 ) )
+                    std::cout << "checking if visited!" << std::endl;
+                    if ( !( seg_raw[idx+dir[d]] & 0x40 ) ) // if not visited
                     {
                         bfs.push_back(idx+dir[d]);
                         num_pushes++;
                         seg_raw[idx+dir[d]] |= 0x40;
+                    }
+                    else{
+                        num_visited++;
                     }
                 }
                 else
@@ -141,6 +146,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
         seg_raw[idx] = to_set;
         ++bfs_index;
     }
+    std::cout << "num_visited: " <<num_visited << std::endl;
     std::cout << "num_pops: " <<num_pops << std::endl;
     std::cout << "num_pushes: " << num_pushes << std::endl;
 

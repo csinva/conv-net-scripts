@@ -224,14 +224,14 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         if(!weights.count(make_pair(v2,v1))){            // not bidirectional
-            outgoing[v1] = true;
-            vqueue.push(v1);
-            corners.push_back(v1);
-            visited[v1]=true;
+            outgoing[v2] = true;
+            vqueue.push(v2);                             // THIS MIGHT BE push(v2)
+            //corners.push_back(v2);
+            visited[v2]=true;
             num_out++;
         }
         else{                                              // bidirectional
-            bidirectional[v1] = true;
+            bidirectional[v2] = true;
             num_bi++;
         }
     }
@@ -253,32 +253,39 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             //cout << "plateau corner " << v << endl;
         //}
     }
-    cout << "num out: " << num_out << endl;
+    cout << "num out: " << num_out << "=" << visited.size() << endl;
     cout << "num bi: " << num_bi << endl;
     cout << "num corners: " << vqueue.size() << endl;
     cout << "corners" << endl;
-    for(int i=0;i<corners.size();i++){
+    //for(int i=0;i<corners.size();i++){
         //cout << "\t" << i << ": " << corners[i] << endl;
-    }
+    //}
 
     int num_pops = 0;
     int num_pushes = 0;
+    unsigned int num_visited = 0;
+    int num_tested = 0;
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
         num_pops++;
-        //cout << "u: " << u << endl;
-        for(const auto&v_pair:bidirectional){
-            ID v = v_pair.first;
-            //cout << "\tv: " << v << endl;
-            if(weights.count(make_pair(u,v))){                    //u,v in E
+        for(const auto&v_pair:weights){                         // THIS IS A SLOW LOOP
+            ID v1 = v_pair.first.first;
+            ID v2 = v_pair.first.second;
+            if(u==v1){
+                if(weights.count(make_pair(v2,v1))){
+                    num_tested++;
+                /*
+        //for(int v=0;v<size;v++){
+            //if(weights.count(make_pair(u,v))){                    //u,v in E
                 //cout << "\t\tfound u,v!" << endl;
-                if(weights.count(make_pair(v,u))){                //v,u in E
+                //if(weights.count(make_pair(v,u))){                //v,u in E
                     //cout << "\t\t\tfound v,u!" << endl;
                     weights.erase(make_pair(u,v));                //remove u,v from E
                     //cout << "\t\t\t\terase end " << u << "," << v << endl;
                     if(visited[v]){                                //If v is visited
                         //cout << "\t\t\t\terase end " << v << "," << u << endl;
+                        //cout << num_visited++ << endl;
                         weights.erase(make_pair(v,u));            //remove v,u from E
                     }
                     else{                                         //otherwise
@@ -286,11 +293,16 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
                         vqueue.push(v);                           //and add it to the end of Q
                         num_pushes++;
                     }
+                */
                 }
+
             }
         }
+        //}
     }
-    std::cout << "num_pops: " <<num_pops << std::endl;
+    std::cout << "num_tested: " <<num_tested << std::endl;
+    std::cout << "num_visited: " <<num_visited << std::endl;
+    std::cout << "num_pops: " << num_pops << std::endl;
     std::cout << "num_pushes: " << num_pushes << std::endl;
 
 
