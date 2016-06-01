@@ -269,12 +269,20 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID u = vqueue.front();
         vqueue.pop();
         num_pops++;
+        for(const auto&v_pair:outgoing){                         // THIS IS A SLOW LOOP
+            ID v = v_pair.second;
+            if(weights.count(make_pair(v,u))){
+                num_tested++;
+
+        /*
         for(const auto&v_pair:weights){                         // THIS IS A SLOW LOOP
             ID v1 = v_pair.first.first;
             ID v2 = v_pair.first.second;
-            if(u==v1){
+            if(u==v2){
                 if(weights.count(make_pair(v2,v1))){
                     num_tested++;
+        */
+
                 /*
         //for(int v=0;v<size;v++){
             //if(weights.count(make_pair(u,v))){                    //u,v in E
@@ -293,8 +301,8 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
                         vqueue.push(v);                           //and add it to the end of Q
                         num_pushes++;
                     }
+                 }
                 */
-                }
 
             }
         }
