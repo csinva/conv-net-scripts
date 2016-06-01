@@ -105,9 +105,7 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
         }
     }
     std::cout << "num corners all: " << num_corners_all << std::endl;
-    for(int i=0;i<bfs.size();i++){
-        //std::cout << "\t" << i << ": " << bfs[i] << std::endl;
-    }
+
     // divide the plateaus
 
     std::size_t bfs_index = 0;
@@ -155,19 +153,32 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
 
     bfs.clear();
 
-    // main watershed logic - connected components
 
+
+    ////////// Count num edges ////////////
+    int num_edges = 0;
+    for ( std::ptrdiff_t idx = 0; idx < size; ++idx ){
+        if ( !( seg_raw[idx] & traits::high_bit ) && seg_raw[idx] ){
+            for ( std::ptrdiff_t d = 0; d < 6; ++d ){
+                if ( seg_raw[idx] & dirmask[d] ){
+                    num_edges++;
+                }
+            }
+        }
+    }
+    std::cout << "num_edges: " << num_edges << std::endl; // This is equal to num_deleted=2
+
+    // main watershed logic - connected components
     id_t next_id = 1;
 
-    for ( std::ptrdiff_t idx = 0; idx < size; ++idx )
-    {
+    for ( std::ptrdiff_t idx = 0; idx < size; ++idx ){
         // background pixels
         if ( seg_raw[idx] == 0 ){
             seg_raw[idx] |= traits::high_bit;
             ++counts[0];
         }
-
-        if ( !( seg_raw[idx] & traits::high_bit ) && seg_raw[idx] ){ //not background and picked by bfs
+        // not background and picked by bfs
+        if ( !( seg_raw[idx] & traits::high_bit ) && seg_raw[idx] ){
             bfs.push_back(idx);
             bfs_index = 0;
             seg_raw[idx] |= 0x40;
@@ -176,19 +187,21 @@ watershed( const affinity_graph_ptr<F>& aff_ptr, const L& lowv, const H& highv )
                 std::ptrdiff_t me = bfs[bfs_index]; // me starts at idx
 
                 for ( std::ptrdiff_t d = 0; d < 6; ++d ){
-                    if ( seg_raw[me] & dirmask[d] ){
+                    if ( seg_raw[me] & dirmask[d] ){ // not connected in d dir
                         std::ptrdiff_t him = me + dir[d]; // him starts at idx + dir[d]
+                        // merge me with him if him has a high bit
                         if ( seg_raw[him] & traits::high_bit ){
                             counts[ seg_raw[him] & ~traits::high_bit ]
                                 += bfs.size();
 
-                            for ( auto& it: bfs ){
+                            for ( auto& it: bfs ){ // it is everything in bfs
                                 seg_raw[it] = seg_raw[him];
                             }
 
                             bfs.clear();
                             d = 6; // break
                         }
+                        // not visited
                         else if ( !( seg_raw[him] & 0x40 ) ){
                             seg_raw[him] |= 0x40;
                             bfs.push_back( him );

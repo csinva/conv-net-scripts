@@ -107,6 +107,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
 
     // 1 - filter by Tmax, Tmin
     map<pair<ID,ID>, F> weights;
+    map<pair<ID,ID>, F> weights_deleted;
     map<ID,bool> found;
     for(int i=0;i<n_edge;i++){
         ID v1 = node1[i];
@@ -117,15 +118,19 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
             found[v1]=true;
             found[v2]=true;
         }
-        else
+        else{
             num_deleted++;
+            weights_deleted[make_pair(node1[i],node2[i])] = weight;
+        }
         if(weight!=maxes[v2] && weight<high){ //1a Remove each {u, v} from E if w({vi, u}) > Tmax.
             weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
             found[v1]=true;
             found[v2]=true;
         }
-        else
+        else{
             num_deleted++;
+            weights_deleted[make_pair(node1[i],node2[i])] = weight;
+        }
     }
     int num_background=0;
     for(int i=0;i<size;i++)
@@ -151,8 +156,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID v2 = pair.first.second;
         if(!weights.count(make_pair(v2,v1))){            // not bidirectional
             outgoing[v2] = true;
-            vqueue.push(v2);                             // THIS MIGHT BE push(v2)
-            //corners.push_back(v2);
+            vqueue.push(v2);
             visited[v2]=true;
             num_out++;
         }
@@ -202,7 +206,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         //if(!seg_raw[i]==MAX)
          dsets.make_set(i);
     }
-    for ( const auto &pair : weights ) // union
+    for ( const auto &pair : weights_deleted ) // union
         dsets.union_set(pair.first.first,pair.first.second);
 
     for(int i=0;i<size-1;i++){
