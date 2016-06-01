@@ -12,16 +12,24 @@ import h5py
 #-------------- interface methods --------------------------------------------------------------
 def zwatershed_and_metrics_arb(gt, node1, node2, edgeWeight, threshes, save_threshes):
     threshes.sort()
-    return zwshed_with_stats(gt, node1, node2, edgeWeight, threshes, save_threshes, h5=0)
+    return zwshed_with_stats_arb(gt, node1, node2, edgeWeight, threshes, save_threshes, h5=0)
 
 def zwatershed_and_metrics_h5_arb(gt, node1, node2, edgeWeight, threshes, save_threshes, seg_save_path):
     threshes.sort()
-    return zwshed_with_stats(gt, node1, node2, edgeWeight, threshes, save_threshes, h5=1, seg_save_path=seg_save_path)
+    return zwshed_with_stats_arb(gt, node1, node2, edgeWeight, threshes, save_threshes, h5=1, seg_save_path=seg_save_path)
+
+def zwatershed_arb(seg_shape, node1, node2, edgeWeight, save_threshes):
+    save_threshes.sort()
+    return zwshed_no_stats_arb(seg_shape, node1, node2, edgeWeight, save_threshes, save_threshes, h5=0)
+
+def zwatershed_h5_arb(seg_shape, node1, node2, edgeWeight, save_threshes, seg_save_path):
+    save_threshes.sort()
+    return zwshed_no_stats_arb(seg_shape, node1, node2, edgeWeight, save_threshes, save_threshes, h5=1, seg_save_path=seg_save_path)
 
 #-------------- helper methods --------------------------------------------------------------
-def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1,
-             np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes,
-              int h5, seg_save_path="NULL/"):
+def zwshed_with_stats_arb(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim=1] node1,
+                          np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes,
+                          int h5, seg_save_path="NULL/"):
     if h5:
         makedirs(seg_save_path)
 
@@ -39,7 +47,7 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim
     # get segs, stats
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
-        map = oneThresh_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
+        map = merge_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
                                        rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         graph = np.array(map['rg'], dtype='float32')
@@ -67,6 +75,42 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, ndim
     else:
         return seg_one, segs, returnMap
 
+def zwshed_no_stats_arb(dims, np.ndarray[uint32_t, ndim=1] node1,
+                        np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes, save_threshes,
+                        int h5, seg_save_path="NULL/"):
+    if h5:
+        makedirs(seg_save_path)
+
+    # get initial seg,rg
+    n_edge = node1.size
+    seg_empty = np.zeros(dims)
+    map = zwshed_initial_arb(seg_empty, node1, node2, n_edge, edgeWeight)
+    cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
+    cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
+    cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
+    counts_len = len(map['counts'])
+    seg_one = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
+
+    # get segs, stats
+    segs = []
+    for i in range(len(threshes)):
+        map = merge_no_stats(dims[0], dims[1], dims[2], &rgn_graph[0, 0],
+                                       rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i])
+        seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
+        graph = np.array(map['rg'], dtype='float32')
+        counts_out = np.array(map['counts'], dtype='uint32')
+        counts_len = len(counts_out)
+        seg_in = np.array(map['seg'], dtype='uint32')
+        rgn_graph = graph.reshape(len(graph)/3,3)
+        if threshes[i] in save_threshes:
+            if h5:
+                f = h5py.File(seg_save_path + 'seg_' + str(threshes[i]) + '.h5', 'w')
+                f["main"] = seg
+                f.close()
+            else:
+                segs.append(seg)
+    if not h5:
+        return seg_one, segs
 
 def makedirs(seg_save_path):
     if not seg_save_path.endswith("/"):
@@ -78,19 +122,21 @@ def zwshed_initial_arb(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[uint32_t, nd
                    np.ndarray[uint32_t, ndim=1] node2, int n_edge, np.ndarray[float, ndim=1] edgeWeight):
     cdef np.ndarray[uint32_t, ndim=1] counts = np.empty(1, dtype='uint32')
     dims = seg.shape
-    map = calc_region_graph(dims[0], dims[1], dims[2], &node1[0], &node2[0], &edgeWeight[0], n_edge)
+    map = zwshed_initial_c(dims[0], dims[1], dims[2], &node1[0], &node2[0], &edgeWeight[0], n_edge)
     graph = np.array(map['rg'], dtype='float32')
     return {'rg': graph.reshape(len(graph) / 3, 3), 'seg': np.array(map['seg'], dtype='uint32'),
             'counts': np.array(map['counts'], dtype='uint32')}
 
 #-------------- c++ methods --------------------------------------------------------------
 cdef extern from "zwatershed.h":
-    map[string, list[float]] calc_region_graph(int dimX, int dimY, int dimZ, uint32_t*node1,
+    map[string, list[float]] zwshed_initial_c(int dimX, int dimY, int dimZ, uint32_t*node1,
                                                uint32_t*node2, float*edgeWeight, int n_edge)
-    map[string, vector[double]] oneThresh_with_stats(int dx, int dy, int dz, np.uint32_t*gt,
+    map[string, vector[double]] merge_with_stats(int dx, int dy, int dz, np.uint32_t*gt,
                                                      np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
                                                      uint32_t*counts,int counts_len, int thresh)
-
+    map[string, vector[double]] merge_no_stats(int dx, int dy, int dz,
+                                                     np.float32_t*rgn_graph, int rgn_graph_len, uint32_t*seg,
+                                                     uint32_t*counts,int counts_len, int thresh)
 
 #-------------- edgelist methods --------------------------------------------------------------
 def nodelist_like(shape, nhood):
