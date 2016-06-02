@@ -8,7 +8,7 @@
 #include <set>
 
 template< typename ID, typename F, typename FN, typename M >
-inline void merge_segments_with_function( const volume_ptr<ID>& seg_ptr,
+inline void merge_segments_with_function_arb( const volume_ptr<ID>& seg_ptr,
                                           const region_graph_ptr<ID,F> rg_ptr,
                                           std::vector<std::size_t>& counts,
                                           const FN& func,

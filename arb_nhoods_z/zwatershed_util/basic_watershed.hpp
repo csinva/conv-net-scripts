@@ -7,7 +7,7 @@
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
 inline tuple< volume_ptr<ID>, vector<size_t> >
-watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
+watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
             , const L& lowv, const H& highv )
 {
 
@@ -23,14 +23,14 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     ptrdiff_t size = xdim * ydim * zdim;
     cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
-          volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim], boost::c_storage_order())),
+          volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),
           vector<size_t>(1)
     );
 
     volume<id_t>& seg = *get<0>(result);
     id_t* seg_raw = seg.data();
     for(ID i=0;i<size;i++)
-        seg_raw[i]=0;
+        seg_raw[i]=MAX;
 
     // 1 - filter by Tmax, Tmin
     map<pair<int,int>, float> weights;
@@ -40,13 +40,8 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
                 weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
             weights[make_pair(node1[i],node2[i])] = weight;
             weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
-        //}
-        /*
-        else{
-            seg_raw[node1[i]]=MAX;
-            seg_raw[node2[i]]=MAX;
-        }
-        */
+            seg_raw[node1[i]] = 0;
+            seg_raw[node2[i]] = 0; //1c set all vertices with no edges as background
     }
 
     // 2 - keep only outgoing edges with min edge (can be multiple)
@@ -65,7 +60,6 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        F epsilon = 1e-100; // this is subject to change
         if(aff==maxes[v1] || aff >=high) //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
     }
@@ -81,12 +75,10 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         ID v2 = pair.first.second;
         if(!weights_filtered.count(make_pair(v2,v1))){ // if strictly outgoing
             if(!min_indexes.count(v1)){
-                //cout <<  v1 << "," << min_indexes[v1] << "," << v2 << endl;
                 min_indexes[v1] = v2;
                 weights[make_pair(v1,v2)] = pair.second;
             }
             else if(v2 < min_indexes[v1]){
-                //cout << "erasing " << v1 << "," << min_indexes[v1] << endl;
                 weights.erase(make_pair(v1,min_indexes[v1]));
                 weights[make_pair(v1,v2)] = pair.second;
                 min_indexes[v1]=v2;
@@ -144,7 +136,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     vector<ID> parent(size);
     boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
     for (ID i=0; i<size; ++i){
-        if(!seg_raw[i])
+        if(seg_raw[i]!=MAX)
             dsets.make_set(i);
     }
     for ( const auto &pair : weights ) // union
@@ -171,17 +163,13 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
 
     // deal with 0
     /*
-    if(counts_map.count(0)){
+    if(counts_map.count(0))
         counts.push_back(counts_map[0]);
         counts_map.erase(0);
-    }
-    else{
+    else
         counts.push_back(0);
-    }
-    renum[0]=0;
+    renum[0]=0
     */
-
-    //counts.push_back(counts_map[0]);
 
     int new_label = 1;
     for (const auto &pair:counts_map){

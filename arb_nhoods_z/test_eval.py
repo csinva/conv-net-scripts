@@ -11,7 +11,7 @@ import array
 
 sys.path.append('..')
 sys.path.append('../src_cython')
-from zwatershed import zwatershed_and_metrics
+from zwatershed import *
 from z_watershed import *
 from visualization.visualize_funcs import *
 
@@ -33,15 +33,12 @@ gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]], dtype='uint32')
 aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]], dtype='float32')
 aff = aff[:, p1:(-1 * p1), p2:(-1 * p2), p3:(-1 * p3)]
 gt = trim_arbitrary_aff(gt, aff)
-print "aff.shape",aff.shape
-print "gt.shape",gt.shape
 
 nhood = mknhood3d(1)
 node1, node2, edge_affs = affgraph_to_edgelist(aff, nhood)
-print "len node1", len(node1)
-print "n1,n2,edge", min(node1), max(node1), min(node2), max(node2), min(edge_affs), max(edge_affs)
 print "\noriginal watershed..."
 seg_one, segs_old, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
+
 print rand
 print "nsegs", len(np.unique(seg_one)),len(np.unique(segs_old[-1]))
 print "\nnew watershed..."

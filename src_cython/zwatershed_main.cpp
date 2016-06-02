@@ -108,7 +108,7 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
     std::vector<double> counts_data; // = * (new std::list<float>());
     for(int i=0;i<dimX*dimY*dimZ;i++)
         seg_vector.push_back(((double)(seg->data()[i])));
-    auto x = compare_volumes_arb(*gt_ptr, *seg, dimX,dimY,dimZ);
+    auto x = compare_volumes(*gt_ptr, *seg, dimX,dimY,dimZ);
     r.push_back(x.first);
     r.push_back(x.second);
     for ( const auto& e: *rg ){

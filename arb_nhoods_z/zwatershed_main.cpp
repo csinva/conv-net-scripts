@@ -38,18 +38,18 @@ double LOW=  .0001;
 double HIGH= .9999;
 bool RECREATE_RG = true;
 
-std::map<std::string,std::list<float>> zwshed_initial_c(int dimX, int dimY, int dimZ, uint32_t*node1,
+std::map<std::string,std::list<float>> zwshed_initial_c_arb(int dimX, int dimY, int dimZ, uint32_t*node1,
                                                uint32_t*node2, float*edgeWeight, int n_edge){
     // read data
     std::cout << "\ncalculating basic watershed..." << std::endl;
     volume_ptr<uint32_t> seg_ref;
     std::vector<std::size_t> counts_ref;
-    std::tie(seg_ref , counts_ref) = watershed<uint32_t>(dimX,dimY,dimZ,node1, node2, edgeWeight, n_edge, LOW, HIGH);
+    std::tie(seg_ref , counts_ref) = watershed_arb<uint32_t>(dimX,dimY,dimZ,node1, node2, edgeWeight, n_edge, LOW, HIGH);
     auto seg = *seg_ref;
 
     // calculate region graph
     std::cout << "\ncalculating rgn graph..." << std::endl;
-    auto rg = get_region_graph(node1, node2, edgeWeight, n_edge, seg_ref , counts_ref.size()-1);
+    auto rg = get_region_graph_arb(node1, node2, edgeWeight, n_edge, seg_ref , counts_ref.size()-1);
 
     // save and return
     std::map<std::string,std::list<float>> returnMap;
@@ -76,7 +76,7 @@ std::map<std::string,std::list<float>> zwshed_initial_c(int dimX, int dimY, int 
  }
 
 
-std::map<std::string,std::vector<double>> merge_with_stats(int dimX,int dimY, int dimZ, uint32_t * gt, float * rgn_graph,
+std::map<std::string,std::vector<double>> merge_with_stats_arb(int dimX,int dimY, int dimZ, uint32_t * gt, float * rgn_graph,
 int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh){
 
     //read data
@@ -95,7 +95,7 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
 
     // merge
     std::cout << "thresh: " << thresh << "\n";
-	merge_segments_with_function(seg, rg, counts, square(thresh), 10,RECREATE_RG);
+	merge_segments_with_function_arb(seg, rg, counts, square(thresh), 10,RECREATE_RG);
 
     // save
     std::map<std::string,std::vector<double>> returnMap;
@@ -123,7 +123,7 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
     return returnMap;
 }
 
-std::map<std::string,std::vector<double>> merge_no_stats(int dimX,int dimY, int dimZ, float * rgn_graph,
+std::map<std::string,std::vector<double>> merge_no_stats_arb(int dimX,int dimY, int dimZ, float * rgn_graph,
 int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int thresh){
 
     //read data
@@ -140,7 +140,7 @@ int rgn_graph_len, uint32_t * seg_in, uint32_t*counts_in, int counts_len, int th
 
     // merge
     std::cout << "thresh: " << thresh << "\n";
-	merge_segments_with_function(seg, rg, counts, square(thresh), 10,RECREATE_RG);
+	merge_segments_with_function_arb(seg, rg, counts, square(thresh), 10,RECREATE_RG);
 
     // save
     std::map<std::string,std::vector<double>> returnMap;

@@ -28,7 +28,7 @@
 using namespace std;
 
 std::pair<double,double>
-compare_volumes_arb(
+compare_volumes(
                  volume<uint32_t>& gt,
                  volume<uint32_t>& ws, int dimX, int dimY, int dimZ ){
     double rand_split = 0;
