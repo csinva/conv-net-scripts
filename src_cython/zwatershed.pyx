@@ -39,6 +39,15 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
     cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
+
+    # for printing --------------------------------
+    print rgn_graph[rgn_graph[:,2].argsort()][:10,:]
+    print counts_out[np.array(rgn_graph[rgn_graph[:,2].argsort()][:10,0],dtype='int')]
+    print counts_out[np.array(rgn_graph[rgn_graph[:,2].argsort()][:10,1],dtype='int')]
+    print "big counts",sorted(counts_out,reverse=True)[:20]
+    print "sum counts",sum(counts_out)
+    # for printing --------------------------------
+
     counts_len = len(map['counts'])
     dims = affs.shape
     seg_one = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
@@ -46,6 +55,7 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
     # get segs, stats
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
+        print "counts",sorted(counts_out)[0:10]
         map = merge_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
                                    rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
@@ -54,6 +64,7 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
         counts_len = len(counts_out)
         seg_in = np.array(map['seg'], dtype='uint32')
         rgn_graph = graph.reshape(len(graph)/3,3)
+        # print rgn_graph[rgn_graph[:,2].argsort()][:10,:]
         if threshes[i] in save_threshes:
             if h5:
                 f = h5py.File(seg_save_path + 'seg_' + str(threshes[i]) + '.h5', 'w')

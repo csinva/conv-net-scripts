@@ -151,24 +151,44 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
         dsets.union_set(pair.first.first,pair.first.second);
 
     for(ID i=0;i<size;i++){             // find
-        if(!seg_raw[i])
+        if(seg_raw[i]!=MAX)
             seg_raw[i]=dsets.find_set(i);
     }
-    map<ID,ID> counts_map;  //label->count(label)
-    map<ID,ID> renum;       //old_label->new_label
+
     // renumber and get counts
     for(ID i=0;i<size;i++){
         if(seg_raw[i]==MAX)
             seg_raw[i]=0;
         else
             seg_raw[i]++;
-        counts_map[seg_raw[i]]++;
     }
-    int new_label = 0;
+
+    map<ID,ID> counts_map;  //label->count(label)
+    map<ID,ID> renum;       //old_label->new_label
     auto& counts = get<1>(result);
+    for(ID i=0;i<size;i++)
+        counts_map[seg_raw[i]]++;
+
+    // deal with 0
+    /*
+    if(counts_map.count(0)){
+        counts.push_back(counts_map[0]);
+        counts_map.erase(0);
+    }
+    else{
+        counts.push_back(0);
+    }
+    renum[0]=0;
+    */
+
+    //counts.push_back(counts_map[0]);
+
+    int new_label = 1;
     for (const auto &pair:counts_map){
-        renum[pair.first] = new_label++;
+        //cout << pair.first << " ";
+        renum[pair.first] = new_label;
         counts.push_back(counts_map[pair.first]);
+        new_label++;
     }
     for(ID i=0;i<size;i++){
         seg_raw[i]=renum[seg_raw[i]];
