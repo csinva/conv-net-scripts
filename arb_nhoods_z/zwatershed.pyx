@@ -6,6 +6,7 @@ from libcpp.pair cimport pair
 from libc.stdint cimport uint32_t
 import numpy as np
 import os
+import scipy.sparse
 cimport numpy as np
 import h5py
 
@@ -34,7 +35,8 @@ def zwshed_with_stats_arb(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, 
         makedirs(seg_save_path)
 
     # get initial seg,rg
-    gt = np.array(gt, order='F')
+    gt = np.array(gt, order='C')
+    # gt = np.array(gt, order='F')
     n_edge = node1.size
     map = zwshed_initial_arb(gt, node1, node2, n_edge, edgeWeight)
     cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
@@ -44,7 +46,7 @@ def zwshed_with_stats_arb(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, 
     # for printing --------------------------------
     graph = np.array(map['rg'], dtype='float32')
     print graph.shape
-    print graph[graph[:,2].argsort()][:10,:]
+    # print graph[graph[:,2].argsort()][:10,:]
     print counts_out[np.array(graph[graph[:,2].argsort()][:10,0],dtype='int')]
     print counts_out[np.array(graph[graph[:,2].argsort()][:10,1],dtype='int')]
     print "big counts",sorted(counts_out,reverse=True)[:20]

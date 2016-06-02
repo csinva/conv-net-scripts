@@ -31,6 +31,7 @@ std::pair<double,double>
 compare_volumes_arb(
                  volume<uint32_t>& gt,
                  volume<uint32_t>& ws, int dimX, int dimY, int dimZ ){
+    cout << "calculating stats..." << endl;
     double rand_split = 0;
     double rand_merge = 0;
 
@@ -39,24 +40,27 @@ compare_volumes_arb(
 
     double total = 0;
     std::map<uint32_t, std::map<uint32_t, std::size_t>> p_ij;
-
     std::map<uint32_t, std::size_t> s_i, t_j;
-    for ( std::ptrdiff_t x = 0; x < dimZ; ++x )
+
+    cout << "dimx,y,z " << dimX <<","<<dimY<<","<<dimZ << endl;
+
+    for ( std::ptrdiff_t x = 0; x < dimX; ++x )
         for ( std::ptrdiff_t y = 0; y < dimY; ++y )
-            for ( std::ptrdiff_t z = 0; z < dimX; ++z )
+            for ( std::ptrdiff_t z = 0; z < dimZ; ++z )
             {
+                //cout << "x,y,z" << x<<","<<y<<","<<z<<endl;
                 uint32_t wsv = ws[x][y][z];
                 uint32_t gtv = gt[x][y][z];
 
                 if ( gtv )
                 {
                     ++total;
-
                     ++p_ij[gtv][wsv];
                     ++s_i[wsv];
                     ++t_j[gtv];
                 }
             }
+
 
     double sum_p_ij = 0;
     for ( auto& a: p_ij )

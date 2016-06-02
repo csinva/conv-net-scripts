@@ -23,7 +23,7 @@ watershed(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, 
     ptrdiff_t size = xdim * ydim * zdim;
     cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
-          volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),
+          volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim], boost::c_storage_order())),
           vector<size_t>(1)
     );
 

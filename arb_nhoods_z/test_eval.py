@@ -25,7 +25,7 @@ hdf5_pred_file = path_to_data + 'tstvol-1_2.h5'  # /tier2/turaga/singhc/train/ou
 out = path_to_data + 'out/'  # '/groups/turaga/home/singhc/evaluation/out/'
 save_threshes = threshes
 rand = 0
-p1, p2, p3 = 190, 190, 190  # 215, 214, 214 # 200, 200, 200
+p1, p2, p3 = 160, 180, 214  # 215, 214, 214 # 200, 200, 200
 
 hdf5_gt = h5py.File(hdf5_gt_file, 'r')
 hdf5_aff = h5py.File(hdf5_pred_file, 'r')
@@ -33,6 +33,8 @@ gt = np.asarray(hdf5_gt[hdf5_gt.keys()[0]], dtype='uint32')
 aff = np.asarray(hdf5_aff[hdf5_aff.keys()[0]], dtype='float32')
 aff = aff[:, p1:(-1 * p1), p2:(-1 * p2), p3:(-1 * p3)]
 gt = trim_arbitrary_aff(gt, aff)
+print "aff.shape",aff.shape
+print "gt.shape",gt.shape
 
 nhood = mknhood3d(1)
 node1, node2, edge_affs = affgraph_to_edgelist(aff, nhood)

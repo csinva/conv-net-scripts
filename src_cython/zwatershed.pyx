@@ -41,11 +41,12 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
 
     # for printing --------------------------------
-    print rgn_graph[rgn_graph[:,2].argsort()][:10,:]
+    # print rgn_graph[rgn_graph[:,2].argsort()][:10,:]
     print counts_out[np.array(rgn_graph[rgn_graph[:,2].argsort()][:10,0],dtype='int')]
     print counts_out[np.array(rgn_graph[rgn_graph[:,2].argsort()][:10,1],dtype='int')]
     print "big counts",sorted(counts_out,reverse=True)[:20]
     print "sum counts",sum(counts_out)
+    print "NUM BACKGROUND!!",sum(seg_in==0),counts_out[0]
     # for printing --------------------------------
 
     counts_len = len(map['counts'])
