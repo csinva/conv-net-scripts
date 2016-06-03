@@ -5,7 +5,6 @@
 #include <iostream>
 #include <unordered_set>
 #include <boost/pending/disjoint_sets.hpp>
-#include <boost/functional/hash.hpp>
 
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
@@ -59,14 +58,14 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     }
 
     map<pair<int,int>, float> weights_filtered; //filter only if matching mins
-    unordered_set< pair<ID,ID>, boost::hash<pair<int, int>> > edges;
+    map<ID, unordered_set<ID> > edges;
     for ( const auto &pair : weights ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
         if(aff==maxes[v1] || aff >=high){ //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
-            edges.insert(make_pair(v1,v2));
+            edges[v1].insert(v2);
         }
     }
 
@@ -76,6 +75,7 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
     weights.clear();
     map<ID,ID> min_indexes;
+    /*
     for ( const auto &pair : weights_filtered ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
@@ -83,6 +83,7 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
             if(!min_indexes.count(v1)){
                 min_indexes[v1] = v2;
                 weights[make_pair(v1,v2)] = pair.second;
+                //edges.insert(make_pair(v1,v2));
             }
             else if(v2 < min_indexes[v1]){
                 weights.erase(make_pair(v1,min_indexes[v1]));
@@ -93,6 +94,29 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
         else // if bidirectional
             weights[make_pair(v1,v2)] = pair.second;
     }
+    */
+    for ( const auto &pair : edges ) {
+        //unordered_set<ID> my_set = edges[v1];
+        for( const auto &v2:pair.second){
+            ID v1 = pair.first;
+            //ID v2 = pair.first.second;
+            if(!weights_filtered.count(make_pair(v2,v1))){ // if strictly outgoing
+                if(!min_indexes.count(v1)){
+                    min_indexes[v1] = v2;
+                    weights[make_pair(v1,v2)] = 1;//pair.second;
+                    //edges.insert(make_pair(v1,v2));
+                }
+                else if(v2 < min_indexes[v1]){
+                    weights.erase(make_pair(v1,min_indexes[v1]));
+                    weights[make_pair(v1,v2)] =1;// pair.second;
+                    min_indexes[v1]=v2;
+                }
+            }
+            else // if bidirectional
+                weights[make_pair(v1,v2)] = 1;//pair.second;
+        }
+    }
+
     cout << "weights len: "<<weights.size()<<endl;
 
     // 4. Modify G′ to split the non-minimal plateaus:
