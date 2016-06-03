@@ -3,7 +3,10 @@
 #include "types.hpp"
 #include <queue>
 #include <iostream>
+#include <unordered_set>
 #include <boost/pending/disjoint_sets.hpp>
+#include <boost/functional/hash.hpp>
+
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
 inline tuple< volume_ptr<ID>, vector<size_t> >
@@ -45,7 +48,7 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     }
 
     // 2 - keep only outgoing edges with min edge (can be multiple)
-    map<ID,F> maxes; //find mins for each vertex
+    map<ID,F> maxes; //find maxes for each vertex
     for ( const auto &pair : weights ) {
         ID v = pair.first.first;
         F aff = pair.second;
@@ -56,12 +59,15 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     }
 
     map<pair<int,int>, float> weights_filtered; //filter only if matching mins
+    unordered_set< pair<ID,ID>, boost::hash<pair<int, int>> > edges;
     for ( const auto &pair : weights ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        if(aff==maxes[v1] || aff >=high) //float comparison
+        if(aff==maxes[v1] || aff >=high){ //float comparison
             weights_filtered[make_pair(v1,v2)] = aff;
+            edges.insert(make_pair(v1,v2));
+        }
     }
 
     cout << "weights len: "<<weights.size()<<endl;
@@ -161,19 +167,9 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     for(ID i=0;i<size;i++)
         counts_map[seg_raw[i]]++;
 
-    // deal with 0
-    /*
-    if(counts_map.count(0))
-        counts.push_back(counts_map[0]);
-        counts_map.erase(0);
-    else
-        counts.push_back(0);
-    renum[0]=0
-    */
 
     int new_label = 1;
     for (const auto &pair:counts_map){
-        //cout << pair.first << " ";
         renum[pair.first] = new_label;
         counts.push_back(counts_map[pair.first]);
         new_label++;
