@@ -32,66 +32,62 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
         seg_raw[i]=MAX;
 
     // 1 - filter by Tmax, Tmin
+    map<ID,F> maxes; //find maxes for each vertex
     map<pair<int,int>, float> weights;
     for(int i=0;i<n_edge;i++){
-        F weight = edgeWeight[i];
-            if(weight<low)
-                weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
-            weights[make_pair(node1[i],node2[i])] = weight;
-            weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
+        F aff = edgeWeight[i];
+        ID v1 = node1[i];
+        ID v2 = node2[i];
+        if(aff>=low){ //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
+            weights[make_pair(v1,v2)] = aff;
             seg_raw[node1[i]] = 0; //1c set all vertices with no edges as background
             seg_raw[node2[i]] = 0;
+            if(!maxes.count(v1))
+                maxes[v1] = aff;
+            else if(aff > maxes[v1])
+                maxes[v1] = aff;
+            if(!maxes.count(v2)) // make all edges bidirectional
+                maxes[v2] = aff;
+            else if(aff > maxes[v2])
+                maxes[v2] = aff;
+        }
     }
 
-    // 2 - keep only outgoing edges with min edge (can be multiple)
-    map<ID,F> maxes; //find maxes for each vertex
-    for ( const auto &pair : weights ) {
-        ID v = pair.first.first;
-        F aff = pair.second;
-        if(!maxes.count(v))
-            maxes[v] = aff;
-        else if(aff > maxes[v])
-            maxes[v] = aff;
-    }
-
+    // 2 - keep only outgoing edges with max edge (can be multiple)
     map<ID, unordered_set<ID> > edges;
     for ( const auto &pair : weights ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        if(aff==maxes[v1] || aff >=high){ //float comparison
+        if(aff==maxes[v1] || aff >=high){
             edges[v1].insert(v2);
+            if(aff==maxes[v2] || aff >=high){
+                ID v2_bi = v2 | traits::high_bit; // insert bidirectional edge
+                edges[v2].insert(v1);
+            }
         }
+        else if(aff==maxes[v2] || aff >=high){ // not bidirectional
+            edges[v2].insert(v1);
+        }
+
     }
 
     cout << "weights len: "<<weights.size()<<endl;
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
     map<ID,ID> min_indexes;
-
+    queue<ID> vqueue;
+    map<ID,bool> visited;
     for ( const auto &pair : edges ) {
         for( const auto &v2:pair.second){
             ID v1 = pair.first;
             if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
-                if(!min_indexes.count(v1)){
+                if(!min_indexes.count(v1))
                     min_indexes[v1] = v2;
-                }
                 else if(v2 < min_indexes[v1]){
                     edges[v1].erase(min_indexes[v1]);
                     min_indexes[v1]=v2;
                 }
-            }
-        }
-    }
-
-    // 4. Modify G′ to split the non-minimal plateaus:
-    queue<ID> vqueue;
-    map<ID,bool> visited;
-    int num_outgoing = 0;
-    for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
-        ID v1 = pair.first;
-        for( const auto &v2:pair.second){
-            if(edges[v2].find(v1)==edges[v2].end()){            // not bidirectional
                 vqueue.push(v1);
                 visited[v1] = true;
             }
@@ -100,6 +96,8 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
 
     cout << "num corners " << vqueue.size() << endl;
     cout << "num distinct corners " << visited.size() << endl;
+
+    // 4. Modify G′ to split the non-minimal plateaus:
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
