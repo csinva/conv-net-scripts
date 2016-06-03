@@ -57,67 +57,36 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
             maxes[v] = aff;
     }
 
-    map<pair<int,int>, float> weights_filtered; //filter only if matching mins
     map<ID, unordered_set<ID> > edges;
     for ( const auto &pair : weights ) {
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
         if(aff==maxes[v1] || aff >=high){ //float comparison
-            weights_filtered[make_pair(v1,v2)] = aff;
             edges[v1].insert(v2);
         }
     }
 
     cout << "weights len: "<<weights.size()<<endl;
-    cout << "weights filtered len: "<<weights_filtered.size()<<endl;
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
-    weights.clear();
     map<ID,ID> min_indexes;
-    /*
-    for ( const auto &pair : weights_filtered ) {
-        ID v1 = pair.first.first;
-        ID v2 = pair.first.second;
-        if(!weights_filtered.count(make_pair(v2,v1))){ // if strictly outgoing
-            if(!min_indexes.count(v1)){
-                min_indexes[v1] = v2;
-                weights[make_pair(v1,v2)] = pair.second;
-                //edges.insert(make_pair(v1,v2));
-            }
-            else if(v2 < min_indexes[v1]){
-                weights.erase(make_pair(v1,min_indexes[v1]));
-                weights[make_pair(v1,v2)] = pair.second;
-                min_indexes[v1]=v2;
-            }
-        }
-        else // if bidirectional
-            weights[make_pair(v1,v2)] = pair.second;
-    }
-    */
+
     for ( const auto &pair : edges ) {
-        //unordered_set<ID> my_set = edges[v1];
         for( const auto &v2:pair.second){
             ID v1 = pair.first;
-            //ID v2 = pair.first.second;
-            if(!weights_filtered.count(make_pair(v2,v1))){ // if strictly outgoing
+            if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
                 if(!min_indexes.count(v1)){
                     min_indexes[v1] = v2;
-                    weights[make_pair(v1,v2)] = 1;//pair.second;
                     //edges.insert(make_pair(v1,v2));
                 }
                 else if(v2 < min_indexes[v1]){
-                    weights.erase(make_pair(v1,min_indexes[v1]));
-                    weights[make_pair(v1,v2)] =1;// pair.second;
+                    edges[v1].erase(min_indexes[v1]);
                     min_indexes[v1]=v2;
                 }
             }
-            else // if bidirectional
-                weights[make_pair(v1,v2)] = 1;//pair.second;
         }
     }
-
-    cout << "weights len: "<<weights.size()<<endl;
 
     // 4. Modify G′ to split the non-minimal plateaus:
     queue<ID> vqueue;
@@ -125,39 +94,42 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     map<ID,bool> bidirectional;
     map<ID,bool> outgoing;
     int num_outgoing = 0;
-    for ( const auto &pair : weights ) { // check which vertices have outgoing, bidirectional edges
-        ID v1 = pair.first.first;
-        ID v2 = pair.first.second;
-        if(!weights.count(make_pair(v2,v1))){            // not bidirectional
-            vqueue.push(v1); // might be v2
-            visited[v1] = true;
+    for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
+        for( const auto &v2:pair.second){
+            ID v1 = pair.first;
+            if(edges[v2].find(v1)==edges[v2].end()){            // not bidirectional
+                vqueue.push(v1);
+                visited[v1] = true;
+            }
         }
     }
+
     cout << "num corners " << vqueue.size() << endl;
     cout << "num distinct corners " << visited.size() << endl;
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
-        for(const auto&v_pair:bidirectional){
-            ID v = v_pair.first;
-            if(weights.count(make_pair(u,v))){                    //u,v in E
-                if(weights.count(make_pair(v,u))){                //v,u in E
-                    weights.erase(make_pair(u,v));                //remove u,v from E
-                    if(visited[v]){                                //If v is visited
-                        weights.erase(make_pair(v,u));            //remove v,u from E
-                    }
-                    else{                                         //otherwise
-                        visited[v] = true;                        //mark v as visited
-                        vqueue.push(v);                           //and add it to the end of Q
-                    }
+        for( const auto &v:edges[u]){//u,v in E
+            if(edges[v].find(u)!=edges[v].end()){                //v,u in E
+                edges[u].erase(v);
+                if(visited[v]){                                //If v is visited
+                    edges[v].erase(u);
+                }
+                else{                                         //otherwise
+                    visited[v] = true;                        //mark v as visited
+                    vqueue.push(v);                           //and add it to the end of Q
                 }
             }
         }
     }
 
-    // 5. Replace all unidirectional edges with bidirectional edges - probably not necessary
-    for ( const auto &pair : weights )
-        weights[make_pair(pair.first.second,pair.first.first)] = pair.second;
+    // 5. Replace all unidirectional edges with bidirectional edges
+    for ( const auto &pair : edges ) {
+        for( const auto &v2:pair.second){
+            ID v1 = pair.first;
+            edges[v2].insert(v1);
+        }
+    }
 
     // 6. Return connected components of the modified G
     cout << "nEdge: " << weights.size() << endl;
@@ -169,8 +141,12 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
         if(seg_raw[i]!=MAX)
             dsets.make_set(i);
     }
-    for ( const auto &pair : weights ) // union
-        dsets.union_set(pair.first.first,pair.first.second);
+    for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
+        for( const auto &v2:pair.second){
+            ID v1 = pair.first;
+            dsets.union_set(v1,v2);
+        }
+    }
 
     for(ID i=0;i<size;i++){             // find
         if(seg_raw[i]!=MAX)
