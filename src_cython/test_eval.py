@@ -11,6 +11,7 @@ import array
 
 sys.path.append('..')
 from zwatershed import *
+from edgelist_methods import *
 from visualization.visualize_funcs import *
 
 path_to_folder = '/Users/chandansingh/drive/janelia/conv_net_scripts/'
