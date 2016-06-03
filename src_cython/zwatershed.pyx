@@ -66,7 +66,8 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
         print "counts", sorted(counts_out)[0:10]
-        map = merge_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
+        if(len(rgn_graph) > 0):
+            map = merge_with_stats(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
                                rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
         graph = np.array(map['rg'], dtype='float32')
@@ -112,7 +113,8 @@ def zwshed_no_stats(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_thresh
 
     # get segs, stats
     for i in range(len(threshes)):
-        map = merge_no_stats(dims[0], dims[1], dims[2], &rgn_graph[0, 0],
+        if(len(rgn_graph) > 0):
+            map = merge_no_stats(dims[0], dims[1], dims[2], &rgn_graph[0, 0],
                              rgn_graph.shape[0], &seg_in[0], &counts_out[0], len(map['counts']), threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
         graph = np.array(map['rg'], dtype='float32')
@@ -167,7 +169,8 @@ def zwshed_with_stats_arb(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, 
     # get segs, stats
     segs, splits, merges = [], [], []
     for i in range(len(threshes)):
-        map = merge_with_stats_arb(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
+        if(len(rgn_graph) > 0):
+            map = merge_with_stats_arb(dims[0], dims[1], dims[2], &gt[0, 0, 0], &rgn_graph[0, 0],
                                    rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         graph = np.array(map['rg'], dtype='float32')
@@ -215,7 +218,8 @@ def zwshed_no_stats_arb(dims, np.ndarray[uint32_t, ndim=1] node1,
     # get segs, stats
     segs = []
     for i in range(len(threshes)):
-        map = merge_no_stats_arb(dims[0], dims[1], dims[2], &rgn_graph[0, 0],
+        if(len(rgn_graph) > 0):
+            map = merge_no_stats_arb(dims[0], dims[1], dims[2], &rgn_graph[0, 0],
                                  rgn_graph.shape[0], &seg_in[0], &counts_out[0], counts_len, threshes[i])
         seg = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
         graph = np.array(map['rg'], dtype='float32')

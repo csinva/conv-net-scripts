@@ -38,12 +38,13 @@ node1, node2, edge_affs = affgraph_to_edgelist(aff, nhood)
 print "\noriginal watershed..."
 seg_one, segs_old, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
 
-print rand
-print "nsegs", len(np.unique(seg_one)),len(np.unique(segs_old[-1]))
 print "\nnew watershed..."
 seg_one_new, segs_new, rand_new = zwatershed_and_metrics_arb(gt, np.array(node1, dtype='uint32'), np.array(node2, dtype='uint32'),
                                        np.array(edge_affs), threshes, save_threshes)
+print "--------Final--------"
+print rand
 print rand_new
+print "nsegs", len(np.unique(seg_one)),len(np.unique(segs_old[-1]))
 print "nsegs", len(np.unique(seg_one_new)),len(np.unique(segs_new[-1]))
 
 print "time: ", time.clock() - start
