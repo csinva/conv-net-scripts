@@ -9,7 +9,7 @@
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
 inline tuple< volume_ptr<ID>, vector<size_t> >
-watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
+watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
             , const L& lowv, const H& highv )
 {
 
@@ -19,9 +19,6 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     ID MAX = 4294967295;
     affinity_t low  = static_cast<affinity_t>(lowv);
     affinity_t high = static_cast<affinity_t>(highv);
-    ptrdiff_t xdim = x_dim;
-    ptrdiff_t ydim = y_dim;
-    ptrdiff_t zdim = z_dim;
     ptrdiff_t size = xdim * ydim * zdim;
     cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
@@ -42,8 +39,8 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
                 weight = 0; //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
             weights[make_pair(node1[i],node2[i])] = weight;
             weights[make_pair(node2[i],node1[i])] = weight; // make all edges bidirectional
-            seg_raw[node1[i]] = 0;
-            seg_raw[node2[i]] = 0; //1c set all vertices with no edges as background
+            seg_raw[node1[i]] = 0; //1c set all vertices with no edges as background
+            seg_raw[node2[i]] = 0;
     }
 
     // 2 - keep only outgoing edges with min edge (can be multiple)
@@ -78,7 +75,6 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
             if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
                 if(!min_indexes.count(v1)){
                     min_indexes[v1] = v2;
-                    //edges.insert(make_pair(v1,v2));
                 }
                 else if(v2 < min_indexes[v1]){
                     edges[v1].erase(min_indexes[v1]);
@@ -91,12 +87,10 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
     // 4. Modify G′ to split the non-minimal plateaus:
     queue<ID> vqueue;
     map<ID,bool> visited;
-    map<ID,bool> bidirectional;
-    map<ID,bool> outgoing;
     int num_outgoing = 0;
     for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
+        ID v1 = pair.first;
         for( const auto &v2:pair.second){
-            ID v1 = pair.first;
             if(edges[v2].find(v1)==edges[v2].end()){            // not bidirectional
                 vqueue.push(v1);
                 visited[v1] = true;
@@ -112,22 +106,13 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
         for( const auto &v:edges[u]){//u,v in E
             if(edges[v].find(u)!=edges[v].end()){                //v,u in E
                 edges[u].erase(v);
-                if(visited[v]){                                //If v is visited
+                if(visited[v])                                //If v is visited
                     edges[v].erase(u);
-                }
                 else{                                         //otherwise
                     visited[v] = true;                        //mark v as visited
                     vqueue.push(v);                           //and add it to the end of Q
                 }
             }
-        }
-    }
-
-    // 5. Replace all unidirectional edges with bidirectional edges
-    for ( const auto &pair : edges ) {
-        for( const auto &v2:pair.second){
-            ID v1 = pair.first;
-            edges[v2].insert(v1);
         }
     }
 
@@ -142,9 +127,9 @@ watershed_arb(int x_dim, int y_dim, int z_dim, ID* node1, ID* node2, F* edgeWeig
             dsets.make_set(i);
     }
     for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
+        ID v1 = pair.first;
         for( const auto &v2:pair.second){
-            ID v1 = pair.first;
-            dsets.union_set(v1,v2);
+            dsets.union_set(v1,v2);                     // 5. Replace all unidirectional edges with bidirectional edges
         }
     }
 
