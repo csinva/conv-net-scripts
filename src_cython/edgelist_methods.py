@@ -1,7 +1,7 @@
 import numpy as np
 
 
-#-------------- edgelist methods --------------------------------------------------------------
+# -------------- edgelist methods --------------------------------------------------------------
 def nodelist_like(shape, nhood):
     nEdge = nhood.shape[0]
     nodes = np.arange(np.prod(shape), dtype=np.int32).reshape(shape)
@@ -19,12 +19,15 @@ def nodelist_like(shape, nhood):
 
     return (node1, node2)
 
+
 def affgraph_to_edgelist(aff, nhood):
+    num_vert = aff.shape[1] * aff.shape[2] * aff.shape[3]
     node1, node2 = nodelist_like(aff.shape[1:], nhood)
     node1, node2, aff = node1.ravel(), node2.ravel(), aff.ravel()
-    # discard any negatives
-    negs = np.logical_and((node1>0),(node2>0))
-    return node1[negs],node2[negs],aff[negs]
+    # discard illegal vertices
+    negs = np.logical_and.reduce(((node1 > 0), (node2 > 0), (node1 < num_vert), (node2 < num_vert)))
+    return node1[negs], node2[negs], aff[negs]
+
 
 def mknhood3d(radius=1):
     ceilrad = np.ceil(radius)
