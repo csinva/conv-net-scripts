@@ -27,10 +27,9 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
 
     volume<id_t>& seg = *get<0>(result);
     id_t* seg_raw = seg.data();
-    for(ID i=0;i<size;i++)
-        seg_raw[i]=traits::high_bit;
-    //high_bit=1 means background, 2nd high_bit=1 means visited, val stores min_index
-
+    for(ID i=0;i<size;i++)                  //high_bit=1 means background
+        seg_raw[i]=traits::high_bit;        //2nd high_bit=1 means visited
+                                            //val stores min_index
     // 1 - filter by Tmax, Tmin
     map<ID,F> maxes; //find maxes for each vertex
     map<pair<int,int>, float> weights;
@@ -93,18 +92,17 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     }
     weights.clear();
 
-
-    for ( const auto &pair : edges ) {
+    for ( const auto &pair : edges )
         for( const auto &v2:pair.second){
             ID v1 = pair.first;
-            if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
-                if(!(seg_raw[v1]&traits::high_bit_2)){
+            if(edges[v2].find(v1)==edges[v2].end()){                       // if strictly outgoing
+                if(!(seg_raw[v1]&traits::high_bit_2)){                       // if not visited
                     vqueue.push(v1);
-                    seg_raw[v1]|=traits::high_bit_2;                    //visited=true
-                }
+                    seg_raw[v1]|=traits::high_bit_2;
+                 }
             }
         }
-    }
+
 
     cout << "num corners " << vqueue.size() << endl;
 
@@ -112,8 +110,7 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
-        //for( const auto &v:edges[u]){//u,v in E
-        for (auto it = edges[u].begin(); it != edges[u].end();) {
+        for (auto it = edges[u].begin(); it != edges[u].end();) { //u,v in E
             ID v = *it;
             if(edges[v].find(u)!=edges[v].end()){                //v,u in E
                 it = edges[u].erase(it);
@@ -139,22 +136,15 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     }
     for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
         ID v1 = pair.first;
-        for( const auto &v2:pair.second){
+        for( const auto &v2:pair.second)
             dsets.union_set(v1,v2);                     // 5. Replace all unidirectional edges with bidirectional edges
-        }
     }
 
-    for(ID i=0;i<size;i++){             // find
+    for(ID i=0;i<size;i++){                     // find
         if(! (seg_raw[i]&traits::high_bit))
-            seg_raw[i]=dsets.find_set(i);
-    }
-
-    // renumber and get counts
-    for(ID i=0;i<size;i++){
-        if(seg_raw[i]&traits::high_bit)
-            seg_raw[i]=0;
-        else
-            seg_raw[i]++;
+            seg_raw[i]=dsets.find_set(i)+1;
+        else                                    //background
+            seg_raw[i] = 0;
     }
 
     map<ID,ID> counts_map;  //label->count(label)
@@ -163,15 +153,14 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     for(ID i=0;i<size;i++)
         counts_map[seg_raw[i]]++;
 
-
     int new_label = 1;
     for (const auto &pair:counts_map){
         renum[pair.first] = new_label;
         counts.push_back(counts_map[pair.first]);
         new_label++;
     }
-    for(ID i=0;i<size;i++){
+    for(ID i=0;i<size;i++)
         seg_raw[i]=renum[seg_raw[i]];
-    }
+    
     return result;
 }
