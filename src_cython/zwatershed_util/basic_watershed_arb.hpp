@@ -60,10 +60,12 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
         ID v2 = pair.first.second;
         F aff = pair.second;
         if(aff==maxes[v1] || aff >=high){
-            edges[v1].insert(v2);
             if(aff==maxes[v2] || aff >=high){
-                ID v2_bi = v2;// | traits::high_bit; // insert bidirectional edge
-                edges[v2].insert(v1);
+                ID v2_bi = v2|traits::high_bit;
+                edges[v1].insert(v2_bi);  // insert bidirectional edge
+            }
+            else{
+                edges[v1].insert(v2);
             }
         }
         else if(aff==maxes[v2] || aff >=high){ // not bidirectional
@@ -72,16 +74,20 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
 
     }
 
-    cout << "weights len: "<<weights.size()<<endl;
+    cout << "edges len: "<<edges.size()<<endl;
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
+    int num_out = 0;
+    int num_bi = 0;
     map<ID,ID> min_indexes;
     queue<ID> vqueue;
     map<ID,bool> visited;
     for ( const auto &pair : edges ) {
+        ID v1 = pair.first;
         for( const auto &v2:pair.second){
-            ID v1 = pair.first;
-            if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
+            //if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
+            if(! (v2 & traits::high_bit) ){ // if strictly outgoing
+                num_out++;
                 if(!min_indexes.count(v1))
                     min_indexes[v1] = v2;
                 else if(v2 < min_indexes[v1]){
@@ -91,9 +97,14 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
                 vqueue.push(v1);
                 visited[v1] = true;
             }
+            else{
+                num_bi++;
+            }
         }
     }
 
+    cout << "num out " << num_out << endl;
+    cout << "num bi " << num_bi << endl;
     cout << "num corners " << vqueue.size() << endl;
     cout << "num distinct corners " << visited.size() << endl;
 
@@ -119,8 +130,6 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     }
 
     // 6. Return connected components of the modified G
-    cout << "nEdge: " << weights.size() << endl;
-    cout << "size: " << size << endl;
     vector<ID> rank(size);
     vector<ID> parent(size);
     boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
