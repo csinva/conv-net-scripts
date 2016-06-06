@@ -72,12 +72,10 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
 
     }
 
-    cout << "weights len: "<<weights.size()<<endl;
-
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
     map<ID,ID> min_indexes;
     queue<ID> vqueue;
-    map<ID,bool> visited;
+    //map<ID,bool> visited;
     for ( const auto &pair : edges ) {
         for( const auto &v2:pair.second){
             ID v1 = pair.first;
@@ -88,14 +86,15 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
                     edges[v1].erase(min_indexes[v1]);
                     min_indexes[v1]=v2;
                 }
-                vqueue.push(v1);
-                visited[v1] = true;
+                if(!seg_raw[v1]==1){
+                    vqueue.push(v1);
+                    seg_raw[v1]=1;                    //visited=true
+                }
             }
         }
     }
 
     cout << "num corners " << vqueue.size() << endl;
-    cout << "num distinct corners " << visited.size() << endl;
 
     // 4. Modify G′ to split the non-minimal plateaus:
     while(!vqueue.empty()){
@@ -106,10 +105,10 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
             ID v = *it;
             if(edges[v].find(u)!=edges[v].end()){                //v,u in E
                 it = edges[u].erase(it);
-                if(visited[v])                                //If v is visited
+                if(seg_raw[v]==1)                                //If v is visited
                     edges[v].erase(u);
                 else{                                         //otherwise
-                    visited[v] = true;                        //mark v as visited
+                    seg_raw[v] = 1;                        //mark v as visited
                     vqueue.push(v);                           //and add it to the end of Q
                 }
             }

@@ -25,9 +25,9 @@ def affgraph_to_edgelist(aff, nhood):
     node1, node2 = nodelist_like(aff.shape[1:], nhood)
     node1, node2, aff = node1.ravel(), node2.ravel(), aff.ravel()
     # discard illegal vertices
-    # negs = np.logical_and.reduce(((node1 > 0), (node2 > 0), (node1 < num_vert), (node2 < num_vert)))
-    negs = np.logical_and.reduce(((node1 > 0), (node2 > 0), (node1 < num_vert), (node2 < num_vert)))
-    return node1[negs], node2[negs], aff[negs]
+    valid = np.logical_and.reduce((node1 > 0, node2 > 0, node1 < num_vert,
+                                   node2 < num_vert, node1 != node2))
+    return node1[valid], node2[valid], aff[valid]
 
 
 def mknhood3d(radius=1):
