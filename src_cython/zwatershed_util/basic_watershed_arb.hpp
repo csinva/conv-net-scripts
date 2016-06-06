@@ -9,8 +9,8 @@
 using namespace std;
 template< typename ID, typename F, typename L, typename H >
 inline tuple< volume_ptr<ID>, vector<size_t> >
-watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight, int n_edge//const affinity_graph_ptr<F>& aff_ptr
-            , const L& lowv, const H& highv )
+watershed_arb(const int xdim, const int ydim, const int zdim, const ID* node1, const ID* node2,
+            const F* edgeWeight, const int n_edge, const L& lowv, const H& highv )
 {
 
     using affinity_t = F;
@@ -19,7 +19,6 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     affinity_t low  = static_cast<affinity_t>(lowv);
     affinity_t high = static_cast<affinity_t>(highv);
     ptrdiff_t size = xdim * ydim * zdim;
-    cout << "nEdge start: " << n_edge << endl;
     tuple< volume_ptr<id_t>, vector<size_t> > result(
           volume_ptr<id_t>( new volume<id_t>(boost::extents[xdim][ydim][zdim])),
           vector<size_t>(1)
@@ -104,7 +103,7 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
         }
 
 
-    cout << "num corners " << vqueue.size() << endl;
+    cout << "\tnum corners " << vqueue.size() << endl;
 
     // 4. Modify G′ to split the non-minimal plateaus:
     while(!vqueue.empty()){
@@ -161,6 +160,7 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     }
     for(ID i=0;i<size;i++)
         seg_raw[i]=renum[seg_raw[i]];
-    
+    std::cout << "\tfound: " << (new_label-1) << " components\n";
+
     return result;
 }

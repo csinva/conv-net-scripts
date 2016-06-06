@@ -42,9 +42,9 @@ double LOW=  .0001;
 double HIGH= .9999;
 bool RECREATE_RG = true;
 
-std::map<std::string,std::list<float>> zwshed_initial_c(int dimX, int dimY, int dimZ, float* affs)
+std::map<std::string,std::list<float>> zwshed_initial_c(const int dimX, const int dimY, const int dimZ, float* affs)
 {
-    std::cout << "calculating rgn graph..." << std::endl;
+    std::cout << "calculating basic watershed..." << std::endl;
 
     // read data
     volume_ptr<uint32_t> seg_ref;
@@ -58,6 +58,7 @@ std::map<std::string,std::list<float>> zwshed_initial_c(int dimX, int dimY, int 
 
 
     // calculate region graph
+    std::cout << "calculating rgn graph..." << std::endl;
     auto rg = get_region_graph(aff, seg_ref , counts_ref.size()-1);
 
     // save and return
@@ -70,12 +71,10 @@ std::map<std::string,std::list<float>> zwshed_initial_c(int dimX, int dimY, int 
     }
     std::list<float> seg_data = * (new std::list<float>());
     std::list<float> counts_data = * (new std::list<float>());
-    for(int i=0;i<dimX*dimY*dimZ;i++){
+    for(int i=0;i<dimX*dimY*dimZ;i++)
         seg_data.push_back(seg_ref->data()[i]);
-    }
-    for (const auto& x:counts_ref){
+    for (const auto& x:counts_ref)
         counts_data.push_back(x);
-    }
     returnMap["rg"]=rg_data;
     returnMap["seg"]=seg_data;
     returnMap["counts"]=counts_data;
@@ -173,17 +172,17 @@ std::map<std::string,std::vector<double>> merge_no_stats(int dimX, int dimY, int
 
 
 
-std::map<std::string,std::list<float>> zwshed_initial_c_arb(int dimX, int dimY, int dimZ, uint32_t*node1,
-                                               uint32_t*node2, float*edgeWeight, int n_edge){
+std::map<std::string,std::list<float>> zwshed_initial_c_arb(const int dimX, const int dimY, const int dimZ, const uint32_t*node1,
+                                               const uint32_t*node2, const float*edgeWeight, const int n_edge){
     // read data
-    std::cout << "\ncalculating basic watershed..." << std::endl;
+    std::cout << "calculating basic watershed..." << std::endl;
     volume_ptr<uint32_t> seg_ref;
     std::vector<std::size_t> counts_ref;
     std::tie(seg_ref , counts_ref) = watershed_arb<uint32_t>(dimX,dimY,dimZ,node1, node2, edgeWeight, n_edge, LOW, HIGH);
     auto seg = *seg_ref;
 
     // calculate region graph
-    std::cout << "\ncalculating rgn graph..." << std::endl;
+    std::cout << "calculating rgn graph..." << std::endl;
     auto rg = get_region_graph_arb(node1, node2, edgeWeight, n_edge, seg_ref , counts_ref.size()-1);
 
     // save and return
@@ -197,12 +196,11 @@ std::map<std::string,std::list<float>> zwshed_initial_c_arb(int dimX, int dimY, 
     }
     std::list<float> seg_data = * (new std::list<float>());
     std::list<float> counts_data = * (new std::list<float>());
-    for(int i=0;i<dimX*dimY*dimZ;i++){
+    for(int i=0;i<dimX*dimY*dimZ;i++)
         seg_data.push_back(seg_ref->data()[i]);
-    }
-    for (const auto& x:counts_ref){
+    for (const auto& x:counts_ref)
         counts_data.push_back(x);
-    }
+
     returnMap["rg"]=rg_data;
     returnMap["seg"]=seg_data;
     returnMap["counts"]=counts_data;

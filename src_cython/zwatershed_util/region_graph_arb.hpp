@@ -14,8 +14,6 @@ get_region_graph_arb( //const affinity_graph_ptr<F>& aff_ptr,
 {
 
     region_graph_ptr<ID,F> rg_ptr( new region_graph<ID,F> );
-    cout << "num segs in rgn graph: " << max_segid << endl;
-
     region_graph<ID,F>& rg = *rg_ptr;
     ID* seg = seg_ptr->data();
     std::vector<std::map<ID,F>> edges(max_segid+1);
@@ -31,15 +29,11 @@ get_region_graph_arb( //const affinity_graph_ptr<F>& aff_ptr,
 
 
     for ( ID id1 = 1; id1 <= max_segid; ++id1 )
-    {
         for ( const auto& p: edges[id1] )
             rg.emplace_back(p.second, id1, p.first);
-    }
 
-    std::cout << "Region graph size: " << rg.size() << std::endl;
 
-    std::stable_sort(std::begin(rg), std::end(rg),
-                     std::greater<std::tuple<F,ID,ID>>());
+    std::stable_sort(std::begin(rg), std::end(rg), std::greater<std::tuple<F,ID,ID>>());
 
 
     return rg_ptr;

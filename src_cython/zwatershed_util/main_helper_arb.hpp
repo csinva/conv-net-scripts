@@ -31,7 +31,6 @@ std::pair<double,double>
 compare_volumes_arb(
                  volume<uint32_t>& gt,
                  volume<uint32_t>& ws, int dimX, int dimY, int dimZ ){
-    cout << "calculating stats..." << endl;
     double rand_split = 0;
     double rand_merge = 0;
 
@@ -83,8 +82,8 @@ compare_volumes_arb(
     }
 
     //std::cout << sum_p_ij << "\n";
-    std::cout << "Rand Split: " << (sum_p_ij/sum_t_k) << "\n";
-    std::cout << "Rand Merge: " << (sum_p_ij/sum_s_k) << "\n";
+    std::cout << "\tRand Split: " << (sum_p_ij/sum_t_k) << "\n";
+    std::cout << "\tRand Merge: " << (sum_p_ij/sum_s_k) << "\n";
 
     return std::make_pair(sum_p_ij/sum_t_k,
                           sum_p_ij/sum_s_k);
