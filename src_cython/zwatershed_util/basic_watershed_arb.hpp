@@ -76,10 +76,6 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
                     seg_raw[v1] = seg_raw[v1]&&traits::mask_high + v2;
                     edges[v1].insert(v2);
                 }
-                if(!(seg_raw[v1]&traits::high_bit_2)){
-                    vqueue.push(v1);
-                    seg_raw[v1]|=traits::high_bit_2;                    //visited=true
-                }
             }
         }
         else if(aff==maxes[v2] || aff >=high){ // not bidirectional
@@ -92,20 +88,32 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
                 seg_raw[v2] = seg_raw[v2]&&traits::mask_high + v1;
                 edges[v2].insert(v1);
             }
-            if(!(seg_raw[v2]&traits::high_bit_2)){
-                vqueue.push(v2);
-                seg_raw[v2]|=traits::high_bit_2;                    //visited=true
-            }
+
         }
     }
     weights.clear();
+
+
+    for ( const auto &pair : edges ) {
+        for( const auto &v2:pair.second){
+            ID v1 = pair.first;
+            if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
+                if(!(seg_raw[v1]&traits::high_bit_2)){
+                    vqueue.push(v1);
+                    seg_raw[v1]|=traits::high_bit_2;                    //visited=true
+                }
+            }
+        }
+    }
+
     cout << "num corners " << vqueue.size() << endl;
 
     // 4. Modify G′ to split the non-minimal plateaus:
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
-        for (auto it = edges[u].begin(); it != edges[u].end();) { //u,v in E
+        //for( const auto &v:edges[u]){//u,v in E
+        for (auto it = edges[u].begin(); it != edges[u].end();) {
             ID v = *it;
             if(edges[v].find(u)!=edges[v].end()){                //v,u in E
                 it = edges[u].erase(it);
@@ -131,8 +139,9 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     }
     for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
         ID v1 = pair.first;
-        for( const auto &v2:pair.second)
+        for( const auto &v2:pair.second){
             dsets.union_set(v1,v2);                     // 5. Replace all unidirectional edges with bidirectional edges
+        }
     }
 
     for(ID i=0;i<size;i++){             // find
@@ -161,8 +170,8 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
         counts.push_back(counts_map[pair.first]);
         new_label++;
     }
-    for(ID i=0;i<size;i++)
+    for(ID i=0;i<size;i++){
         seg_raw[i]=renum[seg_raw[i]];
-
+    }
     return result;
 }
