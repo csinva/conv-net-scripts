@@ -16,7 +16,6 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     using affinity_t = F;
     using id_t       = ID;
     using traits     = watershed_traits<id_t>;
-    ID MAX = 4294967295;
     affinity_t low  = static_cast<affinity_t>(lowv);
     affinity_t high = static_cast<affinity_t>(highv);
     ptrdiff_t size = xdim * ydim * zdim;
@@ -29,7 +28,8 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     volume<id_t>& seg = *get<0>(result);
     id_t* seg_raw = seg.data();
     for(ID i=0;i<size;i++)
-        seg_raw[i]=MAX;
+        seg_raw[i]=traits::high_bit;
+    //high_bit=1 means background, 2nd high_bit=1 means visited
 
     // 1 - filter by Tmax, Tmin
     map<ID,F> maxes; //find maxes for each vertex
@@ -40,8 +40,8 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
         ID v2 = node2[i];
         if(aff>=low){ //1b For each {u, v} from E set w({vi, u}) = 0 if w({vi, u}) < Tmin.
             weights[make_pair(v1,v2)] = aff;
-            seg_raw[node1[i]] = 0; //1c set all vertices with no edges as background
-            seg_raw[node2[i]] = 0;
+            seg_raw[node1[i]] &= traits::mask; //1c set all vertices with no edges as background
+            seg_raw[node2[i]] &= traits::mask;
             if(!maxes.count(v1))
                 maxes[v1] = aff;
             else if(aff > maxes[v1])
@@ -59,36 +59,40 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
         ID v1 = pair.first.first;
         ID v2 = pair.first.second;
         F aff = pair.second;
-        if(aff==maxes[v1] || aff >=high){
+        if(aff==maxes[v1] || aff >=high)
             edges[v1].insert(v2);
-            if(aff==maxes[v2] || aff >=high){
-                ID v2_bi = v2;// | traits::high_bit; // insert bidirectional edge
-                edges[v2].insert(v1);
-            }
-        }
-        else if(aff==maxes[v2] || aff >=high){ // not bidirectional
+        if(aff==maxes[v2] || aff >=high) // not bidirectional
             edges[v2].insert(v1);
-        }
-
     }
+    weights.clear();
 
     // 3 keep only one strictly outgoing edge pointing to a vertex with the minimal index
     map<ID,ID> min_indexes;
     queue<ID> vqueue;
-    //map<ID,bool> visited;
     for ( const auto &pair : edges ) {
         for( const auto &v2:pair.second){
             ID v1 = pair.first;
             if(edges[v2].find(v1)==edges[v2].end()){ // if strictly outgoing
+                /*
+                if(!(seg_raw[v1]&traits::mask_3))
+                    seg_raw[v1]+=v2;
+                else if(v2 < seg_raw[v1]&traits::mask_3){
+                    edges[v1].erase(min_indexes[v1]); // this might cause a problem
+                    seg_raw[v1] = seg_raw[v1]&&traits::mask_high + v2;
+                }
+                */
+
                 if(!min_indexes.count(v1))
                     min_indexes[v1] = v2;
                 else if(v2 < min_indexes[v1]){
                     edges[v1].erase(min_indexes[v1]);
                     min_indexes[v1]=v2;
                 }
-                if(!seg_raw[v1]==1){
+
+
+                if(!(seg_raw[v1]&traits::high_bit_2)){
                     vqueue.push(v1);
-                    seg_raw[v1]=1;                    //visited=true
+                    seg_raw[v1]|=traits::high_bit_2;                    //visited=true
                 }
             }
         }
@@ -105,10 +109,10 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
             ID v = *it;
             if(edges[v].find(u)!=edges[v].end()){                //v,u in E
                 it = edges[u].erase(it);
-                if(seg_raw[v]==1)                                //If v is visited
+                if(seg_raw[v]&traits::high_bit_2)                                //If v is visited
                     edges[v].erase(u);
                 else{                                         //otherwise
-                    seg_raw[v] = 1;                        //mark v as visited
+                    seg_raw[v] |= traits::high_bit_2;         //mark v as visited
                     vqueue.push(v);                           //and add it to the end of Q
                 }
             }
@@ -118,13 +122,11 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     }
 
     // 6. Return connected components of the modified G
-    cout << "nEdge: " << weights.size() << endl;
-    cout << "size: " << size << endl;
     vector<ID> rank(size);
     vector<ID> parent(size);
     boost::disjoint_sets<ID*, ID*> dsets(&rank[0],&parent[0]);
     for (ID i=0; i<size; ++i){
-        if(seg_raw[i]!=MAX)
+        if(! (seg_raw[i]&traits::high_bit) ) //not background
             dsets.make_set(i);
     }
     for ( const auto &pair : edges ) {                  // check which vertices have outgoing, bidirectional edges
@@ -135,13 +137,13 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     }
 
     for(ID i=0;i<size;i++){             // find
-        if(seg_raw[i]!=MAX)
+        if(! (seg_raw[i]&traits::high_bit))
             seg_raw[i]=dsets.find_set(i);
     }
 
     // renumber and get counts
     for(ID i=0;i<size;i++){
-        if(seg_raw[i]==MAX)
+        if(seg_raw[i]&traits::high_bit)
             seg_raw[i]=0;
         else
             seg_raw[i]++;

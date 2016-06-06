@@ -42,8 +42,6 @@ compare_volumes_arb(
     std::map<uint32_t, std::map<uint32_t, std::size_t>> p_ij;
     std::map<uint32_t, std::size_t> s_i, t_j;
 
-    cout << "dimx,y,z " << dimX <<","<<dimY<<","<<dimZ << endl;
-
     for ( std::ptrdiff_t x = 0; x < dimX; ++x )
         for ( std::ptrdiff_t y = 0; y < dimY; ++y )
             for ( std::ptrdiff_t z = 0; z < dimZ; ++z )
