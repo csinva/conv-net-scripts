@@ -17,13 +17,13 @@ from visualization.visualize_funcs import *
 path_to_folder = '/Users/chandansingh/drive/janelia/conv_net_scripts/'
 path_to_data = path_to_folder + 'data/'
 
-start = time.clock()
-threshes = [10,2000]
+global segs_old, segs_new, rand_old, rand_new
+threshes = [10, 2000]
 hdf5_gt_file = path_to_data + 'groundtruth_seg_thick.h5'  # /groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col/tstvol-520-1-h5/groundtruth_seg_thick.h5'
 hdf5_pred_file = path_to_data + 'tstvol-1_2.h5'  # /tier2/turaga/singhc/train/output_200000/tstvol-1_2.h5'
 out = path_to_data + 'out/'  # '/groups/turaga/home/singhc/evaluation/out/'
 save_threshes = threshes
-rand = 0
+rand_old, rand_new = -1, -1
 p1, p2, p3 = 160, 170, 180  # 215, 214, 214 # 200, 200, 200
 
 hdf5_gt = h5py.File(hdf5_gt_file, 'r')
@@ -35,16 +35,41 @@ gt = trim_arbitrary_aff(gt, aff)
 
 nhood = mknhood3d(1)
 node1, node2, edge_affs = affgraph_to_edgelist(aff, nhood)
-print "\noriginal watershed..."
-seg_one, segs_old, rand = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
 
-print "\nnew watershed..."
-seg_one_new, segs_new, rand_new = zwatershed_and_metrics_arb(gt, np.array(node1, dtype='uint32'), np.array(node2, dtype='uint32'),
-                                       np.array(edge_affs), threshes, save_threshes)
+def test_eval():
+    global segs_old, segs_new, rand_old, rand_new
+    print "\noriginal watershed..."
+    start = time.clock()
+    segs_old, rand_old = zwatershed_and_metrics(gt, aff, threshes, save_threshes)
+    segs_old = zwatershed(aff, threshes)
+    print "time: ", time.clock() - start
+
+    print "\nnew watershed..."
+    start = time.clock()
+    segs_new, rand_new = zwatershed_and_metrics_arb(gt, np.array(node1, dtype='uint32'), np.array(node2, dtype='uint32'),
+                                                    np.array(edge_affs), threshes, save_threshes)
+
+    print "time: ", time.clock() - start, "\n"
+
+def test_no_eval():
+    global segs_old, segs_new, rand_old, rand_new
+    print "\noriginal watershed..."
+    start = time.clock()
+    segs_old = zwatershed(aff, threshes)
+    print "time: ", time.clock() - start
+
+    print "\nnew watershed..."
+    start = time.clock()
+    segs_new = zwatershed_arb(gt.shape, np.array(node1, dtype='uint32'), np.array(node2, dtype='uint32'),
+                                                    np.array(edge_affs), save_threshes)
+    print "time: ", time.clock() - start, "\n"
+
+
+# test_eval()
+test_no_eval()
+
 print "--------Final--------"
-print rand
+print rand_old
 print rand_new
-print "nsegs", len(np.unique(seg_one)),len(np.unique(segs_old[-1]))
-print "nsegs", len(np.unique(seg_one_new)),len(np.unique(segs_new[-1]))
-
-print "time: ", time.clock() - start
+print "nsegs", len(np.unique(segs_old[0])), len(np.unique(segs_old[-1]))
+print "nsegs", len(np.unique(segs_old[0])), len(np.unique(segs_new[-1]))

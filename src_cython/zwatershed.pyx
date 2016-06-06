@@ -60,7 +60,6 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
 
     counts_len = len(map['counts'])
     dims = affs.shape
-    seg_one = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
 
     # get segs, stats
     segs, splits, merges = [], [], []
@@ -92,7 +91,7 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
     if h5:
         return returnMap
     else:
-        return seg_one, segs, returnMap
+        return segs, returnMap
 
 def zwshed_no_stats(np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes, int h5,
                     seg_save_path="NULL/"):
@@ -162,7 +161,6 @@ def zwshed_with_stats_arb(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, 
 
     counts_len = len(map['counts'])
     dims = gt.shape
-    seg_one = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
 
     # get segs, stats
     segs, splits, merges = [], [], []
@@ -194,7 +192,7 @@ def zwshed_with_stats_arb(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[uint32_t, 
     if h5:
         return returnMap
     else:
-        return seg_one, segs, returnMap
+        return segs, returnMap
 
 def zwshed_no_stats_arb(dims, np.ndarray[uint32_t, ndim=1] node1,
                         np.ndarray[uint32_t, ndim=1] node2, np.ndarray[float, ndim=1] edgeWeight, threshes,
@@ -205,13 +203,12 @@ def zwshed_no_stats_arb(dims, np.ndarray[uint32_t, ndim=1] node1,
 
     # get initial seg,rg
     n_edge = node1.size
-    seg_empty = np.zeros(dims)
+    seg_empty = np.zeros(dims,dtype='uint32')
     map = zwshed_initial_arb(seg_empty, node1, node2, n_edge, edgeWeight)
     cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
     counts_len = len(map['counts'])
-    seg_one = np.array(map['seg'], dtype='uint32').reshape((dims[0], dims[1], dims[2]))
 
     # get segs, stats
     segs = []
@@ -233,7 +230,7 @@ def zwshed_no_stats_arb(dims, np.ndarray[uint32_t, ndim=1] node1,
             else:
                 segs.append(seg)
     if not h5:
-        return seg_one, segs
+        return segs
 
 def zwshed_initial_arb(np.ndarray[uint32_t, ndim=3] seg, np.ndarray[uint32_t, ndim=1] node1,
                        np.ndarray[uint32_t, ndim=1] node2, int n_edge, np.ndarray[float, ndim=1] edgeWeight):
