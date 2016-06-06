@@ -25,9 +25,9 @@ def affgraph_to_edgelist(aff, nhood):
     node1, node2 = nodelist_like(aff.shape[1:], nhood)
     node1, node2, aff = node1.ravel(), node2.ravel(), aff.ravel()
     # discard illegal vertices
-    valid = np.logical_and.reduce((node1 > 0, node2 > 0, node1 < num_vert,
-                                   node2 < num_vert, node1 != node2))
-    return node1[valid], node2[valid], aff[valid]
+    # negs = np.logical_and.reduce(((node1 > 0), (node2 > 0), (node1 < num_vert), (node2 < num_vert)))
+    negs = np.logical_and.reduce(((node1 > 0), (node2 > 0), (node1 < num_vert), (node2 < num_vert)))
+    return node1[negs], node2[negs], aff[negs]
 
 
 def mknhood3d(radius=1):
@@ -35,13 +35,13 @@ def mknhood3d(radius=1):
     x = np.arange(-ceilrad, ceilrad + 1, 1)
     y = np.arange(-ceilrad, ceilrad + 1, 1)
     z = np.arange(-ceilrad, ceilrad + 1, 1)
-    [i, j, k] = np.meshgrid(x, y, z)
+    [i, j, k] = np.meshgrid(z, y, z)
 
     idxkeep = (i ** 2 + j ** 2 + k ** 2) <= radius ** 2
-    i = i[idxkeep].ravel()
-    j = j[idxkeep].ravel()
-    k = k[idxkeep].ravel()
-    zeroIdx = np.ceil(len(i) / 2).astype(np.int32)
+    i = i[idxkeep].ravel();
+    j = j[idxkeep].ravel();
+    k = k[idxkeep].ravel();
+    zeroIdx = np.ceil(len(i) / 2).astype(np.int32);
 
     nhood = np.vstack((k[:zeroIdx], i[:zeroIdx], j[:zeroIdx])).T.astype(np.int32)
     return np.ascontiguousarray(np.flipud(nhood))
