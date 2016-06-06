@@ -62,7 +62,7 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
         if(aff==maxes[v1] || aff >=high){
             edges[v1].insert(v2);
             if(aff==maxes[v2] || aff >=high){
-                ID v2_bi = v2 | traits::high_bit; // insert bidirectional edge
+                ID v2_bi = v2;// | traits::high_bit; // insert bidirectional edge
                 edges[v2].insert(v1);
             }
         }
@@ -101,9 +101,11 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
     while(!vqueue.empty()){
         ID u = vqueue.front();
         vqueue.pop();
-        for( const auto &v:edges[u]){//u,v in E
+        //for( const auto &v:edges[u]){//u,v in E
+        for (auto it = edges[u].begin(); it != edges[u].end();) {
+            ID v = *it;
             if(edges[v].find(u)!=edges[v].end()){                //v,u in E
-                edges[u].erase(v);
+                it = edges[u].erase(it);
                 if(visited[v])                                //If v is visited
                     edges[v].erase(u);
                 else{                                         //otherwise
@@ -111,6 +113,8 @@ watershed_arb(int xdim, int ydim, int zdim, ID* node1, ID* node2, F* edgeWeight,
                     vqueue.push(v);                           //and add it to the end of Q
                 }
             }
+            else
+                ++it;
         }
     }
 
