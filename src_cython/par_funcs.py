@@ -1,18 +1,10 @@
 import numpy as np
-import sys
-import time
-import os
 import h5py
-import os.path as op
-import matplotlib.cm as cm
-from matplotlib.widgets import Slider, Button, RadioButtons
-import matplotlib.pyplot as plt
-import array
+from zwatershed import *
 
 def partition_subvols(pred_file,out_folder,max_len):
     f = h5py.File(pred_file, 'r')
     preds = f['main']
-    
     def dim_to_name(start):
         return str(start[0])+'_'+str(start[1])+'_'+str(start[2])+'_vol0/'
     dims = np.array(preds.shape[1:])
@@ -32,4 +24,19 @@ def partition_subvols(pred_file,out_folder,max_len):
     for i in range(len(starts)):
         s,e = starts[i],ends[i]
         args.append((pred_file,s,e,out_folder+dim_to_name(s)))    
-    return args,starts,ends
+    return args,starts,ends,dims,num_vols
+    
+def zwshed_h5_par(arg):
+    (pred_file,s,e,seg_save_path) = arg
+    f = h5py.File(pred_file, 'r')
+    preds_small = f['main']
+    pred_vol = preds_small[:,s[0]:e[0],s[1]:e[1],s[2]:e[2]]
+    zwatershed_basic_h5(pred_vol,seg_save_path)
+    print "finished",seg_save_path,"watershed"
+    
+def add_or_inc(key_max,key_min,d):
+    key = (key_max,key_min)
+    if not key in d:
+        d[key] = 1
+    else:
+        d[key] +=1
