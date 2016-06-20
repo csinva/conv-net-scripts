@@ -6,7 +6,7 @@ def partition_subvols(pred_file,out_folder,max_len):
     f = h5py.File(pred_file, 'r')
     preds = f['main']
     def dim_to_name(start):
-        return str(start[0])+'_'+str(start[1])+'_'+str(start[2])+'_vol0/'
+        return str(start[0])+'_'+str(start[1])+'_'+str(start[2])+'_vol/'
     dims = np.array(preds.shape[1:])
     num_vols = np.array([int(x/max_len)+1 for x in dims])
     deltas = dims/num_vols
@@ -33,7 +33,17 @@ def zwshed_h5_par(arg):
     pred_vol = preds_small[:,s[0]:e[0],s[1]:e[1],s[2]:e[2]]
     zwatershed_basic_h5(pred_vol,seg_save_path)
     print "finished",seg_save_path,"watershed"
-    
+
+
+# run using: spark-janelia -n 3 lsd -s lsd-example.py
+def eval_with_spark(args):
+    from pyspark import SparkConf, SparkContext
+    conf = SparkConf().setAppName('zwshed')
+    sc = SparkContext(conf=conf)
+    finish_status = sc.parallelize(args,len(args)).map(zwshed_h5_par).collect()
+    print(zip(args,finish_status))
+
+######################      merge methods     ######################
 def add_or_inc(key_max,key_min,d):
     key = (key_max,key_min)
     if not key in d:
@@ -60,13 +70,11 @@ def calc_merges(edge_mins,edge_maxes, re, merges={}):
             add_or_inc(edge_max,edge_min,merges)
     return re, merges  
 
-# merge methods
 def filter_merges(merges):
     COUNT_THRESH = 0
-    print "filter merges..."
+    print "filter_merges..."
     # only keep strongest edges
-    renums = {}
-    count_maxes = {}
+    renums,count_maxes = {},{}
     for pair in merges:
         count = merges[pair]
         e1,e2 = pair
@@ -79,11 +87,7 @@ def filter_merges(merges):
             count_maxes[e1] = count
     
     # compress merges
-    sum_counts = 0
-    for key in merges:
-        sum_counts += merges[key]
     renums_filtered = {}
-    print "merging numbers,",len(renums.keys()),"keys ... "            
     for key in renums:
         val = renums[key]
         if merges[(key,val)] > COUNT_THRESH:
@@ -93,7 +97,8 @@ def filter_merges(merges):
     return renums_filtered
     
 # stitch methods
-def merge(merges_filtered,rgs,i_arr,(args,starts,ends),f,max_val=1e5):     
+def merge(merges_filtered,rgs,i_arr,(args,starts,ends),f,max_val=1e5):  
+    print "merge"
     # merge segs        
     mp = np.arange(0,max_val+1,dtype='uint64')
     mp[merges_filtered.keys()] = merges_filtered.values()
@@ -107,13 +112,14 @@ def merge(merges_filtered,rgs,i_arr,(args,starts,ends),f,max_val=1e5):
         rg = rgs[key]
         rg_to_renum = rg[:,:2].astype('int')
         rg[:,:2] = mp[rg_to_renum]
-        keeps = rg[:,0]!=rg[:,1]
+        keeps = rg[:,0]<rg[:,1]
         rg_filtered = rg[keeps,:]
         rgs[key] = rg_filtered
     
     return rgs
 
-def renum_all(seg,rgs,i_arr,(args,starts,ends),f): # there must be at least one background pixel   
+def renum_all(seg,rgs,i_arr,(args,starts,ends,dims),f): # there must be at least one background pixel   
+    print "renumbering all..."
     segId,seg_sizes = np.unique(seg,return_counts=True) # this might have to be done in parts
     renum = np.zeros(segId.max()+1,dtype=np.uint64)
     renum[segId] = np.arange(0,len(segId)+1) 
