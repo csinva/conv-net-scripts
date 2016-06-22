@@ -2,6 +2,9 @@ import numpy as np
 import h5py
 from zwatershed import *
 
+
+######################      partition subvols     ######################
+
 def partition_subvols(pred_file,out_folder,max_len):
     f = h5py.File(pred_file, 'r')
     preds = f['main']
@@ -26,6 +29,8 @@ def partition_subvols(pred_file,out_folder,max_len):
         args.append((pred_file,s,e,out_folder+dim_to_name(s)))    
     return args,starts,ends,dims,num_vols
     
+######################      call watershed     ######################
+
 def zwshed_h5_par(arg):
     (pred_file,s,e,seg_save_path) = arg
     f = h5py.File(pred_file, 'r')
@@ -34,7 +39,10 @@ def zwshed_h5_par(arg):
     zwatershed_basic_h5(pred_vol,seg_save_path)
     print "finished",seg_save_path,"watershed"
 
-
+def eval_with_par_map(args,num_workers):
+    p = Pool(num_workers)
+    p.map(zwshed_h5_par, args)
+    
 # run using: spark-janelia -n 3 lsd -s lsd-example.py
 def eval_with_spark(args):
     from pyspark import SparkConf, SparkContext
@@ -43,7 +51,63 @@ def eval_with_spark(args):
     finish_status = sc.parallelize(args,len(args)).map(zwshed_h5_par).collect()
     print(zip(args,finish_status))
 
-######################      merge methods     ######################
+######################      stitch main    #########################
+
+def stitch_and_save(partition_data,outname):
+    args,starts,ends,dims,num_vols = partition_data
+    (X,Y,Z) = num_vols #(1,1,2) # num_vols
+    if not outname.endswith('.h5'):
+        outname += '.h5'
+    if op.isfile(outname):
+        os.remove(outname)
+    f = h5py.File(outname, 'a')
+#     dset_seg = f.create_dataset('seg', dims, dtype='uint64', chunks=True)
+    dset_seg = f.create_dataset('seg', (110,220,220), dtype='uint64', chunks=True)
+    inc,re,merges,rgs,i_arr=0,{},{},{},[]
+
+    # calc all merges, set dset_seg, rg with incrementing
+    for x,y,z in product(range(X),range(Y),range(Z)):
+        i = x*num_vols[1]*num_vols[2]+y*num_vols[2]+z
+        i_arr.append(i)
+        s,e = starts[i],ends[i]
+        basic_file = h5py.File(args[i][-1]+'basic.h5','r')
+        seg,rg = np.array(basic_file['seg']),np.array(basic_file['rg'])
+        seg[seg!=0]+=inc
+        rg[:,:2] += inc
+        rgs[i] = rg
+        inc = np.max(seg)
+        print "i,x,y,z",i,x,y,z
+        if not z==0: 
+            re,merges = calc_merges(edge_mins=dset_seg[s[0]:e[0],s[1]:e[1],s[2]+3],edge_maxes=seg[:,:,3], re=re, merges=merges)
+        if not y==0:
+            re,merges = calc_merges(edge_mins=dset_seg[s[0]:e[0],s[1]+3,s[2]:e[2]],edge_maxes=seg[:,3,:],re=re,merges=merges)
+        if not x==0:
+            re,merges = calc_merges(edge_mins=dset_seg[s[0]+3,s[1]:e[1],s[2]:e[2]],edge_maxes=seg[3,:,:],re=re, merges=merges)
+        dset_seg[s[0]:e[0],s[1]:e[1],s[2]:e[2]] = seg[:,:,:]
+#         plt.imshow(dset_seg[0, :, :], cmap=cmap)
+#         plt.show()
+    
+    merges_filtered = filter_merges(merges)
+#     plt.imshow(dset_seg[V, :, :], cmap=cmap)
+#     plt.show()
+    
+    rgs = merge(merges_filtered,rgs,i_arr,args,f,max_val=inc)
+    
+#     plt.imshow(dset_seg[V, :, :], cmap=cmap)
+#     plt.show()
+    
+    seg_sizes = calc_seg_sizes(f)
+
+    # save
+    f = h5py.File(outname, 'a')
+    dset_seg_sizes = f.create_dataset('seg_sizes', data=np.array(seg_sizes))
+    for key in rgs:
+        rg_dset = f.create_dataset('rg_'+str(key),data=np.array(rgs[key]))
+    dset_starts = f.create_dataset('starts',data=np.array(starts))
+    dset_ends = f.create_dataset('ends',data=np.array(ends))                               
+    f.close()
+
+######################      stitch helpers    #########################
 def add_or_inc(key_max,key_min,d):
     key = (key_max,key_min)
     if not key in d:
@@ -119,3 +183,32 @@ def calc_seg_sizes(f): # there must be at least one background pixel
     seg_sizes_proper = np.zeros(segId.max()+1,dtype=np.uint64)
     seg_sizes_proper[segId] = seg_sizes
     return seg_sizes_proper
+    
+######################      agglomeration     #########################
+
+def merge_by_thresh(seg,seg_sizes,rg,thresh):
+    re = {}
+    seg_max = np.max(seg)
+    seg_min = np.min(seg)
+    print "calculating renums..."
+    for i in range(rg.shape[0]):
+        n1,n2,w = rg[i,:]
+        size = w*w*thresh
+        if seg_sizes[n1] < size or seg_sizes[n2] < size:
+            re[n2]=n1
+            seg_sizes[n1]+=seg_sizes[n2]
+            seg_sizes[n2]+=seg_sizes[n1]
+    re_filtered = {}
+    print "filtering renums..."
+    for key in re:
+        val = re[key]
+        while val in re:
+            val = re[val]
+        if key < seg_max and val < seg_max:
+            re_filtered[key] = val
+    
+    print "renumbering..."
+    mp = np.arange(0,seg_max+1,dtype='uint64')
+    mp[re_filtered.keys()] = re_filtered.values()
+    seg = mp[seg]
+    return seg
