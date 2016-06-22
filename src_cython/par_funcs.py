@@ -179,9 +179,9 @@ def merge(merges_filtered,rgs,i_arr,args,f,max_val=1e5):
     return rgs
 
 def calc_seg_sizes(f): # there must be at least one background pixel   
-    print "calculating seg_sizes all..."
+    print "calculating seg_sizes..."
     segId,seg_sizes = np.unique(f['seg'],return_counts=True) # this might have to be done in parts
-    seg_sizes_proper = np.zeros(segId.max()+1,dtype=np.uint64)
+    seg_sizes_proper = np.zeros(segId.max()+1,dtype='uint64')
     seg_sizes_proper[segId] = seg_sizes
     return seg_sizes_proper
     
