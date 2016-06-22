@@ -1,7 +1,8 @@
 import numpy as np
 import h5py
 from zwatershed import *
-
+import os.path as op
+from itertools import product
 
 ######################      partition subvols     ######################
 
