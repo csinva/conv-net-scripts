@@ -31,3 +31,16 @@
 - `segs = pygt.zwatershed_arb(seg_shape, node1, node2, edgeWeight, seg_save_thresh_list)`
 - `rand = pygt.zwatershed_and_metrics_h5_arb(segTrue, node1, node2, edgeWeight, eval_thresh_list, seg_save_thresh_list, seg_save_path)`
 - `pygt.zwatershed_h5_arb(seg_shape, node1, node2, edgeWeight, eval_thresh_list, seg_save_path)`
+
+##### parallel watershed - 4 steps
+1. Partition the subvolumes
+	- `partition_data = partition_subvols(pred_file,out_folder,max_len=MAX_LEN)`
+2. Zwatershed each of the subvolumes
+	- *with spark*
+	- `eval_with_spark(partition_data[0])`
+	- *with python multiprocessing map*
+	- `eval_with_par_map(partition_data[0],NUM_WORKERS)`
+3. Stitch the subvolumes together, save to new segmentation with several rgs
+	- `stitch_and_save(partition_data,outname,(X,Y,Z)=num_vols)`
+4. Threshold individual subvolumes by merging
+	- `seg_merged = merge_by_thresh(seg,seg_sizes,rg,thresh)`
