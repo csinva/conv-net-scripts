@@ -63,8 +63,8 @@ def stitch_and_save(partition_data,outname):
     if op.isfile(outname):
         os.remove(outname)
     f = h5py.File(outname, 'a')
-#     dset_seg = f.create_dataset('seg', dims, dtype='uint64', chunks=True)
-    dset_seg = f.create_dataset('seg', (110,220,220), dtype='uint64', chunks=True)
+    dset_seg = f.create_dataset('seg', dims, dtype='uint64', chunks=True)
+    # dset_seg = f.create_dataset('seg', (110,220,220), dtype='uint64', chunks=True)
     inc,re,merges,rgs,i_arr=0,{},{},{},[]
 
     # calc all merges, set dset_seg, rg with incrementing
@@ -164,7 +164,7 @@ def filter_merges(merges):
 def merge(merges_filtered,rgs,i_arr,args,f,max_val=1e5):  
     print "merge"
     # merge segs        
-    mp = np.arange(0,max_val+2,dtype='uint64')
+    mp = np.arange(0,max_val+100,dtype='uint64')
     mp[merges_filtered.keys()] = merges_filtered.values()
     for i in i_arr:
         s,e = args[i][1],args[i][2]

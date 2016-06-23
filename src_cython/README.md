@@ -1,7 +1,8 @@
 # convolutional network metric scripts
 - Code is based around code from https://bitbucket.org/poozh/watershed described in http://arxiv.org/abs/1505.00249.  For use in https://github.com/naibaf7/PyGreentea. 
 
-# building cython
+# building cython methods
+- dependencies are specified in the requirements.txt file
 - run ./make.sh
 
 # function api
