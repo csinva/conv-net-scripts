@@ -26,7 +26,7 @@ MAX_LEN = 250
 
 
 
-def merge_by_thresh(seg,seg_sizes,rg,thresh):
+def merge_by_thresh(seg,seg_sizes,rg,thresh): #agnostic to seg shape
     re = {}
     seg_max = np.max(seg)
     seg_min = np.min(seg)
@@ -61,7 +61,7 @@ def merge_by_thresh(seg,seg_sizes,rg,thresh):
 
 
 
-
+print "loading data..."
 num,thresh = 0,2000
 f = h5py.File(outname, 'a')
 s,e = f['starts'][num],f['ends'][num]
@@ -69,12 +69,12 @@ seg = f['seg'][s[0]:e[0]-3,s[1]:e[1]-3,s[2]:e[2]-3]
 seg_sizes = np.array(f['seg_sizes'])
 rg = np.array(f['rg_'+str(num)])
 f.close()
-print "num_segs",len(np.unique(seg_init)),len(np.unique(seg))
-print "rg lens",len(rg_init),len(rg)
+print "num_segs",len(np.unique(seg))
+print "rg lens",len(rg)
 
 
 seg_merged = merge_by_thresh(seg,seg_sizes,rg,thresh)
 
-print "num_segs",len(np.unique(seg_init)),len(np.unique(seg))
-print "rg lens",len(rg_init),len(rg)
+print "num_segs",len(np.unique(seg))
+print "rg lens",len(rg)
 

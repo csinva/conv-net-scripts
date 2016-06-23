@@ -164,7 +164,7 @@ def filter_merges(merges):
 def merge(merges_filtered,rgs,i_arr,args,f,max_val=1e5):  
     print "merge"
     # merge segs        
-    mp = np.arange(0,max_val+1,dtype='uint64')
+    mp = np.arange(0,max_val+2,dtype='uint64')
     mp[merges_filtered.keys()] = merges_filtered.values()
     for i in i_arr:
         s,e = args[i][1],args[i][2]
