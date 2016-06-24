@@ -31,6 +31,14 @@ def partition_subvols(pred_file,out_folder,max_len):
         args.append((pred_file,s,e,out_folder+dim_to_name(s)))    
     return args,starts,ends,dims,num_vols
     
+def unoverlap(s_old,e_old,dims):
+        s_old,e_old = np.array(s_old), np.array(e_old)
+        s,e = [],[]
+        for i in range(len(s_old)):
+            s.append(np.array(s_old[i])+[4,4,4] - 4*(s_old[i]==0))
+            e.append(np.array(e_old[i])-[3,3,3] + 3*(e_old[i]>dims))
+        return np.array(s),np.array(e)
+        
 ######################      call watershed     ######################
 
 def zwshed_h5_par(arg):

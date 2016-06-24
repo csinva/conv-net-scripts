@@ -6,7 +6,7 @@ import os
 import h5py
 import os.path as op
 
-
+'''
 pred_file_rand = '/nobackup/turaga/singhc/rand_affs/333k_rand.h5'
 # np.random.seed(seed=703858704)
 # affs = np.random.rand(3,3000,3000,3000).astype('float32')
@@ -22,3 +22,4 @@ for i in range(3):
 # f['main'] = affs
 f.close()
 pred_file = pred_file_rand
+'''
