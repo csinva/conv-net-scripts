@@ -37,8 +37,9 @@
 - *a full example is given in par_tests.ipynb*
 
 1. Partition the subvolumes
-	- `partition_data = partition_subvols(pred_file,out_folder,max_len)`
+	- `partition_data = partition_subvols(pred_file,out_folder,max_len,nhood=None)`
 		- evenly divides the data in *pred_file* with the constraint that no dimension of any subvolume is longer than max_len
+		- if the affinity graph is saved with an arbitrary nhood, pass in the nhood as an argument (in line with https://github.com/srinituraga/malis)
 2. Zwatershed the subvolumes
 	1. `eval_with_spark(partition_data[0])`
 		- *with spark*

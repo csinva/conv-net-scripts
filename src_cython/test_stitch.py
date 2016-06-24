@@ -18,10 +18,11 @@ V = 20
 # pred_file = '/groups/turaga/home/turagas/research/caffe_v2/processed/bock2/120000/cutout_3k.h5'
 # pred_file = '/groups/turaga/home/turagas/turagalab/FROM_TIER2/singhc/train/output_200000/tstvol-1_2.h5'
 # out_folder = '/nobackup/turaga/singhc/3k_200/' # _3k _vol has full, max_len = 300
-pred_file = '/nobackup/turaga/singhc/rand_affs/3k_rand.h5'
-out_folder = '/nobackup/turaga/singhc/rand_3k_200/' # _3k _vol has full, max_len = 300
+# pred_file = '/nobackup/turaga/singhc/rand_affs/3k_rand.h5'
+# out_folder = '/nobackup/turaga/singhc/rand_3k_200/' # _3k _vol has full, max_len = 300
+pred_file = '/nobackup/turaga/singhc/rand_affs/333k_rand.h5'
+out_folder = '/nobackup/turaga/singhc/rand_333k_200/'
 outname = out_folder+'out.h5'
-NUM_WORKERS = 32
 MAX_LEN = 200
 
 t1 = time.time()
@@ -49,7 +50,7 @@ def stitch_and_save(partition_data,outname):
     # calc all merges, set dset_seg, rg with incrementing
     for x,y,z in product(range(X),range(Y),range(Z)):
         i = x*num_vols[1]*num_vols[2]+y*num_vols[2]+z
-        print "\ti =",str(i-1),"time",time.time()-t1,"secs"
+        # print "\ti =",str(i-1),"time",time.time()-t1,"secs"
         t1 = time.time()
         i_arr.append(i)
         s,e = starts[i],ends[i]
