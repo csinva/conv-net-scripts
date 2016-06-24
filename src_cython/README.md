@@ -54,8 +54,10 @@
 			- outname['seg'] = full stitched segmentation
 			- outname['seg_sizes'] = array of size of each segmentation
 			- outname['rg_i'] = region graph for ith subvolume
-4. Threshold individual subvolumes by merging
-	- `seg_merged = merge_by_thresh(seg,seg_sizes,rg,thresh)`
-		- load in these areguments from outname
+4. Merge with threshold
+	- `seg_merged = merge_seg_by_thresh(seg,seg_sizes,rg,thresh)`
+		- load in these arguments from outname
+	- merge_vol_by_thresh(fname_in,fname_out,thresh)
+		- merge and save entire volume from fname_in (hdf5 file) to fname_out (hdf5 file)	
 
 

@@ -196,7 +196,7 @@ def calc_seg_sizes(f): # there must be at least one background pixel
     
 ######################      agglomeration     #########################
 
-def merge_by_thresh(seg,seg_sizes,rg,thresh):
+def merge_seg_by_thresh(seg,seg_sizes,rg,thresh):
     re = {}
     seg_max = np.max(seg)
     seg_min = np.min(seg)
@@ -222,3 +222,24 @@ def merge_by_thresh(seg,seg_sizes,rg,thresh):
     mp[re_filtered.keys()] = re_filtered.values()
     seg = mp[seg]
     return seg
+
+def merge_vol_by_thresh(fname_in,fname_out,thresh):
+    f = h5py.File(fname_in)
+    dims = f['seg'].shape
+    print "dims",dims
+    starts,ends = f['starts'],f['ends']
+    seg_sizes = f['seg_sizes']
+    if op.isfile(fname_out):
+        os.remove(fname_out)
+    g = h5py.File(fname_out)
+    seg_out = g.create_dataset("seg",dims, chunks=True)
+
+    for i in range(len(starts)):
+        s,e = starts[i],ends[i]
+        seg = f['seg'][s[0]:e[0],s[1]:e[1],s[2]:e[2]]
+        rg = f['rg_'+str(i)]
+        print i,s,e,len(rg)
+        seg_merged = merge_seg_by_thresh(seg,seg_sizes,rg,thresh)
+        g[s[0]:e[0],s[1]:e[1],s[2]:e[2]] = seg_merged
+    f.close()
+    g.close()
