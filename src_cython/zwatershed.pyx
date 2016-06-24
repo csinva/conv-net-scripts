@@ -45,23 +45,34 @@ def zwatershed_h5_arb(seg_shape, node1, node2, edgeWeight, save_threshes, seg_sa
                                seg_save_path=seg_save_path)
                                
 def zwatershed_basic_h5(affs, seg_save_path):
-    zwatershed_basic_h5(affs, seg_save_path=seg_save_path)
+    zwshed_basic_h5(affs, seg_save_path=seg_save_path)
+    
+def zwatershed_basic_h5_arb(seg_shape, node1, node2, edgeWeight, seg_save_path):
+    return zwshed_basic_h5_arb(seg_shape, node1, node2, edgeWeight, seg_save_path=seg_save_path)
 
 #-------------- helper methods --------------------------------------------------------------
-def zwatershed_basic_h5(np.ndarray[np.float32_t, ndim=4] affs, seg_save_path="NULL/"):
+def zwshed_basic_h5(np.ndarray[np.float32_t, ndim=4] affs, seg_save_path="NULL/"):
     makedirs(seg_save_path)
-
-    # get initial seg,rg
     affs = np.asfortranarray(np.transpose(affs, (1, 2, 3, 0)))
     dims = affs.shape
     seg_empty = np.empty((dims[0], dims[1], dims[2]), dtype='uint32')
     map = zwshed_initial(seg_empty, affs)
-    counts = map['counts']
-    rg = map['rg']
     f = h5py.File(seg_save_path + 'basic.h5', 'w')
     f["seg"] = seg = np.array(map['seg'], dtype='uint32').reshape((dims[2], dims[1], dims[0])).transpose(2, 1, 0)
-    f["counts"]=counts
-    f["rg"]=rg
+    f["counts"]=map['counts']
+    f["rg"]=map['rg']
+    f.close()
+    
+def zwshed_basic_h5_arb(dims, np.ndarray[uint32_t, ndim=1] node1,np.ndarray[uint32_t, ndim=1] node2,
+                        np.ndarray[float, ndim=1] edgeWeight,seg_save_path="NULL/"):
+    makedirs(seg_save_path)
+    n_edge = node1.size
+    seg_empty = np.zeros(dims,dtype='uint32')
+    map = zwshed_initial_arb(seg_empty, node1, node2, n_edge, edgeWeight)
+    f = h5py.File(seg_save_path + 'basic.h5', 'w')
+    f["seg"] = seg = np.array(map['seg'], dtype='uint32')
+    f["counts"]=map['counts']
+    f["rg"]=map['rg']
     f.close()
 
 def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, ndim=4] affs, threshes, save_threshes,
@@ -76,7 +87,7 @@ def zwshed_with_stats(np.ndarray[uint32_t, ndim=3] gt, np.ndarray[np.float32_t, 
     cdef np.ndarray[uint32_t, ndim=1] seg_in = map['seg']
     cdef np.ndarray[uint32_t, ndim=1] counts_out = map['counts']
     cdef np.ndarray[np.float32_t, ndim=2] rgn_graph = map['rg']
-
+    
     counts_len = len(map['counts'])
     dims = affs.shape
 
