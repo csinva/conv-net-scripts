@@ -46,7 +46,7 @@ def zwatershed_h5_arb(seg_shape, node1, node2, edgeWeight, save_threshes, seg_sa
                                
 def zwatershed_basic_h5(affs, seg_save_path):
     zwshed_basic_h5(affs, seg_save_path=seg_save_path)
-    
+
 def zwatershed_basic_h5_arb(seg_shape, node1, node2, edgeWeight, seg_save_path):
     return zwshed_basic_h5_arb(seg_shape, node1, node2, edgeWeight, seg_save_path=seg_save_path)
 

@@ -47,7 +47,6 @@ def zwshed_h5_par(arg):
     f = h5py.File(pred_file, 'r')
     preds_small = f['main']
     pred_vol = preds_small[:,s[0]:e[0],s[1]:e[1],s[2]:e[2]]
-    def zwatershed_basic_h5_arb(seg_shape, node1, node2, edgeWeight, seg_save_path)
     if nhood==None:
         zwatershed_basic_h5(pred_vol,seg_save_path)
     else:

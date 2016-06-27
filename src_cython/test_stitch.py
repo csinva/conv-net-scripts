@@ -50,11 +50,11 @@ def stitch_and_save(partition_data,outname):
     # calc all merges, set dset_seg, rg with incrementing
     for x,y,z in product(range(X),range(Y),range(Z)):
         i = x*num_vols[1]*num_vols[2]+y*num_vols[2]+z
-        # print "\ti =",str(i-1),"time",time.time()-t1,"secs"
+        print "\ti =",str(i-1),"time",time.time()-t1,"secs"
         t1 = time.time()
         i_arr.append(i)
         s,e = starts[i],ends[i]
-        basic_file = h5py.File(args[i][-1]+'basic.h5','r')
+        basic_file = h5py.File(args[i][3]+'basic.h5','r')
         seg,rg = np.array(basic_file['seg']),np.array(basic_file['rg'])
         seg[seg!=0]+=inc
         rg[:,:2] += inc
