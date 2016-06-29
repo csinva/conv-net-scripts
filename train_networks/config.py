@@ -1,5 +1,5 @@
 DEBUG = False
-SAVE_IMAGES = False
+SAVE_IMAGES = True
 
 # hyperparameters
 base_learning_rate = 5e-5

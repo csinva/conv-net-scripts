@@ -1,0 +1,7 @@
+snapshots
+rotations
+*.prototxt
+*.pyc
+*.caffemodel
+*.solverstate
+*.mat
