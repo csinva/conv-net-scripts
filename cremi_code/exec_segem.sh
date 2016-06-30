@@ -1,3 +1,4 @@
+# data at /nobackup/turaga/grisaitisw/data/SegEM/SegEM_challenge/volumeTrainingData3/
 raw_file=/groups/turaga/home/turagas/data/SNEMI3D/train_im_uint8.h5
 seg_file=/groups/turaga/home/turagas/data/SNEMI3D/train_seg.h5
 dset1=main
